@@ -11,7 +11,10 @@
       "Bash(hugo:*)",
       "Bash(git:*)",
       "Bash(~/.zshrc:*)",
-      "Bash(gh auth:*)"
+      "Bash(gh auth:*)",
+      "Bash(python3:*)",
+      "Bash(pip3 install:*)",
+      "Bash(curl:*)"
     ]
   }
 }

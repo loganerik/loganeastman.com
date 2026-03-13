@@ -9,14 +9,21 @@ chapter: "04. Services Rendered"
 
 </div>
 
-I help people and companies tell better stories — with words, with software, or with both.
+![Mirror](/img/mirror.jpg)
 
-That might look like writing copy, building a website, developing a creative strategy, or prototyping an idea that doesn't have a name yet. I like working at the edge of what's possible, especially when the brief is vague and the deadline is real.
+<h3 class="convictions-heading">I'm a creative generalist with some very specific specifics.</h3>
 
-I'm most useful when you need someone who can write *and* build, or when the problem lives somewhere between "content" and "product."
+I got here by marrying a brand and business strategy career with a life in film and television — selling stories and shopping pilots with companies like College Humor and This Is Just a Test, cutting my teeth at Broadway Video, Gary Sanchez, and Smart Entertainment. As a strategist at [We First](http://www.wefirstbranding.com), a purpose-driven brand consultancy, I learned to unearth insights and craft messaging for top global companies and founder-led startups. The result is someone who can see, hear, and speak to both the business side and the creative side, the leadership side and the team side, the technical side and the human side. 
+
+<h3 class="convictions-heading">I work from a few convictions:</h3>
+
+- Good work is vital — alive, curious, and a little risky.
+- Tension is something to use, not resolve.
+- Respect people's complexity and intelligence.
+- AI requires pragmatism.
 
 <div class="work-cta">
 
-Interested? Say hello: [logan@loganeastman.com](mailto:logan@loganeastman.com)
+Interested? Say hello: [logan.eastman@gmail.com](mailto:logan.eastman@gmail.com)
 
 </div>
