@@ -16,6 +16,8 @@ Five and a half years later on the night of May 30th, other nearby structures we
 
 Helicopters buzzed all night. I smelled smoke. I watched the broadcast until the famed Osteria Mozza nearby was reportedly lit. With the protests finally by my window, I drifted to sleep. Though it was close, I knew the damage would never reach me. Here, riots are like The Big One. Something inevitable that you're prepared for.
 
+![](/img/writing/if-only-i-were-asleep/01.avif)
+
 ## "No Knocks"
 
 But when our apartment was broken into in 2015, I was the only one who didn't wake up. Coincidence had it that an intoxicated guest looking for his sweater (let's call him Adam) mistook our entrance for the party next door on a night we inexplicably forgot to turn the lock. Coincidence also had it that Adam worked at a company where I had once interned.
@@ -27,6 +29,8 @@ Adam, once escorted out, was recalcitrant; returning to the door, knocking, and 
 This incident became an amusing almost boastful anecdote. When I got to know our neighbors, I learned the depressing backstory. Adam had been good friends with John Winkler, 30, who was accidentally killed by police a year earlier. Winkler had ran to help his neighbors after a roommate pulled a knife on them. As Winkler and friends escaped outside, three deputies, believing Winkler to be the attacker, shot him dead and injured another hostage as they ran toward what they thought was safety. Adam, consumed with sadness, had been coping with drugs and alcohol. Later, the mentally ill assailant was at first charged with the friend's murder. If it weren't for him, prosecutors reasoned, Winkler would not have died. He's serving 14 years for related charges.
 
 I wish we hadn't called the cops on the guy I knew from work.
+
+![](/img/writing/if-only-i-were-asleep/02.avif)
 
 ## Privileged Paranoia
 
@@ -57,6 +61,8 @@ Across the spectrum, every interviewee agreed the riots could happen again. Ever
 My older, white interviewees both recalled that the police protected the wealthy enclave of Hancock Park in '92. At the time I didn't know where that was. I found myself living nearby just 4 years later.
 
 Now, I want to make sure I remember more than just Mozza.
+
+<img class="img-full" src="/img/writing/if-only-i-were-asleep/03.avif" alt="">
 
 ## Hancock Park Chad
 
