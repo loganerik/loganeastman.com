@@ -15,7 +15,9 @@
       "Bash(python3:*)",
       "Bash(pip3 install:*)",
       "Bash(curl:*)",
-      "Bash(sudo:*)"
+      "Bash(sudo:*)",
+      "WebFetch(domain:loganeastman.substack.com)",
+      "Bash(mkdir:*)"
     ]
   }
 }

@@ -5,7 +5,7 @@ chapter: "04. Services Rendered"
 
 <div class="intro">
 
-*Every case got closed. Not always the way the client imagined — sometimes better, sometimes stranger — but the work got done. That was the reputation, and it was earned.*
+*Every case got closed. Not always the way the client imagined — sometimes better, often stranger.*
 
 </div>
 

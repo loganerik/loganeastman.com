@@ -94,6 +94,31 @@ img.bw {
   filter: grayscale(100%);
 }
 
+.img-small {
+  max-width: 45%;
+  margin: 0.5rem auto;
+}
+
+.img-row {
+  display: flex !important;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+.img-row img {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 33%;
+  margin: 0;
+  height: auto;
+}
+
+.img-full {
+  width: 100vw;
+  max-width: none;
+  margin-left: calc(-50vw + 50%);
+}
+
 figure {
   margin: 2rem 0;
 }
