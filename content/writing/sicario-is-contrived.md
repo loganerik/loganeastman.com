@@ -1,7 +1,7 @@
 ---
 title: "Sicario is Contrived"
 date: 2017-05-02
-postType: essay
+postType: review
 draft: false
 description: "On illegal drugs as Hollywood's ultimate plot device, and why Sicario's message lands harder than it should."
 ---
