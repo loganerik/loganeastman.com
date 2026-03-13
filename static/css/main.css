@@ -41,7 +41,7 @@ main {
 
 /* --- Typography --- */
 h1, h2, h3 {
-  font-family: 'Special Elite', 'Courier New', monospace;
+  font-family: 'Cutive', 'Courier New', monospace;
   font-weight: 400;
   letter-spacing: 0.02em;
   line-height: 1.3;
@@ -142,7 +142,7 @@ figcaption {
 }
 
 .site-nav .site-name {
-  font-family: 'Special Elite', 'Courier New', monospace;
+  font-family: 'Cutive', 'Courier New', monospace;
   font-size: 1.3rem;
   text-decoration: none;
   letter-spacing: 0.05em;

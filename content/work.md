@@ -24,6 +24,10 @@ As a strategist at [We First](http://www.wefirstbranding.com), a purpose-driven 
 - Respect people's complexity and intelligence.
 - AI requires pragmatism.
 
+<h3 class="convictions-heading">What does this look like? A ghost.</h3>
+
+I will help you craft your story and how it shows up — in a book, on your website, in a pitch deck. I will help you make novel connections and better workflows by harnessing the power of AI.
+
 <div class="work-cta">
 
 Interested? Say hello: [logan.eastman@gmail.com](mailto:logan.eastman@gmail.com)
