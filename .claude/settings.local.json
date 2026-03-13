@@ -18,7 +18,8 @@
       "Bash(sudo:*)",
       "WebFetch(domain:loganeastman.substack.com)",
       "Bash(mkdir:*)",
-      "Bash(dig:*)"
+      "Bash(dig:*)",
+      "WebFetch(domain:medium.com)"
     ]
   }
 }
