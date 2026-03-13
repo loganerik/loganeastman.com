@@ -14,7 +14,8 @@
       "Bash(gh auth:*)",
       "Bash(python3:*)",
       "Bash(pip3 install:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(sudo:*)"
     ]
   }
 }

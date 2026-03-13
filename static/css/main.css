@@ -162,6 +162,7 @@ figcaption {
   font-size: 0.75rem;
   color: #111;
   margin-bottom: 0.8rem;
+  white-space: nowrap;
 }
 
 .footer-links {
