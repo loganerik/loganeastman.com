@@ -5,7 +5,7 @@ chapter: "04. Services Rendered"
 
 <div class="intro">
 
-*Every case got closed. Not always the way the client imagined — sometimes better, often stranger.*
+*He built his first website at eight. Moderated a gaming forum with ten thousand daily posts in middle school. Hung out on IRC long before Discord was a glimmer in anyone's eye. Got Twitter to follow Balloon Boy and never logged off. He's been on every platform, learned every tool, and outlasted most of them. Whatever it is — he can do it for you.*
 
 </div>
 
