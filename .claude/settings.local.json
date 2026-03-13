@@ -17,7 +17,8 @@
       "Bash(curl:*)",
       "Bash(sudo:*)",
       "WebFetch(domain:loganeastman.substack.com)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(dig:*)"
     ]
   }
 }
