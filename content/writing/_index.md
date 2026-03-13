@@ -2,6 +2,6 @@
 title: "Writing"
 ---
 
-*He worked his brain like a surgeon, pressing gently along the folds, feeling for the soft spots. Synapses firing between things that had no business being connected. Ninety-five percent of the time he was right. All the time, he was on to something.*
+*He once watched the scene where Mrs. Doubtfire plated takeout and passed it off as her own and a synapse formed between eating out and tasting good. He's been making crazier and crazier connections across disparate interests ever since. The craziest thing is, ninety-nine percent of the time, he stumbles upon something worth thinking about.*
 
 ![Cats](/img/cats.jpg)

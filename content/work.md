@@ -17,16 +17,16 @@ I got here by marrying a brand and business strategy career with a life in film 
 
 As a strategist at [We First](http://www.wefirstbranding.com), a purpose-driven brand consultancy, I learned to unearth insights and craft messaging for top global companies and founder-led startups. The result is someone who can see, hear, and speak to both the business side and the creative side, the leadership side and the team side, the technical side and the human side. 
 
+<h3 class="convictions-heading">What does this look like? A ghost.</h3>
+
+I will help you craft your story and how it shows up — in a book, on your website, in a pitch deck. I will help you make novel connections and better workflows by harnessing the power of AI.
+
 <h3 class="convictions-heading">I work from a few convictions:</h3>
 
 - Good work is vital — alive, curious, and a little risky.
 - Tension is something to use, not resolve.
 - Respect people's complexity and intelligence.
 - AI requires pragmatism.
-
-<h3 class="convictions-heading">What does this look like? A ghost.</h3>
-
-I will help you craft your story and how it shows up — in a book, on your website, in a pitch deck. I will help you make novel connections and better workflows by harnessing the power of AI.
 
 <div class="work-cta">
 

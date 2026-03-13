@@ -5,7 +5,7 @@ chapter: "02. The Usual Suspect"
 
 <div class="intro">
 
-*The office door was open like an invitation or a trap. Inside, a man sat behind a desk covered in half-finished scripts and a cold cup of coffee. Two cats supervised from the couch: one asleep, one judging. He looked up like he'd been expecting you.*
+*Inside, a man sat behind a desk covered in half-finished scripts and a cold cup of coffee. Two cats somewhere nearby. He leaned back and said, "Look, I know you've been on a billion profile pages that look just like this one. You're just going to have to trust me and get to know me."*
 
 </div>
 

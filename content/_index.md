@@ -2,6 +2,4 @@
 title: "Logan Eastman"
 ---
 
-*He had the kind of face that made you think he'd seen the last reel of every movie
-and still bought a ticket to the next one. Not out of hope, more like
-a stubborn belief that the everyone from the director to the projectionist owed him a better ending.*
+*He had the face of a bureaucratic fulltimer forced to be a freelancer by the ambivalent tides. He walked the streets of Los Feliz wanting to Zillow the history of every dwelling, sure there had to be something interesting there. Late at night he would dance in a warehouse east of East LA to four on the floor and you never would have guessed.*
