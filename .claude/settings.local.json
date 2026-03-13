@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(hugo version:*)",
+      "WebFetch(domain:docs.buttondown.com)",
+      "WebFetch(domain:buttondown.com)",
+      "Bash(brew install:*)",
+      "Bash(hugo new:*)",
+      "Bash(chmod +x:*)",
+      "Bash(hugo:*)",
+      "Bash(git:*)",
+      "Bash(~/.zshrc:*)",
+      "Bash(gh auth:*)"
+    ]
+  }
+}

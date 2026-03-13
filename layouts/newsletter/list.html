@@ -1,0 +1,33 @@
+{{ define "main" }}
+<p class="chapter-heading">05. A Tryhard in a Whytry World</p>
+<div class="intro">
+{{ .Content }}
+</div>
+
+<div class="newsletter-signup">
+  <h2>Subscribe</h2>
+  <p>In theory, I write about the intersection of commerce, creativity, and curiosity, all playing out in the ultimate funhouse mirror to the world: Los Angeles. In reality, I talk about whatever I want to talk about and I happen to be living in LA.</p>
+  <form
+    action="https://buttondown.com/api/emails/embed-subscribe/loganeastman"
+    method="post"
+    target="popupwindow"
+  >
+    <input type="email" name="email" placeholder="your@email.com" required>
+    <button type="submit">Subscribe</button>
+  </form>
+</div>
+
+{{ if .Pages }}
+<h2>Archive</h2>
+<ul class="writing-list">
+  {{ range .Pages.ByDate.Reverse }}
+  <li>
+    <a href="{{ .Permalink }}" class="post-title">{{ .Title }}</a>
+    <span class="post-meta">
+      <span class="post-date">{{ .Date.Format "Jan 2006" }}</span>
+    </span>
+  </li>
+  {{ end }}
+</ul>
+{{ end }}
+{{ end }}

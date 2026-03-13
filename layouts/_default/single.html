@@ -1,0 +1,6 @@
+{{ define "main" }}
+<article>
+  {{ with .Params.chapter }}<p class="chapter-heading">{{ . }}</p>{{ end }}
+  {{ .Content }}
+</article>
+{{ end }}

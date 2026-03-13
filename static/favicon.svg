@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Special+Elite');
+    text { font-family: 'Special Elite', monospace; fill: #111; }
+  </style>
+  <rect width="64" height="64" fill="#f7f6f0"/>
+  <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-size="28">LEE</text>
+</svg>
