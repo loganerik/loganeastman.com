@@ -276,6 +276,10 @@ figcaption {
 .writing-list .post-title {
   font-family: 'Lora', Georgia, serif;
   font-size: 1rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .writing-list .post-meta {
