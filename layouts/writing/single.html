@@ -12,4 +12,15 @@
     {{ .Content }}
   </div>
 </article>
+<script>
+document.querySelectorAll('.post-content img').forEach(function(img) {
+  if (!img.closest('a')) {
+    var a = document.createElement('a');
+    a.href = img.src;
+    a.target = '_blank';
+    img.parentNode.insertBefore(a, img);
+    a.appendChild(img);
+  }
+});
+</script>
 {{ end }}
