@@ -343,6 +343,39 @@ figcaption {
   margin-bottom: 1.2rem;
 }
 
+/* --- Lightbox --- */
+#lightbox {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+#lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  margin: 0;
+}
+
+#lightbox-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: 300;
+  cursor: pointer;
+  line-height: 1;
+}
+
 /* --- Poem Layout --- */
 .poem .post-content {
   max-width: 420px;

@@ -12,15 +12,20 @@
     {{ .Content }}
   </div>
 </article>
+<div id="lightbox" onclick="this.style.display='none'">
+  <span id="lightbox-close">&times;</span>
+  <img id="lightbox-img" src="" alt="">
+</div>
 <script>
+var lb = document.getElementById('lightbox');
+var lbImg = document.getElementById('lightbox-img');
 document.querySelectorAll('.post-content img').forEach(function(img) {
-  if (!img.closest('a')) {
-    var a = document.createElement('a');
-    a.href = img.src;
-    a.target = '_blank';
-    img.parentNode.insertBefore(a, img);
-    a.appendChild(img);
-  }
+  img.style.cursor = 'pointer';
+  img.addEventListener('click', function(e) {
+    e.preventDefault();
+    lbImg.src = img.src;
+    lb.style.display = 'flex';
+  });
 });
 </script>
 {{ end }}
