@@ -12,20 +12,33 @@
     {{ .Content }}
   </div>
 </article>
-<div id="lightbox" onclick="this.style.display='none'">
+<div id="lightbox">
   <span id="lightbox-close">&times;</span>
   <img id="lightbox-img" src="" alt="">
 </div>
 <script>
-var lb = document.getElementById('lightbox');
-var lbImg = document.getElementById('lightbox-img');
-document.querySelectorAll('.post-content img').forEach(function(img) {
-  img.style.cursor = 'pointer';
-  img.addEventListener('click', function(e) {
-    e.preventDefault();
-    lbImg.src = img.src;
-    lb.style.display = 'flex';
+(function() {
+  var lb = document.getElementById('lightbox');
+  var lbImg = document.getElementById('lightbox-img');
+
+  lb.addEventListener('click', function(e) {
+    if (e.target !== lbImg) {
+      lb.classList.remove('active');
+    }
   });
-});
+
+  document.querySelectorAll('.post-content img').forEach(function(img) {
+    img.style.cursor = 'pointer';
+    img.addEventListener('click', function(e) {
+      e.stopPropagation();
+      lbImg.src = this.src;
+      lb.classList.add('active');
+    });
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') lb.classList.remove('active');
+  });
+})();
 </script>
 {{ end }}
