@@ -56,4 +56,8 @@ A building near me on Normandie Ave. that was just called "Hollywood Tower Apart
 
 There are efforts to prevent change. One street was designated the "Winona Boulevard Mid-Century Modern Historic District." The district is considered "significant" because it "encompasses a period of change and new construction in the area, as early-20th-century building stock was demolished to make way for denser residential development that embraced Modernism." Apparently, the 20th century building stock it replaced was not significant and the Modernism era is just the right amount of dense and modern. I think the buildings on this tract are interesting to look at but I wonder if most passersby find them important. What sticks out most to me on that street is the building with giant blue, yellow and white flags which I've heard, without substantiation, means it is owned by Donald Sterling.
 
+<video controls playsinline preload="metadata" style="max-width: 100%; margin: 1.5rem 0;">
+  <source src="/img/writing/theyre-eating-the-tripe/heh.mp4" type="video/mp4">
+</video>
+
 I feel like the silly rabbit. I make too much of these boundaries between people, space, time, and streets. For street cred purposes I live in East Hollywood. Los Feliz may still be cooler. It doesn't seem to require as many special projects to improve. At the same time, Los Feliz is pretty much the same place as East Hollywood. After all, East Hollywood is also Little Armenia, Thai Town, Virgil Village and Melrose Hill. And it's all the east side. And it's all Los Angeles.
