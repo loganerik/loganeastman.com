@@ -1,5 +1,5 @@
 ---
-title: "They're eating the trip. They're eating the mango sticky rice."
+title: "They're eating the tripe. They're eating the mango sticky rice."
 date: 2024-10-18
 postType: essay
 draft: false
