@@ -19,4 +19,4 @@ Showcase the brand's nicer, gentler and more fun high while avoiding anxiety and
 
 ## The Result
 
-The brand successfully launched as a lifestyle brand.
+The video positioned the company as a lifestyle brand on launch.
