@@ -27,9 +27,13 @@ title = "Logan Eastman"
     url = "/work/"
     weight = 3
   [[menus.main]]
+    name = "Portfolio"
+    url = "/portfolio/"
+    weight = 4
+  [[menus.main]]
     name = "Newsletter"
     url = "/newsletter/"
-    weight = 4
+    weight = 5
 
 [pagination]
   pagerSize = 50
