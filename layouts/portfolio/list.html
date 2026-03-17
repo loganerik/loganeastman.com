@@ -1,8 +1,9 @@
 {{ define "main" }}
 
+<p class="chapter-heading">05. Evidence, Proof & Casefiles</p>
+
 <div id="portfolio-gate">
   <div class="gate-inner">
-    <h1>Portfolio</h1>
     <p><a href="mailto:logan.eastman@gmail.com">Contact me</a> if interested in seeing work examples.</p>
     <p>This page is password protected.</p>
     <form id="gate-form">
@@ -14,7 +15,6 @@
 </div>
 
 <div id="portfolio-content" style="display:none;">
-  <p class="chapter-heading">05. Evidence, Proof & Casefiles</p>
   <div class="portfolio-grid">
     {{ range .Pages.ByWeight }}
     <a href="{{ .RelPermalink }}" class="portfolio-card">
