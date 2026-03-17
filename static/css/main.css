@@ -489,3 +489,221 @@ article ul {
     gap: 1rem;
   }
 }
+
+/* =====================
+   Portfolio
+   ===================== */
+
+/* Password Gate */
+#portfolio-gate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+}
+
+.gate-inner h1 {
+  font-family: 'Cutive', monospace;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.gate-inner p {
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+#gate-form {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+#gate-input {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ddd;
+  background: #fff;
+  width: 220px;
+}
+
+#gate-form button {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 1rem;
+  border: 1px solid #111;
+  background: #111;
+  color: #f7f6f0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#gate-form button:hover {
+  background: #333;
+}
+
+/* Widen container for portfolio grid — break out of .container's 680px */
+.container:has(#portfolio-content) {
+  max-width: 960px;
+}
+
+/* Portfolio Grid */
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  max-width: 960px;
+  margin: 2rem auto 0;
+}
+
+.portfolio-card {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  text-decoration: none;
+}
+
+.portfolio-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.portfolio-card:hover img {
+  transform: scale(1.03);
+}
+
+.portfolio-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.portfolio-card:hover .portfolio-overlay {
+  opacity: 1;
+}
+
+.portfolio-overlay h2 {
+  font-family: 'Cutive', monospace;
+  color: #f7f6f0;
+  font-size: 1.4rem;
+  margin: 0 0 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.portfolio-overlay .portfolio-year {
+  font-family: 'Courier Prime', monospace;
+  color: #f7f6f0;
+  font-size: 0.85rem;
+  opacity: 0.85;
+  margin-bottom: 0.25rem;
+}
+
+.portfolio-overlay .portfolio-services {
+  font-family: 'Courier Prime', monospace;
+  color: #f7f6f0;
+  font-size: 0.75rem;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Portfolio Single */
+.portfolio-project .back-link {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.85rem;
+  color: #555;
+  text-decoration: none;
+}
+
+.portfolio-project .back-link:hover {
+  color: #111;
+}
+
+.portfolio-header {
+  margin: 2rem 0 1.5rem;
+}
+
+.portfolio-header h1 {
+  font-family: 'Cutive', monospace;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.portfolio-meta {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.portfolio-meta .portfolio-year {
+  margin-right: 1rem;
+}
+
+.portfolio-meta .portfolio-services {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+}
+
+.portfolio-hero {
+  margin: 0 0 2rem;
+}
+
+.portfolio-hero img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.portfolio-body h2 {
+  font-family: 'Cutive', monospace;
+  font-size: 1.2rem;
+  margin: 2rem 0 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.portfolio-gallery {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.portfolio-gallery img {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .portfolio-overlay {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .portfolio-overlay h2 {
+    font-size: 1.1rem;
+  }
+}

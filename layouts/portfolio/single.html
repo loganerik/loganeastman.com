@@ -1,0 +1,72 @@
+{{ define "main" }}
+
+<div id="portfolio-auth-check" style="display:none;">
+  <article class="portfolio-project">
+    <a href="/portfolio/" class="back-link">← Back</a>
+    <div class="portfolio-header">
+      <h1>{{ .Title }}</h1>
+      <div class="portfolio-meta">
+        <span class="portfolio-year">{{ .Params.year }}</span>
+        <span class="portfolio-services">{{ .Params.services }}</span>
+      </div>
+    </div>
+
+    <div class="portfolio-body">
+      {{ .Content }}
+    </div>
+
+    {{ with .Params.supportImage }}
+    <div class="portfolio-hero">
+      <img src="{{ . }}" alt="{{ $.Title }}">
+    </div>
+    {{ end }}
+
+    {{ with .Params.supportVideo }}
+    <div class="portfolio-video">
+      <iframe title="{{ $.Title }}" src="{{ . }}" style="width:100%;aspect-ratio:16/9;border:none;" allowfullscreen></iframe>
+    </div>
+    {{ end }}
+
+    {{ with .Params.images }}
+    <div class="portfolio-gallery">
+      {{ range . }}
+      <img src="{{ . }}" alt="Project detail" class="gallery-img">
+      {{ end }}
+    </div>
+    {{ end }}
+  </article>
+</div>
+
+<script>
+(function() {
+  if (sessionStorage.getItem('portfolio_auth') === 'true') {
+    document.getElementById('portfolio-auth-check').style.display = 'block';
+  } else {
+    window.location.href = '/portfolio/';
+  }
+})();
+</script>
+
+<script>
+// Lightbox for gallery images
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.portfolio-gallery img, .portfolio-hero img').forEach(function(img) {
+    img.style.cursor = 'pointer';
+    img.addEventListener('click', function() {
+      var overlay = document.createElement('div');
+      overlay.className = 'lightbox-overlay';
+      var clone = document.createElement('img');
+      clone.src = this.src;
+      clone.className = 'lightbox-img';
+      overlay.appendChild(clone);
+      document.body.appendChild(overlay);
+      overlay.addEventListener('click', function() { overlay.remove(); });
+      document.addEventListener('keydown', function handler(e) {
+        if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', handler); }
+      });
+    });
+  });
+});
+</script>
+
+{{ end }}

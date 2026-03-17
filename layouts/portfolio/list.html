@@ -1,0 +1,67 @@
+{{ define "main" }}
+
+<div id="portfolio-gate">
+  <div class="gate-inner">
+    <h1>Portfolio</h1>
+    <p>This page is password protected.</p>
+    <form id="gate-form">
+      <input type="password" id="gate-input" placeholder="Enter password" autocomplete="off" autofocus>
+      <button type="submit">Enter</button>
+    </form>
+    <p id="gate-error" style="display:none; color:#c0392b; margin-top:0.5rem;">Incorrect password.</p>
+  </div>
+</div>
+
+<div id="portfolio-content" style="display:none;">
+  <p class="chapter-heading">Portfolio</p>
+  <div class="portfolio-grid">
+    {{ range .Pages.ByWeight }}
+    <a href="{{ .RelPermalink }}" class="portfolio-card">
+      <img src="{{ .Params.gridImage }}" alt="{{ .Title }}">
+      <div class="portfolio-overlay">
+        <h2>{{ .Title }}</h2>
+        <span class="portfolio-year">{{ .Params.year }}</span>
+        <span class="portfolio-services">{{ .Params.services }}</span>
+      </div>
+    </a>
+    {{ end }}
+  </div>
+</div>
+
+<script>
+(function() {
+  const HASH = "{{ .Params.password_hash }}";
+  const STORAGE_KEY = 'portfolio_auth';
+
+  async function sha256(message) {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function unlock() {
+    document.getElementById('portfolio-gate').style.display = 'none';
+    document.getElementById('portfolio-content').style.display = 'block';
+    sessionStorage.setItem(STORAGE_KEY, 'true');
+  }
+
+  if (sessionStorage.getItem(STORAGE_KEY) === 'true') {
+    unlock();
+  }
+
+  document.getElementById('gate-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const input = document.getElementById('gate-input').value;
+    const hash = await sha256(input);
+    if (hash === HASH) {
+      unlock();
+    } else {
+      document.getElementById('gate-error').style.display = 'block';
+      document.getElementById('gate-input').value = '';
+    }
+  });
+})();
+</script>
+
+{{ end }}
