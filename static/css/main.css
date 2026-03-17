@@ -503,60 +503,79 @@ article ul {
   text-align: center;
 }
 
+.gate-inner {
+  max-width: 320px;
+}
+
 .gate-inner h1 {
   font-family: 'Cutive', monospace;
-  font-size: 1.8rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.6rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.03em;
 }
 
 .gate-inner p {
-  color: #555;
-  margin-bottom: 1.5rem;
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 2rem;
+  letter-spacing: 0.02em;
 }
 
 #gate-form {
   display: flex;
-  gap: 0.5rem;
-  justify-content: center;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
 }
 
 #gate-input {
   font-family: 'Courier Prime', monospace;
   font-size: 0.9rem;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #ddd;
-  background: #fff;
-  width: 220px;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  background: transparent;
+  width: 100%;
+  text-align: center;
+  letter-spacing: 0.15em;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#gate-input:focus {
+  border-bottom-color: #111;
 }
 
 #gate-form button {
   font-family: 'Courier Prime', monospace;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0.5rem 1rem;
+  letter-spacing: 0.1em;
+  padding: 0.5rem 2rem;
   border: 1px solid #111;
-  background: #111;
-  color: #f7f6f0;
+  background: transparent;
+  color: #111;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
 
 #gate-form button:hover {
-  background: #333;
+  background: #111;
+  color: #f7f6f0;
 }
 
 /* Widen container for portfolio grid — break out of .container's 680px */
-.container:has(#portfolio-content) {
-  max-width: 960px;
+.container:has(#portfolio-content),
+.container:has(#portfolio-gate) {
+  max-width: 1080px;
 }
 
 /* Portfolio Grid */
 .portfolio-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  max-width: 960px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
   margin: 2rem auto 0;
 }
 
@@ -573,6 +592,7 @@ article ul {
   height: 100%;
   object-fit: cover;
   display: block;
+  margin: 0;
   transition: transform 0.4s ease;
 }
 
@@ -583,7 +603,7 @@ article ul {
 .portfolio-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -601,23 +621,23 @@ article ul {
 .portfolio-overlay h2 {
   font-family: 'Cutive', monospace;
   color: #f7f6f0;
-  font-size: 1.4rem;
-  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  margin: 0 0 0.4rem;
   letter-spacing: 0.02em;
 }
 
 .portfolio-overlay .portfolio-year {
   font-family: 'Courier Prime', monospace;
   color: #f7f6f0;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   opacity: 0.85;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
 }
 
 .portfolio-overlay .portfolio-services {
   font-family: 'Courier Prime', monospace;
   color: #f7f6f0;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   opacity: 0.7;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -692,10 +712,16 @@ article ul {
   cursor: pointer;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+  .portfolio-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
   .portfolio-grid {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 0.75rem;
   }
 
   .portfolio-overlay {
@@ -704,6 +730,6 @@ article ul {
   }
 
   .portfolio-overlay h2 {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 }
