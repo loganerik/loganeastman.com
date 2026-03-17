@@ -5,6 +5,8 @@ year: 2023
 services: "Pitch strategy, pitch messaging"
 gridImage: "/img/portfolio/vertical-harvest/hero-grid.jpg"
 supportImage: "/img/portfolio/vertical-harvest/hero.png"
+images:
+  - "/img/portfolio/vertical-harvest/detail-3.png"
 weight: 5
 noindex: true
 ---
