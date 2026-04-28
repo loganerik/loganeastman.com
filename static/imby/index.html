@@ -464,6 +464,105 @@
       color: var(--text-main);
     }
 
+    /* Intro Dialog */
+    #intro-dialog {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #intro-dialog.hidden { display: none; }
+    .intro-content {
+      background: var(--bg-panel);
+      border-radius: 16px;
+      max-width: 560px;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 32px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .intro-content h1 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      color: var(--accent);
+      margin: 0 0 8px 0;
+    }
+    .intro-content h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin: 20px 0 8px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .intro-content p {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      margin: 0 0 12px 0;
+    }
+    .intro-content .btn {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 16px;
+      border: none;
+      font-size: 14px;
+    }
+    .intro-content .btn:hover { opacity: 0.9; }
+
+    /* Collapsible Panel */
+    #panel.collapsed {
+      width: 48px;
+      min-width: 48px;
+      overflow: hidden;
+    }
+    #panel.collapsed > *:not(.panel-toggle) { display: none; }
+    #panel.collapsed .panel-toggle { display: flex; }
+    .panel-toggle {
+      display: none;
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 28px;
+      height: 28px;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-card);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-muted);
+      z-index: 10;
+    }
+    #panel:not(.collapsed) .panel-toggle {
+      display: flex;
+    }
+    .panel-expand {
+      display: none;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    #panel.collapsed .panel-expand { display: flex; }
+
     /* Timeline */
     #timeline {
       position: absolute;
@@ -471,17 +570,53 @@
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 28px;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px 24px;
       background: var(--bg-panel);
       border: 1px solid var(--border);
       border-radius: 14px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.08);
       z-index: 1000;
+      max-width: 600px;
+      width: 90%;
     }
+    #timeline.minimized {
+      padding: 12px 20px;
+    }
+    #timeline.minimized .timeline-regs { display: none; }
+    .timeline-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .timeline-toggle {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-card);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .timeline-regs {
+      max-height: 150px;
+      overflow-y: auto;
+      border-top: 1px solid var(--border-light);
+      padding-top: 12px;
+      margin-top: 4px;
+    }
+    .timeline-regs .reg-item {
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .timeline-regs .reg-item:last-child { border-bottom: none; }
     #year-slider {
       width: 300px;
+      flex-grow: 1;
       -webkit-appearance: none;
       background: var(--border);
       height: 6px;
@@ -654,6 +789,26 @@
   </style>
 </head>
 <body>
+  <!-- Intro Dialog -->
+  <div id="intro-dialog">
+    <div class="intro-content">
+      <h1>IMBY: In My Back Yard</h1>
+      <p>An interactive exploration of how regulations shaped Los Angeles—and what reform could unlock.</p>
+
+      <h2>🕐 Timeline Slider</h2>
+      <p>Drag the slider to travel through time (1900–2026). Watch as regulations accumulate and neighborhoods freeze. The map colors show R1 (single-family only) zoning density.</p>
+
+      <h2>🔧 Reform Toggles</h2>
+      <p>In the left panel, switch to the <strong>Reform</strong> tab to experiment with policy changes. Toggle reforms on/off to see their impact on potential housing units, GDP, construction costs, and approval timelines.</p>
+
+      <h2>📊 Methodology</h2>
+      <p>Housing impact estimates use the Hsieh-Moretti model (2019) linking housing constraints to GDP. Zoning data comes from LA City Planning (ZIMAS) and LA County Assessor records. Historical transit routes are from Pacific Electric Railway Historical Society and Metro archives.</p>
+      <p>This is a research tool, not a policy prescription. All estimates are directional—actual impacts depend on market conditions, implementation, and countless other factors.</p>
+
+      <button class="btn" onclick="document.getElementById('intro-dialog').classList.add('hidden'); localStorage.setItem('imby-intro-seen', '1');">Got it, let's explore</button>
+    </div>
+  </div>
+
   <header>
     <div class="logo" id="logo" title="Back to LA Overview">IMBY</div>
     <div class="search-box">
@@ -664,6 +819,8 @@
 
   <main>
     <div id="panel">
+      <div class="panel-toggle" onclick="document.getElementById('panel').classList.add('collapsed')" title="Collapse panel">◀</div>
+      <div class="panel-expand" onclick="document.getElementById('panel').classList.remove('collapsed')">◀ EXPAND PANEL</div>
       <button id="back-btn">← Back to LA Overview</button>
 
       <div class="panel-header">
@@ -735,11 +892,6 @@
           </div>
           <div class="toggle-list" id="toggle-list"></div>
         </div>
-
-        <div class="section">
-          <div class="section-title">Regulations in <span id="reg-year">2026</span></div>
-          <div class="reg-list" id="reg-list"></div>
-        </div>
       </div>
     </div>
 
@@ -747,8 +899,14 @@
       <div id="map"></div>
 
       <div id="timeline">
-        <input type="range" id="year-slider" min="1900" max="2026" value="2026">
-        <div id="year-display">2026</div>
+        <div class="timeline-header">
+          <div class="timeline-toggle" id="timeline-toggle" title="Expand/collapse regulations">▼</div>
+          <input type="range" id="year-slider" min="1900" max="2026" value="2026">
+          <div id="year-display">2026</div>
+        </div>
+        <div class="timeline-regs">
+          <div class="reg-list" id="reg-list"></div>
+        </div>
       </div>
 
       <div id="legend">
@@ -1849,16 +2007,14 @@ Click the <strong>Reform</strong> tab to toggle policies. Click any <strong>zipc
 
     function updateRegulations() {
       const year = state.year;
-      document.getElementById('reg-year').textContent = year;
-
       const active = REGULATIONS.filter(r => r.year <= year);
       const list = document.getElementById('reg-list');
 
       if (active.length === 0) {
         list.innerHTML = '<div class="reg-item"><div class="reg-header"><span class="reg-year">—</span><span class="reg-name">Minimal regulation. Most of LA was farmland, orchards, and small towns.</span></div></div>';
       } else {
-        // Show last 8 regulations, most recent first
-        list.innerHTML = active.slice(-8).reverse().map(r =>
+        // Show last 6 regulations, most recent first
+        list.innerHTML = active.slice(-6).reverse().map(r =>
           `<div class="reg-item" onclick="this.classList.toggle('expanded')">
             <div class="reg-header">
               <span class="reg-year">${r.year}</span>
@@ -2053,6 +2209,14 @@ Click the <strong>Reform</strong> tab to toggle policies. Click any <strong>zipc
       // Build dynamic toggle list
       buildToggleList();
 
+      // Timeline expand/collapse toggle
+      document.getElementById('timeline-toggle').addEventListener('click', () => {
+        const timeline = document.getElementById('timeline');
+        const toggle = document.getElementById('timeline-toggle');
+        timeline.classList.toggle('minimized');
+        toggle.textContent = timeline.classList.contains('minimized') ? '▶' : '▼';
+      });
+
       // Search
       document.getElementById('search-btn').addEventListener('click', () => {
         const zip = document.getElementById('search-input').value.trim();
@@ -2148,6 +2312,11 @@ Click the <strong>Reform</strong> tab to toggle policies. Click any <strong>zipc
 
     // === INIT ===
     async function init() {
+      // Check if user has seen intro before
+      if (localStorage.getItem('imby-intro-seen')) {
+        document.getElementById('intro-dialog').classList.add('hidden');
+      }
+
       initMap();
       setupEvents();
 
