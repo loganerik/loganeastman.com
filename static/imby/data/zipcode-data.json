@@ -39,7 +39,7 @@
     "lng": -118.2727831
   },
   "90004": {
-    "name": "Los Feliz South",
+    "name": "Hancock Park / Larchmont",
     "r1Pct": 0.3,
     "r2r4Pct": 0.5,
     "commercialPct": 0.18,
@@ -260,7 +260,7 @@
     "lng": -118.2378702
   },
   "90022": {
-    "name": "LA County",
+    "name": "East Los Angeles",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -455,7 +455,7 @@
     "lng": -118.2874866
   },
   "90038": {
-    "name": "LA County",
+    "name": "Hollywood",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -481,7 +481,7 @@
     "lng": -118.2605522
   },
   "90040": {
-    "name": "LA County",
+    "name": "Commerce",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -611,7 +611,7 @@
     "lng": -118.4912444
   },
   "90056": {
-    "name": "LA County",
+    "name": "Ladera Heights",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -767,7 +767,7 @@
     "lng": -118.3309888
   },
   "90069": {
-    "name": "LA County",
+    "name": "West Hollywood",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -793,7 +793,7 @@
     "lng": -118.2549427
   },
   "90073": {
-    "name": "LA County",
+    "name": "West LA (VA)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -832,7 +832,7 @@
     "lng": -118.2554035
   },
   "90089": {
-    "name": "LA County",
+    "name": "USC",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -871,7 +871,7 @@
     "lng": -118.4169886
   },
   "90095": {
-    "name": "LA County",
+    "name": "UCLA / Westwood",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -884,7 +884,7 @@
     "lng": -118.4435452
   },
   "90201": {
-    "name": "LA County",
+    "name": "Bell",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -910,7 +910,7 @@
     "lng": -118.4159721
   },
   "90211": {
-    "name": "LA County",
+    "name": "Beverly Hills",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -923,7 +923,7 @@
     "lng": -118.3829791
   },
   "90212": {
-    "name": "LA County",
+    "name": "Beverly Hills (South)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -936,7 +936,7 @@
     "lng": -118.4019658
   },
   "90220": {
-    "name": "LA County",
+    "name": "Compton",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -949,7 +949,7 @@
     "lng": -118.2344512
   },
   "90221": {
-    "name": "LA County",
+    "name": "Compton (East)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -962,7 +962,7 @@
     "lng": -118.2059184
   },
   "90222": {
-    "name": "LA County",
+    "name": "Compton (West)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -975,7 +975,7 @@
     "lng": -118.2367735
   },
   "90230": {
-    "name": "LA County",
+    "name": "Culver City",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -988,7 +988,7 @@
     "lng": -118.3940594
   },
   "90232": {
-    "name": "LA County",
+    "name": "Culver City (Downtown)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1001,7 +1001,7 @@
     "lng": -118.3919023
   },
   "90240": {
-    "name": "LA County",
+    "name": "Downey",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1014,7 +1014,7 @@
     "lng": -118.1183459
   },
   "90241": {
-    "name": "LA County",
+    "name": "Downey (South)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1027,7 +1027,7 @@
     "lng": -118.1286281
   },
   "90242": {
-    "name": "LA County",
+    "name": "Downey (Southeast)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1040,7 +1040,7 @@
     "lng": -118.1405877
   },
   "90245": {
-    "name": "LA County",
+    "name": "El Segundo",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1053,7 +1053,7 @@
     "lng": -118.4042666
   },
   "90247": {
-    "name": "LA County",
+    "name": "Gardena",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1066,7 +1066,7 @@
     "lng": -118.2979668
   },
   "90248": {
-    "name": "LA County",
+    "name": "Gardena (South)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1079,7 +1079,7 @@
     "lng": -118.2840765
   },
   "90249": {
-    "name": "LA County",
+    "name": "Gardena (West)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1092,7 +1092,7 @@
     "lng": -118.3156967
   },
   "90250": {
-    "name": "LA County",
+    "name": "Hawthorne",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1105,7 +1105,7 @@
     "lng": -118.3480828
   },
   "90254": {
-    "name": "LA County",
+    "name": "Hermosa Beach",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1118,7 +1118,7 @@
     "lng": -118.3993032
   },
   "90255": {
-    "name": "LA County",
+    "name": "Huntington Park",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1131,7 +1131,7 @@
     "lng": -118.2171405
   },
   "90260": {
-    "name": "LA County",
+    "name": "Lawndale",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1144,7 +1144,7 @@
     "lng": -118.3518126
   },
   "90262": {
-    "name": "LA County",
+    "name": "Lynwood",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1157,7 +1157,7 @@
     "lng": -118.2007052
   },
   "90263": {
-    "name": "LA County",
+    "name": "Malibu",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1170,7 +1170,7 @@
     "lng": -118.707992
   },
   "90265": {
-    "name": "LA County",
+    "name": "Malibu",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1183,7 +1183,7 @@
     "lng": -118.8463424
   },
   "90266": {
-    "name": "LA County",
+    "name": "Manhattan Beach",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1196,7 +1196,7 @@
     "lng": -118.4021267
   },
   "90270": {
-    "name": "LA County",
+    "name": "Maywood",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1222,7 +1222,7 @@
     "lng": -118.5442322
   },
   "90274": {
-    "name": "LA County",
+    "name": "Rancho Palos Verdes",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1235,7 +1235,7 @@
     "lng": -118.3724543
   },
   "90275": {
-    "name": "LA County",
+    "name": "Rancho Palos Verdes (South)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1248,7 +1248,7 @@
     "lng": -118.3674589
   },
   "90277": {
-    "name": "LA County",
+    "name": "Redondo Beach",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1261,7 +1261,7 @@
     "lng": -118.3871239
   },
   "90278": {
-    "name": "LA County",
+    "name": "Redondo Beach (North)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1274,7 +1274,7 @@
     "lng": -118.3703587
   },
   "90280": {
-    "name": "LA County",
+    "name": "South Gate",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1287,7 +1287,7 @@
     "lng": -118.1927614
   },
   "90290": {
-    "name": "LA County",
+    "name": "Topanga",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1339,7 +1339,7 @@
     "lng": -118.4398414
   },
   "90301": {
-    "name": "LA County",
+    "name": "Inglewood",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1352,7 +1352,7 @@
     "lng": -118.3586535
   },
   "90302": {
-    "name": "LA County",
+    "name": "Inglewood (North)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1365,7 +1365,7 @@
     "lng": -118.3552522
   },
   "90303": {
-    "name": "LA County",
+    "name": "Inglewood (Southwest)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1378,7 +1378,7 @@
     "lng": -118.3310853
   },
   "90304": {
-    "name": "LA County",
+    "name": "Lennox",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1391,7 +1391,7 @@
     "lng": -118.358559
   },
   "90305": {
-    "name": "LA County",
+    "name": "Inglewood (View Park)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1469,7 +1469,7 @@
     "lng": -118.4696301
   },
   "90501": {
-    "name": "LA County",
+    "name": "Torrance",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1482,7 +1482,7 @@
     "lng": -118.3140219
   },
   "90502": {
-    "name": "LA County",
+    "name": "Torrance (North)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1495,7 +1495,7 @@
     "lng": -118.2920619
   },
   "90503": {
-    "name": "LA County",
+    "name": "Torrance (West)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1508,7 +1508,7 @@
     "lng": -118.3537141
   },
   "90504": {
-    "name": "LA County",
+    "name": "Torrance (Central)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1521,7 +1521,7 @@
     "lng": -118.330794
   },
   "90505": {
-    "name": "LA County",
+    "name": "Torrance (South)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1534,7 +1534,7 @@
     "lng": -118.3479566
   },
   "90506": {
-    "name": "LA County",
+    "name": "Torrance (Industrial)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1547,7 +1547,7 @@
     "lng": -118.3299979
   },
   "90601": {
-    "name": "LA County",
+    "name": "Whittier",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1560,7 +1560,7 @@
     "lng": -118.0302707
   },
   "90602": {
-    "name": "LA County",
+    "name": "Whittier (West)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1573,7 +1573,7 @@
     "lng": -118.0225568
   },
   "90603": {
-    "name": "LA County",
+    "name": "Whittier (East)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1586,7 +1586,7 @@
     "lng": -117.9920662
   },
   "90604": {
-    "name": "LA County",
+    "name": "Whittier (South)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1599,7 +1599,7 @@
     "lng": -118.0120801
   },
   "90605": {
-    "name": "LA County",
+    "name": "Whittier (North)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1612,7 +1612,7 @@
     "lng": -118.0243515
   },
   "90606": {
-    "name": "LA County",
+    "name": "Whittier (Central)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1625,7 +1625,7 @@
     "lng": -118.0663633
   },
   "90620": {
-    "name": "LA County",
+    "name": "Buena Park",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1638,7 +1638,7 @@
     "lng": -118.0122254
   },
   "90621": {
-    "name": "LA County",
+    "name": "Buena Park",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1651,7 +1651,7 @@
     "lng": -117.9933677
   },
   "90623": {
-    "name": "LA County",
+    "name": "La Palma",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1664,7 +1664,7 @@
     "lng": -118.0398924
   },
   "90630": {
-    "name": "LA County",
+    "name": "Cypress",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1677,7 +1677,7 @@
     "lng": -118.0383073
   },
   "90631": {
-    "name": "LA County",
+    "name": "La Habra",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1690,7 +1690,7 @@
     "lng": -117.9524832
   },
   "90638": {
-    "name": "LA County",
+    "name": "La Mirada",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1703,7 +1703,7 @@
     "lng": -118.0089608
   },
   "90640": {
-    "name": "LA County",
+    "name": "Montebello",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1716,7 +1716,7 @@
     "lng": -118.1110124
   },
   "90650": {
-    "name": "LA County",
+    "name": "Norwalk",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1729,7 +1729,7 @@
     "lng": -118.0826402
   },
   "90660": {
-    "name": "LA County",
+    "name": "Pico Rivera",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1742,7 +1742,7 @@
     "lng": -118.0892994
   },
   "90670": {
-    "name": "LA County",
+    "name": "Santa Fe Springs",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1755,7 +1755,7 @@
     "lng": -118.0626113
   },
   "90680": {
-    "name": "LA County",
+    "name": "Stanton",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1768,7 +1768,7 @@
     "lng": -117.994901
   },
   "90701": {
-    "name": "LA County",
+    "name": "Artesia",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1781,7 +1781,7 @@
     "lng": -118.0806121
   },
   "90703": {
-    "name": "LA County",
+    "name": "Cerritos",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1794,7 +1794,7 @@
     "lng": -118.0692077
   },
   "90704": {
-    "name": "LA County",
+    "name": "Avalon (Catalina)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1807,7 +1807,7 @@
     "lng": -118.4412822
   },
   "90706": {
-    "name": "LA County",
+    "name": "Bellflower",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1820,7 +1820,7 @@
     "lng": -118.1272504
   },
   "90710": {
-    "name": "LA County",
+    "name": "Harbor City",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1833,7 +1833,7 @@
     "lng": -118.298661
   },
   "90712": {
-    "name": "LA County",
+    "name": "Lakewood",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1846,7 +1846,7 @@
     "lng": -118.1479023
   },
   "90713": {
-    "name": "LA County",
+    "name": "Lakewood (North)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1859,7 +1859,7 @@
     "lng": -118.1126007
   },
   "90715": {
-    "name": "LA County",
+    "name": "Lakewood (East)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1872,7 +1872,7 @@
     "lng": -118.0791411
   },
   "90716": {
-    "name": "LA County",
+    "name": "Hawaiian Gardens",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1885,7 +1885,7 @@
     "lng": -118.0726391
   },
   "90717": {
-    "name": "LA County",
+    "name": "Lomita",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1898,7 +1898,7 @@
     "lng": -118.3171697
   },
   "90720": {
-    "name": "LA County",
+    "name": "Los Alamitos",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1911,7 +1911,7 @@
     "lng": -118.0626915
   },
   "90723": {
-    "name": "LA County",
+    "name": "Paramount",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1924,7 +1924,7 @@
     "lng": -118.1666294
   },
   "90731": {
-    "name": "LA County",
+    "name": "San Pedro",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1937,7 +1937,7 @@
     "lng": -118.2788693
   },
   "90732": {
-    "name": "LA County",
+    "name": "San Pedro (South)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1950,7 +1950,7 @@
     "lng": -118.3128783
   },
   "90740": {
-    "name": "LA County",
+    "name": "Seal Beach",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1963,7 +1963,7 @@
     "lng": -118.075043
   },
   "90742": {
-    "name": "LA County",
+    "name": "Sunset Beach",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1976,7 +1976,7 @@
     "lng": -118.0769056
   },
   "90743": {
-    "name": "LA County",
+    "name": "Surfside",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -1989,7 +1989,7 @@
     "lng": -118.0903266
   },
   "90744": {
-    "name": "LA County",
+    "name": "Wilmington",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2002,7 +2002,7 @@
     "lng": -118.2617235
   },
   "90745": {
-    "name": "LA County",
+    "name": "Carson",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2015,7 +2015,7 @@
     "lng": -118.2641121
   },
   "90746": {
-    "name": "LA County",
+    "name": "Carson (East)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2028,7 +2028,7 @@
     "lng": -118.2522725
   },
   "90747": {
-    "name": "LA County",
+    "name": "Carson (Dominguez)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2041,7 +2041,7 @@
     "lng": -118.2513185
   },
   "90755": {
-    "name": "LA County",
+    "name": "Signal Hill",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2054,7 +2054,7 @@
     "lng": -118.1681353
   },
   "90802": {
-    "name": "LA County",
+    "name": "Long Beach (Downtown)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2067,7 +2067,7 @@
     "lng": -118.208042
   },
   "90803": {
-    "name": "LA County",
+    "name": "Long Beach (Belmont Shore)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2080,7 +2080,7 @@
     "lng": -118.1306364
   },
   "90804": {
-    "name": "LA County",
+    "name": "Long Beach (East)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2093,7 +2093,7 @@
     "lng": -118.148365
   },
   "90805": {
-    "name": "LA County",
+    "name": "Long Beach (North)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2106,7 +2106,7 @@
     "lng": -118.1805667
   },
   "90806": {
-    "name": "LA County",
+    "name": "Long Beach (Central)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2119,7 +2119,7 @@
     "lng": -118.1885965
   },
   "90807": {
-    "name": "LA County",
+    "name": "Long Beach (Bixby Knolls)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2132,7 +2132,7 @@
     "lng": -118.1748198
   },
   "90808": {
-    "name": "LA County",
+    "name": "Long Beach (East)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2145,7 +2145,7 @@
     "lng": -118.1113355
   },
   "90810": {
-    "name": "LA County",
+    "name": "Long Beach (West)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2158,7 +2158,7 @@
     "lng": -118.2224164
   },
   "90813": {
-    "name": "LA County",
+    "name": "Long Beach (Central)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2171,7 +2171,7 @@
     "lng": -118.1967928
   },
   "90814": {
-    "name": "LA County",
+    "name": "Long Beach (Belmont Heights)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2184,7 +2184,7 @@
     "lng": -118.1436309
   },
   "90815": {
-    "name": "LA County",
+    "name": "Long Beach (Los Altos)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2197,7 +2197,7 @@
     "lng": -118.1163907
   },
   "90822": {
-    "name": "LA County",
+    "name": "Long Beach (VA)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2223,7 +2223,7 @@
     "lng": -118.201639
   },
   "91001": {
-    "name": "LA County",
+    "name": "Altadena",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2236,7 +2236,7 @@
     "lng": -118.1372267
   },
   "91006": {
-    "name": "LA County",
+    "name": "Arcadia",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2249,7 +2249,7 @@
     "lng": -118.0267042
   },
   "91007": {
-    "name": "LA County",
+    "name": "Arcadia (South)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2262,7 +2262,7 @@
     "lng": -118.0477319
   },
   "91008": {
-    "name": "LA County",
+    "name": "Duarte",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2275,7 +2275,7 @@
     "lng": -117.9688184
   },
   "91010": {
-    "name": "LA County",
+    "name": "Duarte",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2288,7 +2288,7 @@
     "lng": -117.9576272
   },
   "91011": {
-    "name": "LA County",
+    "name": "La Canada Flintridge",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2301,7 +2301,7 @@
     "lng": -118.2053687
   },
   "91016": {
-    "name": "LA County",
+    "name": "Monrovia",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2314,7 +2314,7 @@
     "lng": -118.0004821
   },
   "91020": {
-    "name": "LA County",
+    "name": "Montrose",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2327,7 +2327,7 @@
     "lng": -118.2306517
   },
   "91024": {
-    "name": "LA County",
+    "name": "Sierra Madre",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2340,7 +2340,7 @@
     "lng": -118.0502158
   },
   "91030": {
-    "name": "LA County",
+    "name": "South Pasadena",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2379,7 +2379,7 @@
     "lng": -118.2379175
   },
   "91046": {
-    "name": "LA County",
+    "name": "Tujunga",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2392,7 +2392,7 @@
     "lng": -118.2410355
   },
   "91101": {
-    "name": "Pasadena Downtown",
+    "name": "Pasadena (Old Town)",
     "r1Pct": 0.25,
     "r2r4Pct": 0.4,
     "commercialPct": 0.3,
@@ -2405,7 +2405,7 @@
     "lng": -118.1394556
   },
   "91103": {
-    "name": "Pasadena Northwest",
+    "name": "Pasadena (Northwest)",
     "r1Pct": 0.55,
     "r2r4Pct": 0.28,
     "commercialPct": 0.14,
@@ -2418,7 +2418,7 @@
     "lng": -118.1649413
   },
   "91104": {
-    "name": "Pasadena Northeast",
+    "name": "Pasadena (North)",
     "r1Pct": 0.65,
     "r2r4Pct": 0.22,
     "commercialPct": 0.1,
@@ -2431,7 +2431,7 @@
     "lng": -118.1237517
   },
   "91105": {
-    "name": "Pasadena South",
+    "name": "Pasadena (South)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.25,
     "commercialPct": 0.12,
@@ -2444,7 +2444,7 @@
     "lng": -118.1666485
   },
   "91106": {
-    "name": "Pasadena East",
+    "name": "Pasadena (East)",
     "r1Pct": 0.7,
     "r2r4Pct": 0.18,
     "commercialPct": 0.1,
@@ -2457,7 +2457,7 @@
     "lng": -118.1286585
   },
   "91107": {
-    "name": "Pasadena Hastings Ranch",
+    "name": "Pasadena (East)",
     "r1Pct": 0.75,
     "r2r4Pct": 0.15,
     "commercialPct": 0.08,
@@ -2470,7 +2470,7 @@
     "lng": -118.0858732
   },
   "91108": {
-    "name": "LA County",
+    "name": "San Marino",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2483,7 +2483,7 @@
     "lng": -118.1129107
   },
   "91201": {
-    "name": "LA County",
+    "name": "Glendale",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2496,7 +2496,7 @@
     "lng": -118.2894632
   },
   "91202": {
-    "name": "LA County",
+    "name": "Glendale (Northwest)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2509,7 +2509,7 @@
     "lng": -118.2675387
   },
   "91203": {
-    "name": "LA County",
+    "name": "Glendale (South)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2522,7 +2522,7 @@
     "lng": -118.2629738
   },
   "91204": {
-    "name": "LA County",
+    "name": "Glendale (Southwest)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2535,7 +2535,7 @@
     "lng": -118.2609341
   },
   "91205": {
-    "name": "LA County",
+    "name": "Glendale (Southeast)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2548,7 +2548,7 @@
     "lng": -118.2458387
   },
   "91206": {
-    "name": "LA County",
+    "name": "Glendale (Central)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2561,7 +2561,7 @@
     "lng": -118.213769
   },
   "91207": {
-    "name": "LA County",
+    "name": "Glendale (Montrose)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2574,7 +2574,7 @@
     "lng": -118.2629218
   },
   "91208": {
-    "name": "LA County",
+    "name": "Glendale (North)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2587,7 +2587,7 @@
     "lng": -118.2395241
   },
   "91210": {
-    "name": "LA County",
+    "name": "Glendale (Downtown)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2600,7 +2600,7 @@
     "lng": -118.256507
   },
   "91214": {
-    "name": "LA County",
+    "name": "La Crescenta",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2613,7 +2613,7 @@
     "lng": -118.2491853
   },
   "91301": {
-    "name": "LA County",
+    "name": "Agoura Hills",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2652,7 +2652,7 @@
     "lng": -118.6009135
   },
   "91304": {
-    "name": "Canoga Park West",
+    "name": "Canoga Park (West)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.25,
     "commercialPct": 0.12,
@@ -2717,7 +2717,7 @@
     "lng": -118.5154718
   },
   "91320": {
-    "name": "LA County",
+    "name": "Newbury Park",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2730,7 +2730,7 @@
     "lng": -118.9451182
   },
   "91321": {
-    "name": "LA County",
+    "name": "Newhall",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2756,7 +2756,7 @@
     "lng": -118.5502898
   },
   "91325": {
-    "name": "Northridge West",
+    "name": "Northridge",
     "r1Pct": 0.75,
     "r2r4Pct": 0.15,
     "commercialPct": 0.08,
@@ -2782,7 +2782,7 @@
     "lng": -118.556005
   },
   "91330": {
-    "name": "LA County",
+    "name": "Northridge (CSUN)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2886,7 +2886,7 @@
     "lng": -118.4572406
   },
   "91350": {
-    "name": "LA County",
+    "name": "Santa Clarita",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2899,7 +2899,7 @@
     "lng": -118.5017475
   },
   "91351": {
-    "name": "LA County",
+    "name": "Canyon Country",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2925,7 +2925,7 @@
     "lng": -118.365856
   },
   "91354": {
-    "name": "LA County",
+    "name": "Valencia",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2938,7 +2938,7 @@
     "lng": -118.5537886
   },
   "91355": {
-    "name": "LA County",
+    "name": "Valencia",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2964,7 +2964,7 @@
     "lng": -118.5475532
   },
   "91360": {
-    "name": "LA County",
+    "name": "Thousand Oaks",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2977,7 +2977,7 @@
     "lng": -118.8821746
   },
   "91361": {
-    "name": "LA County",
+    "name": "Westlake Village",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -2990,7 +2990,7 @@
     "lng": -118.8889087
   },
   "91362": {
-    "name": "LA County",
+    "name": "Thousand Oaks",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3016,7 +3016,7 @@
     "lng": -118.5934083
   },
   "91367": {
-    "name": "Woodland Hills South",
+    "name": "Woodland Hills",
     "r1Pct": 0.68,
     "r2r4Pct": 0.18,
     "commercialPct": 0.12,
@@ -3029,7 +3029,7 @@
     "lng": -118.6157137
   },
   "91371": {
-    "name": "LA County",
+    "name": "Woodland Hills",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3042,7 +3042,7 @@
     "lng": -118.5761253
   },
   "91377": {
-    "name": "LA County",
+    "name": "Oak Park",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3055,7 +3055,7 @@
     "lng": -118.7669176
   },
   "91381": {
-    "name": "LA County",
+    "name": "Stevenson Ranch",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3068,7 +3068,7 @@
     "lng": -118.6470167
   },
   "91384": {
-    "name": "LA County",
+    "name": "Castaic",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3081,7 +3081,7 @@
     "lng": -118.699048
   },
   "91387": {
-    "name": "LA County",
+    "name": "Canyon Country",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3094,7 +3094,7 @@
     "lng": -118.3724522
   },
   "91390": {
-    "name": "LA County",
+    "name": "Santa Clarita (Agua Dulce)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3146,7 +3146,7 @@
     "lng": -118.463365
   },
   "91405": {
-    "name": "Van Nuys Central",
+    "name": "Van Nuys",
     "r1Pct": 0.42,
     "r2r4Pct": 0.35,
     "commercialPct": 0.18,
@@ -3159,7 +3159,7 @@
     "lng": -118.447609
   },
   "91406": {
-    "name": "Van Nuys West",
+    "name": "Van Nuys",
     "r1Pct": 0.55,
     "r2r4Pct": 0.28,
     "commercialPct": 0.12,
@@ -3172,7 +3172,7 @@
     "lng": -118.4907518
   },
   "91411": {
-    "name": "Van Nuys South",
+    "name": "Van Nuys",
     "r1Pct": 0.5,
     "r2r4Pct": 0.3,
     "commercialPct": 0.15,
@@ -3185,7 +3185,7 @@
     "lng": -118.4592337
   },
   "91423": {
-    "name": "Sherman Oaks East",
+    "name": "Sherman Oaks",
     "r1Pct": 0.7,
     "r2r4Pct": 0.18,
     "commercialPct": 0.1,
@@ -3198,7 +3198,7 @@
     "lng": -118.4332977
   },
   "91436": {
-    "name": "Encino Hills",
+    "name": "Encino",
     "r1Pct": 0.85,
     "r2r4Pct": 0.08,
     "commercialPct": 0.05,
@@ -3224,7 +3224,7 @@
     "lng": -118.2927732
   },
   "91502": {
-    "name": "Burbank Central",
+    "name": "Burbank",
     "r1Pct": 0.35,
     "r2r4Pct": 0.35,
     "commercialPct": 0.22,
@@ -3237,7 +3237,7 @@
     "lng": -118.3100301
   },
   "91504": {
-    "name": "Burbank Hills",
+    "name": "Burbank",
     "r1Pct": 0.72,
     "r2r4Pct": 0.15,
     "commercialPct": 0.1,
@@ -3250,7 +3250,7 @@
     "lng": -118.3263651
   },
   "91505": {
-    "name": "Burbank Media District",
+    "name": "Burbank",
     "r1Pct": 0.3,
     "r2r4Pct": 0.25,
     "commercialPct": 0.3,
@@ -3263,7 +3263,7 @@
     "lng": -118.3469368
   },
   "91506": {
-    "name": "Burbank South",
+    "name": "Burbank",
     "r1Pct": 0.45,
     "r2r4Pct": 0.3,
     "commercialPct": 0.18,
@@ -3289,7 +3289,7 @@
     "lng": -118.3724983
   },
   "91602": {
-    "name": "North Hollywood Arts",
+    "name": "North Hollywood",
     "r1Pct": 0.35,
     "r2r4Pct": 0.42,
     "commercialPct": 0.18,
@@ -3315,7 +3315,7 @@
     "lng": -118.3927505
   },
   "91605": {
-    "name": "North Hollywood Central",
+    "name": "North Hollywood",
     "r1Pct": 0.38,
     "r2r4Pct": 0.4,
     "commercialPct": 0.17,
@@ -3328,7 +3328,7 @@
     "lng": -118.4000224
   },
   "91606": {
-    "name": "North Hollywood East",
+    "name": "North Hollywood",
     "r1Pct": 0.42,
     "r2r4Pct": 0.38,
     "commercialPct": 0.15,
@@ -3354,7 +3354,7 @@
     "lng": -118.3997954
   },
   "91608": {
-    "name": "LA County",
+    "name": "Universal City",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3367,7 +3367,7 @@
     "lng": -118.3509328
   },
   "91701": {
-    "name": "LA County",
+    "name": "Rancho Cucamonga",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3380,7 +3380,7 @@
     "lng": -117.5999444
   },
   "91702": {
-    "name": "LA County",
+    "name": "Azusa",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3393,7 +3393,7 @@
     "lng": -117.8661408
   },
   "91706": {
-    "name": "LA County",
+    "name": "Baldwin Park",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3419,7 +3419,7 @@
     "lng": -117.6392094
   },
   "91709": {
-    "name": "LA County",
+    "name": "Chino Hills",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3432,7 +3432,7 @@
     "lng": -117.7384906
   },
   "91710": {
-    "name": "LA County",
+    "name": "Chino",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3445,7 +3445,7 @@
     "lng": -117.684702
   },
   "91711": {
-    "name": "LA County",
+    "name": "Claremont",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3458,7 +3458,7 @@
     "lng": -117.7152836
   },
   "91722": {
-    "name": "LA County",
+    "name": "Covina",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3471,7 +3471,7 @@
     "lng": -117.9067358
   },
   "91723": {
-    "name": "LA County",
+    "name": "Covina",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3484,7 +3484,7 @@
     "lng": -117.8868443
   },
   "91724": {
-    "name": "LA County",
+    "name": "Covina",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3497,7 +3497,7 @@
     "lng": -117.854733
   },
   "91730": {
-    "name": "LA County",
+    "name": "Rancho Cucamonga",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3510,7 +3510,7 @@
     "lng": -117.5788198
   },
   "91731": {
-    "name": "LA County",
+    "name": "El Monte",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3523,7 +3523,7 @@
     "lng": -118.0434556
   },
   "91732": {
-    "name": "LA County",
+    "name": "El Monte",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3536,7 +3536,7 @@
     "lng": -118.0153445
   },
   "91733": {
-    "name": "LA County",
+    "name": "South El Monte",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3575,7 +3575,7 @@
     "lng": -117.5230196
   },
   "91740": {
-    "name": "LA County",
+    "name": "Glendora",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3588,7 +3588,7 @@
     "lng": -117.8550593
   },
   "91741": {
-    "name": "LA County",
+    "name": "Glendora",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3601,7 +3601,7 @@
     "lng": -117.8416049
   },
   "91744": {
-    "name": "LA County",
+    "name": "La Puente",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3614,7 +3614,7 @@
     "lng": -117.9364699
   },
   "91745": {
-    "name": "LA County",
+    "name": "Hacienda Heights",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3627,7 +3627,7 @@
     "lng": -117.9721463
   },
   "91746": {
-    "name": "LA County",
+    "name": "La Puente",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3640,7 +3640,7 @@
     "lng": -117.9853655
   },
   "91748": {
-    "name": "LA County",
+    "name": "Rowland Heights",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3653,7 +3653,7 @@
     "lng": -117.9006757
   },
   "91750": {
-    "name": "LA County",
+    "name": "La Verne",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3666,7 +3666,7 @@
     "lng": -117.7798028
   },
   "91752": {
-    "name": "LA County",
+    "name": "Mira Loma",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3679,7 +3679,7 @@
     "lng": -117.5353465
   },
   "91754": {
-    "name": "LA County",
+    "name": "Monterey Park",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3692,7 +3692,7 @@
     "lng": -118.1434648
   },
   "91755": {
-    "name": "LA County",
+    "name": "Monterey Park",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3718,7 +3718,7 @@
     "lng": -117.6994702
   },
   "91761": {
-    "name": "LA County",
+    "name": "Ontario",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3731,7 +3731,7 @@
     "lng": -117.5915284
   },
   "91762": {
-    "name": "LA County",
+    "name": "Ontario",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3744,7 +3744,7 @@
     "lng": -117.6740105
   },
   "91763": {
-    "name": "LA County",
+    "name": "Montclair",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3757,7 +3757,7 @@
     "lng": -117.6983146
   },
   "91764": {
-    "name": "LA County",
+    "name": "Ontario",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3770,7 +3770,7 @@
     "lng": -117.6056182
   },
   "91765": {
-    "name": "LA County",
+    "name": "Diamond Bar",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3783,7 +3783,7 @@
     "lng": -117.820908
   },
   "91766": {
-    "name": "LA County",
+    "name": "Pomona",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3796,7 +3796,7 @@
     "lng": -117.7561062
   },
   "91767": {
-    "name": "LA County",
+    "name": "Pomona",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3809,7 +3809,7 @@
     "lng": -117.7379975
   },
   "91768": {
-    "name": "LA County",
+    "name": "Pomona",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3822,7 +3822,7 @@
     "lng": -117.7903792
   },
   "91770": {
-    "name": "LA County",
+    "name": "Rosemead",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3835,7 +3835,7 @@
     "lng": -118.0845292
   },
   "91773": {
-    "name": "LA County",
+    "name": "San Dimas",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3848,7 +3848,7 @@
     "lng": -117.8103898
   },
   "91775": {
-    "name": "LA County",
+    "name": "San Gabriel",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3861,7 +3861,7 @@
     "lng": -118.0894309
   },
   "91776": {
-    "name": "LA County",
+    "name": "San Gabriel",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3874,7 +3874,7 @@
     "lng": -118.0950913
   },
   "91780": {
-    "name": "LA County",
+    "name": "Temple City",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3887,7 +3887,7 @@
     "lng": -118.0559291
   },
   "91784": {
-    "name": "LA County",
+    "name": "Upland",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3900,7 +3900,7 @@
     "lng": -117.6555828
   },
   "91786": {
-    "name": "LA County",
+    "name": "Upland",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3913,7 +3913,7 @@
     "lng": -117.6620349
   },
   "91789": {
-    "name": "LA County",
+    "name": "Walnut",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3926,7 +3926,7 @@
     "lng": -117.8549196
   },
   "91790": {
-    "name": "LA County",
+    "name": "West Covina",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3939,7 +3939,7 @@
     "lng": -117.9370069
   },
   "91791": {
-    "name": "LA County",
+    "name": "West Covina",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3952,7 +3952,7 @@
     "lng": -117.8931689
   },
   "91792": {
-    "name": "LA County",
+    "name": "West Covina",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3965,7 +3965,7 @@
     "lng": -117.9023585
   },
   "91801": {
-    "name": "LA County",
+    "name": "Alhambra",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -3978,7 +3978,7 @@
     "lng": -118.1275266
   },
   "91803": {
-    "name": "LA County",
+    "name": "Alhambra",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -4251,7 +4251,7 @@
     "lng": -118.5336886
   },
   "93534": {
-    "name": "LA County",
+    "name": "Lancaster",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -4264,7 +4264,7 @@
     "lng": -118.1529195
   },
   "93535": {
-    "name": "LA County",
+    "name": "Lancaster (East)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -4277,7 +4277,7 @@
     "lng": -117.8646602
   },
   "93536": {
-    "name": "LA County",
+    "name": "Lancaster (West)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -4368,7 +4368,7 @@
     "lng": -117.9479954
   },
   "93550": {
-    "name": "LA County",
+    "name": "Palmdale",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -4381,7 +4381,7 @@
     "lng": -118.1235974
   },
   "93551": {
-    "name": "LA County",
+    "name": "Palmdale (West)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -4394,7 +4394,7 @@
     "lng": -118.2390048
   },
   "93552": {
-    "name": "LA County",
+    "name": "Palmdale (East)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -4407,7 +4407,7 @@
     "lng": -118.0237441
   },
   "93553": {
-    "name": "LA County",
+    "name": "Pearblossom",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -4459,7 +4459,7 @@
     "lng": -117.6213929
   },
   "93560": {
-    "name": "LA County",
+    "name": "Rosamond",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
@@ -4511,7 +4511,7 @@
     "lng": -117.7660655
   },
   "93591": {
-    "name": "LA County",
+    "name": "Palmdale (North)",
     "r1Pct": 0.6,
     "r2r4Pct": 0.2,
     "commercialPct": 0.12,
