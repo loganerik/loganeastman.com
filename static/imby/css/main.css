@@ -1,0 +1,180 @@
+/* IMBY - LA Noir Design System */
+
+:root {
+  /* Primary Noir Palette */
+  --noir-black: #0a0a0a;
+  --noir-charcoal: #1a1a1a;
+  --noir-slate: #2d2d2d;
+  --noir-smoke: #404040;
+  --noir-ash: #5a5a5a;
+
+  /* Accent Colors - 1940s Neon Signs */
+  --neon-amber: #f5a623;
+  --neon-amber-dim: #b37a1a;
+  --neon-amber-glow: rgba(245, 166, 35, 0.3);
+  --neon-red: #d63031;
+  --neon-red-dim: #a02525;
+  --neon-teal: #00b894;
+  --neon-teal-dim: #00a085;
+
+  /* Text Hierarchy */
+  --text-primary: #e8e6e3;
+  --text-secondary: #a09a8f;
+  --text-muted: #6b6560;
+
+  /* Map Zone Colors */
+  --zone-r1: rgba(214, 48, 49, 0.5);
+  --zone-r2: rgba(253, 121, 168, 0.4);
+  --zone-commercial: rgba(108, 92, 231, 0.4);
+  --zone-industrial: rgba(99, 110, 114, 0.4);
+  --zone-reformed: rgba(0, 184, 148, 0.5);
+
+  /* Harm Classification */
+  --harm-true: var(--neon-red);
+  --harm-preference: var(--neon-amber);
+  --harm-mixed: #9b59b6;
+
+  /* Effects */
+  --shadow-noir: 0 4px 20px rgba(0, 0, 0, 0.8);
+  --shadow-soft: 0 2px 10px rgba(0, 0, 0, 0.5);
+  --glow-amber: 0 0 20px var(--neon-amber-glow);
+
+  /* Typography */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Crimson Pro', 'Times New Roman', serif;
+  --font-mono: 'Source Code Pro', 'Courier New', monospace;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* Layout */
+  --header-height: 60px;
+  --panel-width: 380px;
+  --timeline-height: 60px;
+}
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--noir-black);
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1rem; }
+
+a {
+  color: var(--neon-amber);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--text-primary);
+}
+
+/* Film Grain Overlay */
+.film-grain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.04;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* Neon Text Effect */
+.neon-text {
+  color: var(--neon-amber);
+  text-shadow:
+    0 0 5px var(--neon-amber),
+    0 0 10px var(--neon-amber),
+    0 0 20px var(--neon-amber),
+    0 0 40px rgba(245, 166, 35, 0.4);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--noir-charcoal);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--noir-smoke);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--noir-ash);
+}
+
+/* Focus States */
+:focus {
+  outline: 2px solid var(--neon-amber);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Selection */
+::selection {
+  background: var(--neon-amber);
+  color: var(--noir-black);
+}
+
+/* Utility Classes */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Responsive Typography */
+@media (max-width: 767px) {
+  :root {
+    --header-height: 56px;
+    --panel-width: 100%;
+  }
+
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.125rem; }
+}

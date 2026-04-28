@@ -1,0 +1,2169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IMBY - In My Back Yard</title>
+  <meta name="description" content="Explore how LA regulations have shaped development since 1908.">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #f8f7f4;
+      --bg-panel: #ffffff;
+      --bg-card: #f3f2ee;
+      --border: #e2e0d8;
+      --border-light: #ebe9e3;
+      --accent: #b84c35;
+      --accent-hover: #9a3f2b;
+      --accent-light: #f5e6e2;
+      --positive: #2a7d62;
+      --positive-light: #e3f0eb;
+      --text-dark: #1c1c1c;
+      --text-main: #3d3d3d;
+      --text-muted: #7a7a7a;
+      --text-light: #a8a8a8;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-main);
+      background: var(--bg-main);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      height: 60px;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 20px;
+      flex-shrink: 0;
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+      cursor: pointer;
+    }
+    .logo:hover {
+      color: var(--accent-hover);
+    }
+    .search-box {
+      display: flex;
+      gap: 8px;
+      margin-left: auto;
+    }
+    .search-box input {
+      width: 150px;
+      padding: 8px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 14px;
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-light);
+    }
+    .search-box input::placeholder { color: var(--text-light); }
+    .search-box button {
+      padding: 8px 18px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .search-box button:hover { background: var(--accent-hover); }
+
+    /* Main layout */
+    main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Panel */
+    #panel {
+      width: 400px;
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 28px;
+      flex-shrink: 0;
+    }
+
+    /* Map */
+    #map-container {
+      flex: 1;
+      position: relative;
+    }
+    #map {
+      width: 100%;
+      height: 100%;
+      background: var(--bg-card);
+    }
+
+    /* Panel sections */
+    .panel-header {
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--text-dark);
+    }
+    .panel-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-dark);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .panel-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Tabs */
+    .tab-bar {
+      display: flex;
+      gap: 0;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      flex: 1;
+      padding: 14px 16px;
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+    }
+    .tab:hover {
+      color: var(--text-main);
+    }
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    #tab-reform {
+      margin: 0 -28px;
+      padding: 0 28px;
+    }
+
+    .section {
+      margin-bottom: 28px;
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 14px;
+    }
+
+    /* Stats - sticky header */
+    .stats-wrapper {
+      position: sticky;
+      top: -1px;
+      background: var(--bg-panel);
+      margin: 0 -28px;
+      padding: 16px 28px;
+      z-index: 10;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .stats-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: var(--bg-panel);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    .stat-box {
+      background: var(--bg-card);
+      padding: 18px 14px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 4px;
+    }
+
+    /* Harm explainer */
+    .harm-explainer {
+      font-size: 12px;
+      color: var(--text-main);
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      background: var(--bg-card);
+      border-radius: 8px;
+      line-height: 1.7;
+      border-left: 3px solid var(--accent);
+    }
+    .harm-explainer strong {
+      color: var(--text-dark);
+    }
+
+    /* Toggles */
+    .toggle-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .toggle-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--bg-card);
+      border-radius: 10px;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .toggle-item:hover {
+      border-color: var(--border);
+    }
+    .toggle-item input {
+      display: none;
+    }
+    .toggle-switch {
+      width: 40px;
+      height: 22px;
+      background: var(--border);
+      border-radius: 11px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    .toggle-item input:checked + .toggle-switch {
+      background: var(--positive);
+    }
+    .toggle-item input:checked + .toggle-switch::after {
+      transform: translateX(18px);
+    }
+    .toggle-label {
+      flex: 1;
+      font-size: 13px;
+      color: var(--text-main);
+    }
+    .toggle-tag {
+      font-size: 9px;
+      padding: 4px 8px;
+      border-radius: 5px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .toggle-tag.pref { background: var(--accent-light); color: var(--accent); }
+    .toggle-tag.mixed { background: #ece8f3; color: #6b5b95; }
+    .toggle-tag.labor { background: var(--positive-light); color: var(--positive); }
+
+    .toggle-category {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 20px 0 10px 0;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .toggle-category:first-child {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+    .toggle-wrapper {
+      margin-bottom: 4px;
+    }
+    .toggle-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      padding: 12px 14px 14px 66px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-light);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      display: none;
+      margin-top: -8px;
+    }
+    .toggle-desc em {
+      color: var(--positive);
+      font-style: normal;
+      font-weight: 600;
+    }
+    .toggle-wrapper:hover .toggle-desc {
+      display: block;
+    }
+    .toggle-item:has(input:checked) + .toggle-desc {
+      display: block;
+    }
+
+    /* Narrative */
+    .narrative {
+      font-size: 14px;
+      line-height: 1.85;
+      color: var(--text-main);
+    }
+    .narrative strong {
+      color: var(--text-dark);
+      font-weight: 600;
+    }
+    .narrative .nar-section {
+      display: block;
+      margin-top: 18px;
+    }
+    .narrative .nar-section strong {
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .highlight-teal { color: var(--positive); font-weight: 600; }
+    .highlight-red { color: var(--accent); font-weight: 600; }
+
+    /* Regulations list */
+    .reg-list {
+      font-size: 13px;
+    }
+    .reg-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-light);
+      cursor: pointer;
+    }
+    .reg-item:hover {
+      background: var(--bg-card);
+      margin: 0 -12px;
+      padding: 12px;
+      border-radius: 8px;
+    }
+    .reg-header {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .reg-year {
+      color: var(--accent);
+      min-width: 44px;
+      font-weight: 700;
+    }
+    .reg-name {
+      flex: 1;
+      color: var(--text-main);
+    }
+    .reg-level {
+      font-size: 9px;
+      padding: 3px 7px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .reg-level.federal { background: #dbeafe; color: #1e40af; }
+    .reg-level.state { background: #ece8f3; color: #6b5b95; }
+    .reg-level.local { background: #fef3c7; color: #b45309; }
+    .reg-level.labor { background: var(--positive-light); color: var(--positive); }
+    .reg-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      display: none;
+      margin-top: 6px;
+      padding-left: 56px;
+    }
+    .reg-item.expanded .reg-desc {
+      display: block;
+    }
+
+    /* Sources */
+    .sources {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+    .sources p {
+      margin-bottom: 12px;
+    }
+    .sources ul {
+      margin: 6px 0 12px 20px;
+    }
+    .sources li {
+      margin-bottom: 6px;
+    }
+    .sources em {
+      color: var(--text-main);
+    }
+    .sources strong {
+      color: var(--text-main);
+    }
+
+    /* Timeline */
+    #timeline {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 28px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      z-index: 1000;
+    }
+    #year-slider {
+      width: 300px;
+      -webkit-appearance: none;
+      background: var(--border);
+      height: 6px;
+      border-radius: 3px;
+    }
+    #year-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(184,76,53,0.3);
+    }
+    #year-display {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--accent);
+      min-width: 60px;
+    }
+
+    /* Legend */
+    #legend {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--bg-panel);
+      border-radius: 12px;
+      font-size: 11px;
+      z-index: 1000;
+      max-width: 200px;
+      max-height: calc(100vh - 60px);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .legend-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-main);
+      border-bottom: 1px solid var(--border-light);
+      user-select: none;
+    }
+    .legend-header:hover {
+      background: var(--bg-card);
+    }
+    .legend-collapse-icon {
+      font-size: 10px;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+    }
+    #legend.collapsed .legend-collapse-icon {
+      transform: rotate(-90deg);
+    }
+    .legend-content {
+      padding: 14px 16px;
+      transition: max-height 0.25s ease, padding 0.25s ease, opacity 0.2s ease;
+      max-height: 500px;
+      opacity: 1;
+    }
+    #legend.collapsed .legend-content {
+      max-height: 0;
+      padding: 0 16px;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #legend.collapsed .legend-header {
+      border-bottom: none;
+    }
+    .legend-toggle {
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .legend-toggle:last-of-type {
+      margin-bottom: 6px;
+    }
+    .legend-toggle label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .legend-toggle input {
+      accent-color: var(--accent);
+      width: 16px;
+      height: 16px;
+    }
+    .era-select {
+      display: block;
+      margin-top: 6px;
+      margin-left: 26px;
+      padding: 4px 8px;
+      font-size: 11px;
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      background: var(--bg-main);
+      color: var(--text-main);
+      cursor: pointer;
+    }
+    .era-select:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .legend-section {
+      color: var(--text-light);
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 12px 0 6px 0;
+    }
+    .legend-section:first-child {
+      margin-top: 0;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 5px;
+      color: var(--text-main);
+    }
+    .legend-color {
+      width: 18px;
+      height: 12px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* Back button */
+    #back-btn {
+      display: none;
+      padding: 10px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 13px;
+      cursor: pointer;
+      margin-bottom: 16px;
+      transition: all 0.15s;
+    }
+    #back-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Leaflet overrides */
+    .leaflet-control-zoom a {
+      background: var(--bg-panel) !important;
+      color: var(--text-main) !important;
+      border-color: var(--border) !important;
+    }
+    .leaflet-control-zoom a:hover {
+      background: var(--bg-card) !important;
+    }
+    .leaflet-control-attribution {
+      background: rgba(255,255,255,0.9) !important;
+      color: var(--text-muted) !important;
+      font-size: 10px !important;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" id="logo" title="Back to LA Overview">IMBY</div>
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Zipcode..." maxlength="5">
+      <button id="search-btn">Go</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="panel">
+      <button id="back-btn">← Back to LA Overview</button>
+
+      <div class="panel-header">
+        <div class="panel-title" id="title">Los Angeles</div>
+        <div class="panel-subtitle" id="subtitle">Citywide Overview</div>
+      </div>
+
+      <div class="tab-bar">
+        <button class="tab active" data-tab="about">About</button>
+        <button class="tab" data-tab="reform">Reform</button>
+      </div>
+
+      <!-- ABOUT TAB -->
+      <div class="tab-content active" id="tab-about">
+        <div class="section">
+          <div class="section-title">About This Area</div>
+          <div class="narrative" id="narrative"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Sources & Methodology</div>
+          <div class="sources">
+            <p><strong>Economic Model:</strong> Hsieh & Moretti (2019), "Housing Constraints and Spatial Misallocation," <em>American Economic Journal: Macroeconomics</em>. Found housing constraints reduced US GDP <em>growth</em> by ~36% from 1964-2009. (Note: The authors later acknowledged arithmetic errors, though the directional finding holds.)</p>
+            <p><strong>Calculation:</strong> Additional units × 2.3 (household size) × 1.4 (workers/household) × wage premium (20%) × agglomeration multiplier (1.15)</p>
+            <p><strong>Zoning Data:</strong> LA City Planning (ZIMAS), LA County Assessor, Census Bureau ZCTA boundaries</p>
+            <p><strong>Key Sources:</strong></p>
+            <ul>
+              <li>Glaeser & Gyourko (2018), "The Economic Implications of Housing Supply," <em>Journal of Economic Perspectives</em></li>
+              <li>Saiz (2010), "The Geographic Determinants of Housing Supply," <em>Quarterly Journal of Economics</em></li>
+              <li>Lens & Monkkonen (2016), "Do Strict Land Use Regulations Make Metropolitan Areas More Segregated by Income?"</li>
+              <li>Manville et al. (2020), "Zoning and Affordability: A Reply to Critics," UCLA Lewis Center</li>
+              <li>Diamond, McQuade & Qian (2019), "The Effects of Rent Control Expansion on Tenants, Landlords, and Inequality," <em>American Economic Review</em></li>
+            </ul>
+            <p><strong>Rent Control:</strong> Stanford study found SF rent control reduced rental supply by 15% and increased citywide rents by 5.1%. Benefits accrue disproportionately to longer-term tenants regardless of income.</p>
+            <p><strong>Historical:</strong> Center for Pacific Urbanism (1958 zoning), LA Public Library (Sanborn maps, Baist Atlas)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- REFORM TAB -->
+      <div class="tab-content" id="tab-reform">
+        <div class="stats-wrapper">
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-value" id="stat-units">—</div>
+              <div class="stat-label">Units Possible</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value" id="stat-gdp">—</div>
+              <div class="stat-label">GDP/Year</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value" id="stat-cost">—</div>
+              <div class="stat-label">Cost Reduction</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Toggle Reforms</div>
+          <div class="harm-explainer">
+            <span class="toggle-tag pref">Pref</span> = <strong>Preference only.</strong> No safety rationale.<br>
+            <span class="toggle-tag mixed">Mixed</span> = Safety kernel, but overexpanded.<br>
+            <span class="toggle-tag labor">⚙️</span> = <strong>Labor protection.</strong> Lowers costs + worker pay.
+          </div>
+          <div class="toggle-list" id="toggle-list"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Regulations in <span id="reg-year">2026</span></div>
+          <div class="reg-list" id="reg-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="map-container">
+      <div id="map"></div>
+
+      <div id="timeline">
+        <input type="range" id="year-slider" min="1900" max="2026" value="2026">
+        <div id="year-display">2026</div>
+      </div>
+
+      <div id="legend">
+        <div class="legend-header" id="legend-header">
+          <span>Map Key</span>
+          <span class="legend-collapse-icon">▼</span>
+        </div>
+        <div class="legend-content" id="legend-content">
+          <div class="legend-toggle">
+            <label>
+              <input type="checkbox" id="color-toggle" checked>
+              <span>Show colors</span>
+            </label>
+          </div>
+          <div class="legend-toggle">
+            <label>
+              <input type="checkbox" id="transit-toggle">
+              <span>Transit routes</span>
+            </label>
+            <select id="transit-era" class="era-select" disabled>
+              <option value="2026">2026 Metro</option>
+              <option value="1990">1990 Metro opens</option>
+              <option value="1961">1961 Last Red Car</option>
+              <option value="1955">1955 Yellow Cars end</option>
+              <option value="1945">1945 Pre-decline</option>
+              <option value="1910">1910 Streetcar peak</option>
+            </select>
+          </div>
+          <div class="legend-toggle">
+            <label>
+              <input type="checkbox" id="freeway-toggle">
+              <span>Freeways</span>
+            </label>
+          </div>
+          <div class="legend-toggle">
+            <label>
+              <input type="checkbox" id="fire-toggle">
+              <span>Fire hazard zones</span>
+            </label>
+          </div>
+          <div class="legend-items" id="legend-items">
+          <div class="legend-section">Current View</div>
+          <div class="legend-item">
+            <span class="legend-color" style="background:rgba(184,76,53,0.5)"></span>
+            <span>High R1 (>70%)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background:rgba(184,76,53,0.35)"></span>
+            <span>Moderate R1 (50-70%)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background:rgba(200,140,120,0.35)"></span>
+            <span>Mixed residential</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background:rgba(107,91,149,0.3)"></span>
+            <span>Commercial/Industrial</span>
+          </div>
+          <div class="legend-section">With Reforms</div>
+          <div class="legend-item">
+            <span class="legend-color" style="background:rgba(45,100,160,0.55)"></span>
+            <span>High benefit</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background:rgba(45,100,160,0.35)"></span>
+            <span>Moderate benefit</span>
+          </div>
+          <div class="legend-section">Historical (pre-1956)</div>
+          <div class="legend-item">
+            <span class="legend-color" style="background:rgba(180,140,60,0.5)"></span>
+            <span>Pre-restriction (sepia)</span>
+          </div>
+          <div class="legend-section">Overlays</div>
+          <div class="legend-item">
+            <span class="legend-color" style="background:#0066cc;border-radius:50%"></span>
+            <span>Metro station</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background:transparent;border:2px dashed #d63031"></span>
+            <span>Fire hazard zone</span>
+          </div>
+          <div class="legend-section">Selection</div>
+          <div class="legend-item">
+            <span class="legend-color" style="background:transparent;border:2px solid #b84c35"></span>
+            <span>Selected zipcode</span>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script type="module">
+    // Import transit history data
+    import { PACIFIC_ELECTRIC_ROUTES, LA_RAILWAY_ROUTES, METRO_ROUTES, FREEWAYS, getTransitForYear, getFreewaysForYear } from './js/data/transit-history.js';
+
+    // === STATE ===
+    const state = {
+      year: 2026,
+      selectedZip: null,
+      showColors: true,
+      showTransit: false,
+      showFreeways: false,
+      showFireZones: false,
+      transitEra: 2026,
+      reforms: {
+        // Zoning
+        removeR1: false,
+        noHeightLimits: false,
+        noParkingMins: false,
+        noHillside: false,
+        noSetbacks: false,
+        noLotSize: false,
+        // Environmental
+        noCEQA: false,
+        noCoastal: false,
+        // Fiscal
+        reformProp13: false,
+        noTransitFees: false,
+        reformRentControl: false,
+        // Labor
+        noPrevailingWage: false,
+        noLocalHire: false,
+        noUnionOnly: false,
+        // Process
+        byRight: false,
+        noDesignReview: false,
+      },
+      zipcodeData: null,
+      geojson: null
+    };
+
+    // === REGULATIONS TIMELINE (Federal, State, Local, Labor) ===
+    const REGULATIONS = [
+      // Federal
+      { year: 1934, name: 'FHA Created', level: 'federal', desc: 'Federal Housing Administration institutionalized redlining, refusing to insure mortgages in minority neighborhoods. Maps literally colored "hazardous" areas red.' },
+      { year: 1956, name: 'Interstate Highway Act', level: 'federal', desc: 'Federal funding for highways that demolished urban neighborhoods, primarily Black and Latino communities, to build freeways through cities.' },
+      { year: 1968, name: 'Fair Housing Act', level: 'federal', desc: 'Banned explicit racial discrimination in housing. But exclusionary zoning—banning apartments, requiring large lots—achieved the same segregation "legally."' },
+      { year: 1970, name: 'NEPA', level: 'federal', desc: 'National Environmental Policy Act. Federal projects require environmental review. Model for California\'s CEQA.' },
+
+      // State - Development
+      { year: 1970, name: 'CEQA', level: 'state', desc: 'California Environmental Quality Act. Any project can be challenged with environmental lawsuits. CEQA has caught real contamination issues and forced traffic mitigation—but is also routinely exploited to block housing. Adds 1-5 years and $1M+ to projects. Originally for highways and refineries.' },
+      { year: 1978, name: 'Proposition 13', level: 'state', desc: 'Froze property taxes at 1% of purchase price. Cities now favor commercial development (sales tax) over housing. Long-term owners pay far less than new buyers.' },
+      { year: 1979, name: 'LA Rent Stabilization', level: 'local', desc: 'RSO covers ~624,000 units built before Oct 1978. Annual increases tied to CPI. Vacancy decontrol: landlords reset to market rate when tenants leave. Stanford study: rent control reduced rental supply 15% and raised citywide rents 5.1%.' },
+      { year: 1979, name: 'Santa Monica Rent Control', level: 'local', desc: 'One of nation\'s strictest. Passed after 1,300+ units demolished in 15 months. Covers ~27,500 units. No vacancy decontrol until Costa-Hawkins (1995). Long-term tenants pay far below market; newcomers face higher rents elsewhere.' },
+      { year: 1984, name: 'West Hollywood Incorporation', level: 'local', desc: 'WeHo incorporated specifically to preserve rent control when LA County moved to end it. Coalition of LGBT activists, seniors, and renters gathered signatures in 52 days. Rents frozen and rolled back to Aug 1984 levels.' },
+      { year: 1985, name: 'Ellis Act', level: 'state', desc: 'Allows landlords to "go out of business" and evict all tenants. LA: 30,000+ Ellis evictions since 2001. Used for condo conversions that permanently escape rent control. Disproportionately affects minority and low-income renters.' },
+      { year: 1995, name: 'Costa-Hawkins', level: 'state', desc: 'State law limiting rent control. Vacancy decontrol: landlords reset to market when tenants leave. Exempts single-family homes, condos, and buildings built after Feb 1995. Prevents cities from expanding rent control to newer buildings.' },
+      { year: 2017, name: 'SB 35', level: 'state', desc: 'Streamlined approval for housing in cities missing housing goals. Bypass some local review if project meets zoning and includes affordable units.' },
+      { year: 2019, name: 'AB 1482 Statewide Rent Cap', level: 'state', desc: 'Caps annual rent increases at 5% + CPI (max 10%). Just-cause eviction statewide. Exempts buildings less than 15 years old, single-family homes. First statewide rent regulation—but with significant carve-outs.' },
+      { year: 2021, name: 'SB 9', level: 'state', desc: 'Allows duplexes and lot splits on single-family lots statewide. First major crack in R1 zoning, though local implementation varies.' },
+      { year: 2022, name: 'AB 2011', level: 'state', desc: 'Allows housing on commercial land by-right if developers pay prevailing wages. Links housing reform to labor standards.' },
+
+      // State - Labor
+      { year: 1931, name: 'Prevailing Wage (State)', level: 'labor', desc: 'Public works projects must pay union-scale wages. Extended to subsidized housing. Adds 15-30% to construction costs but ensures fair worker compensation.' },
+      { year: 2017, name: 'SB 35 Labor Standards', level: 'labor', desc: 'Projects using SB 35 streamlining must use skilled labor on projects over 10 units. Trades housing speed for worker protections.' },
+      { year: 2022, name: 'AB 2011 Prevailing Wage', level: 'labor', desc: 'Requires prevailing wages + healthcare for by-right housing on commercial land. Pro-housing and pro-labor coalition.' },
+
+      // Local - LA Specific
+      { year: 1905, name: 'LA Height Limit (150ft)', level: 'local', desc: 'First height restriction. Ostensibly for earthquake safety, but kept downtown low while cities like SF built taller.' },
+      { year: 1908, name: 'LA First Zoning', level: 'local', desc: 'America\'s first citywide use-based zoning ordinance (Ordinance 16170). Separated industrial from residential. NYC\'s 1916 ordinance is often called "first comprehensive," but LA was first to apply zoning citywide.' },
+      { year: 1921, name: 'LA Comprehensive Zoning', level: 'local', desc: '5-zone system (A-E) covering entire city. Established single-family zones that would expand dramatically.' },
+      { year: 1946, name: 'Specific Plans Begin', level: 'local', desc: 'Neighborhoods can create their own stricter rules. Wealthy areas used this to limit density and preserve "character."' },
+      { year: 1950, name: 'Parking Minimums', level: 'local', desc: 'Required off-street parking for all new buildings. 2+ spaces per unit in residential. Adds $50,000-100,000 per unit in construction costs.' },
+      { year: 1956, name: 'Downzoning to R1', level: 'local', desc: 'Massive conversion of multi-family zones to single-family only. Changed 14+ miles of streets. Made existing apartments "non-conforming."' },
+      { year: 1986, name: 'Prop U', level: 'local', desc: 'Halved allowable density on commercial boulevards. Voter initiative driven by anti-growth sentiment. Locked in low-rise sprawl.' },
+      { year: 2008, name: 'Baseline Mansionization', level: 'local', desc: 'Limited house size relative to lot size in R1 zones. Response to teardown/rebuild trend, but added another layer of restriction.' },
+      { year: 2011, name: 'Hillside Ordinance', level: 'local', desc: 'FAR limits based on slope percentage. 1,000 cubic yard grading limit. Historic hillside estates moved 10,000+ cubic yards—now illegal.' },
+      { year: 2017, name: 'Measure S (Failed)', level: 'local', desc: 'Would have banned most zone changes for 2 years. Defeated, but showed anti-development sentiment. 31% voted yes.' },
+      { year: 2017, name: 'Measure JJJ', level: 'local', desc: 'Zone changes require affordable units and local hiring. Links development approval to community benefits and labor standards.' },
+
+      // Recent "Reforms" - well-intentioned but problematic
+      { year: 2016, name: 'Density Bonus Law (Expanded)', level: 'state', desc: 'Developers get extra floors/units if they include affordable housing. Result: cookie-cutter "5-over-1" buildings (5 stories wood over 1 story concrete) that look identical across California. The formula creates buildings, not neighborhoods.' },
+      { year: 2017, name: 'Inclusionary Zoning (Local)', level: 'local', desc: 'Requires 10-25% affordable units in new buildings. Good intent, but raises costs on market units. Some developers avoid building entirely; others build luxury-only under exemptions. Net effect debated.' },
+      { year: 2019, name: 'Design Guidelines (TOC)', level: 'local', desc: 'Transit Oriented Communities program requires specific setbacks, stepbacks, materials, and landscaping. The checklist approach produces repetitive designs. Every TOC project looks the same because they\'re built to the same formula.' },
+      { year: 2020, name: '5-over-1 Construction', level: 'state', desc: 'Building codes favor "Type V" wood framing over concrete podiums. Cheap and fast, but raises fire concerns and questions about lifespan. The uniformity stems from code optimization—developers build to the maximum the formula allows, producing similar results citywide.' },
+      { year: 2021, name: 'SB 9 (Duplex Bill)', level: 'state', desc: 'Allows duplexes on single-family lots. First crack in R1, but implementation is bureaucratic. Many cities add so many local requirements that few projects pencil out. Reform in theory, friction in practice.' },
+      { year: 2023, name: 'Builder\'s Remedy', level: 'state', desc: 'Cities without approved housing elements lose zoning control. Developers can propose anything. Result: massive projects neighbors hate, cities scrambling to approve housing plans to regain control. Blunt instrument.' },
+      { year: 2024, name: 'ADU Streamlining', level: 'state', desc: 'Accessory dwelling units (granny flats) allowed nearly everywhere. But pre-fab ADU companies charge $200K+. The "affordable" backyard unit costs more than a house did 30 years ago.' },
+    ];
+
+    // === TIMELINE NARRATIVES (NYT-style editorial for citywide view) ===
+    const TIMELINE_NARRATIVES = {
+      1900: {
+        era: 'The Frontier City',
+        text: 'Los Angeles is a small city of 100,000—smaller than San Francisco\'s Chinatown today. Oil derricks dot the landscape. The Red Car streetcar system is just beginning. There is no zoning. Anyone can build anything, anywhere.',
+        mood: 'possibility'
+      },
+      1908: {
+        era: 'The First Zoning',
+        text: 'LA passes America\'s first comprehensive zoning ordinance, separating industrial uses from residential. The logic is simple: keep factories away from homes. But the precedent is set—the city can tell you what to build.',
+        mood: 'turning'
+      },
+      1910: {
+        era: 'The Streetcar City',
+        text: 'Pacific Electric reaches 1,000+ miles of track—the largest electric railway in the world. Red Cars connect downtown to Hollywood, Long Beach, Pasadena, and the San Fernando Valley. Yellow Cars run local routes on Vermont, Western, Sunset. Los Angeles is a transit city. Neighborhoods grow organically around stations.',
+        mood: 'golden'
+      },
+      1921: {
+        era: 'The Grid is Drawn',
+        text: 'A 5-zone system (A through E) covers the entire city. Single-family zones begin to appear, but most of LA is still zoned for apartments. The pre-war neighborhoods we love today—Koreatown, Echo Park, Silver Lake—are being built right now.',
+        mood: 'building'
+      },
+      1930: {
+        era: 'The Golden Age',
+        text: 'Courtyard apartments, dingbats, bungalow courts, and mixed-use buildings line every major street. Hollywood is booming. The architecture is eclectic—Spanish Revival, Art Deco, Craftsman—because there are no design review boards.',
+        mood: 'golden'
+      },
+      1934: {
+        era: 'The New Deal\'s Dark Side',
+        text: 'The Federal Housing Administration begins insuring mortgages—but only in "desirable" neighborhoods. Redlining maps literally color minority areas red. The government subsidizes white suburbs while starving diverse urban cores.',
+        mood: 'warning'
+      },
+      1940: {
+        era: 'The Streetcar Conspiracy',
+        text: 'National City Lines—backed by GM, Standard Oil, and Firestone—begins acquiring transit systems nationwide. LA\'s streetcar lines are targeted. The Arroyo Seco Parkway (110) opens: the first freeway in the West. Two competing visions of LA\'s future collide.',
+        mood: 'warning'
+      },
+      1945: {
+        era: 'The Veterans Return',
+        text: 'WWII ends. Millions need housing. Park La Brea (1941-52) was federally-subsidized housing built by Metropolitan Life with FHA financing—not market development. Meanwhile, urban renewal is about to begin: Bunker Hill will be targeted for "slum clearance." Veterans want single-family homes, and developers are ready to provide them.',
+        mood: 'turning'
+      },
+      1955: {
+        era: 'The Yellow Cars End',
+        text: 'The last LA Railway streetcar runs. Local transit now means buses. Bunker Hill Urban Renewal begins—11,000 residents will be displaced to make room for corporate towers. The transit-oriented city is being dismantled from both ends: the trains that built it, and the neighborhoods that grew around them.',
+        mood: 'crisis'
+      },
+      1956: {
+        era: 'The Great Downzoning',
+        text: 'This is the year everything changes. LA converts 14+ miles of streets from multi-family to single-family only. Existing apartments become "non-conforming"—legal to keep, illegal to build. The city that was is now frozen in amber.',
+        mood: 'crisis'
+      },
+      1961: {
+        era: 'The Last Red Car',
+        text: 'The final Pacific Electric line closes: Long Beach to LA. The streetcar system that built Los Angeles—1,000+ miles of track at its peak—is gone. What took decades to build took just 16 years to destroy. The freeway city is now the only city.',
+        mood: 'crisis'
+      },
+      1965: {
+        era: 'The Freeway City',
+        text: 'The 10, 110, and 101 are complete. The 405 is under construction. Freeways meant to bring the region together instead tear neighborhoods apart. East LA, Boyle Heights, and South Central are bisected by concrete.',
+        mood: 'warning'
+      },
+      1970: {
+        era: 'CEQA Arrives',
+        text: 'The California Environmental Quality Act passes. Originally meant for highways and refineries, it will become a weapon against housing. Any project can be challenged. Any neighbor can sue. The era of endless review begins.',
+        mood: 'turning'
+      },
+      1978: {
+        era: 'Prop 13',
+        text: 'Property taxes are frozen at 1% of purchase price. Homeowners celebrate. But cities now favor commercial development over housing—sales tax beats property tax. The fiscal incentive to block homes is baked into law.',
+        mood: 'crisis'
+      },
+      1986: {
+        era: 'Prop U',
+        text: 'Voters halve the allowed density on commercial boulevards. The anti-growth movement reaches its peak. Building height and density are cut in half across the city. The skyline is capped not by engineering, but by fear.',
+        mood: 'crisis'
+      },
+      1990: {
+        era: 'Metro Returns',
+        text: 'The Blue Line opens: LA\'s first new rail transit in 30 years. It runs from downtown to Long Beach—nearly the same route as the Pacific Electric line that closed in 1961. But the new line follows a freight corridor, not the old neighborhood streets. The stations are designed for park-and-ride, not walkable urbanism.',
+        mood: 'turning'
+      },
+      1992: {
+        era: 'After the Uprising',
+        text: 'LA burns. The uprising exposes decades of disinvestment in South LA. But the response is not housing—it\'s more police. The communities that need investment the most remain zoned for nothing.',
+        mood: 'warning'
+      },
+      2000: {
+        era: 'The Revival Begins',
+        text: 'Downtown starts to wake up. The Adaptive Reuse Ordinance lets developers convert empty office buildings to lofts. Artists move to the Arts District. But the rest of LA remains frozen under 1956 rules.',
+        mood: 'building'
+      },
+      2008: {
+        era: 'The Crash',
+        text: 'The housing bubble bursts. Foreclosures devastate the Inland Empire—where people moved because they couldn\'t afford LA. The crisis reveals the cost of constrained supply: when the music stops, the displaced suffer most.',
+        mood: 'crisis'
+      },
+      2017: {
+        era: 'The YIMBY Moment',
+        text: 'SB 35 passes—the first crack in local control. Cities that don\'t build enough housing lose some power to block projects. But implementation is slow, and opponents find workarounds. The reform era begins.',
+        mood: 'turning'
+      },
+      2021: {
+        era: 'SB 9 Duplexes',
+        text: 'For the first time since 1956, duplexes are legal on single-family lots statewide. But cities add fees, setbacks, and conditions. The reform works on paper; in practice, few get built. The gap between law and housing remains.',
+        mood: 'building'
+      },
+      2024: {
+        era: 'The 5-over-1 Era',
+        text: 'New housing is finally getting built—but it all looks the same. Five stories of wood over one story of concrete. Same setbacks, same stepbacks, same materials. The regulations meant to help created their own cookie-cutter conformity. Is this progress?',
+        mood: 'mixed'
+      },
+      2026: {
+        era: 'Today',
+        text: 'LA has 349 zipcodes, ~10 million people, and a housing deficit in the hundreds of thousands. Median home price: $900K+. Median rent: $2,500+. The choice is clear: reform the rules, or watch the crisis deepen.',
+        mood: 'crisis'
+      }
+    };
+
+    function getTimelineNarrative(year) {
+      // Find the most recent narrative for the given year
+      const years = Object.keys(TIMELINE_NARRATIVES).map(Number).sort((a, b) => a - b);
+      let narrativeYear = years[0];
+      for (const y of years) {
+        if (y <= year) narrativeYear = y;
+        else break;
+      }
+      return TIMELINE_NARRATIVES[narrativeYear];
+    }
+
+    // === METRO STATIONS (for transit overlay) ===
+    const METRO_STATIONS = [
+      // Red/Purple Line (B/D)
+      { name: 'Union Station', lat: 34.0561, lng: -118.2365, lines: ['B', 'D', 'L', 'J'] },
+      { name: 'Civic Center', lat: 34.0556, lng: -118.2467, lines: ['B', 'D'] },
+      { name: 'Pershing Square', lat: 34.0494, lng: -118.2514, lines: ['B', 'D'] },
+      { name: '7th St/Metro Center', lat: 34.0489, lng: -118.2589, lines: ['B', 'D', 'A', 'E'] },
+      { name: 'Westlake/MacArthur Park', lat: 34.0559, lng: -118.2750, lines: ['B', 'D'] },
+      { name: 'Wilshire/Vermont', lat: 34.0628, lng: -118.2914, lines: ['B', 'D'] },
+      { name: 'Wilshire/Normandie', lat: 34.0619, lng: -118.3008, lines: ['D'] },
+      { name: 'Wilshire/Western', lat: 34.0624, lng: -118.3089, lines: ['D'] },
+      { name: 'Wilshire/La Brea', lat: 34.0621, lng: -118.3444, lines: ['D'] },
+      { name: 'Wilshire/Fairfax', lat: 34.0622, lng: -118.3615, lines: ['D'] },
+      { name: 'Wilshire/La Cienega', lat: 34.0622, lng: -118.3769, lines: ['D'] },
+      { name: 'Vermont/Beverly', lat: 34.0767, lng: -118.2914, lines: ['B'] },
+      { name: 'Vermont/Santa Monica', lat: 34.0908, lng: -118.2914, lines: ['B'] },
+      { name: 'Vermont/Sunset', lat: 34.0978, lng: -118.2914, lines: ['B'] },
+      { name: 'Hollywood/Western', lat: 34.1017, lng: -118.3089, lines: ['B'] },
+      { name: 'Hollywood/Vine', lat: 34.1017, lng: -118.3256, lines: ['B'] },
+      { name: 'Hollywood/Highland', lat: 34.1017, lng: -118.3389, lines: ['B'] },
+      { name: 'Universal/Studio City', lat: 34.1397, lng: -118.3622, lines: ['B'] },
+      { name: 'North Hollywood', lat: 34.1683, lng: -118.3767, lines: ['B', 'G'] },
+      // Expo Line (E)
+      { name: 'Expo/Crenshaw', lat: 34.0228, lng: -118.3378, lines: ['E'] },
+      { name: 'Farmdale', lat: 34.0228, lng: -118.3500, lines: ['E'] },
+      { name: 'Expo/La Brea', lat: 34.0228, lng: -118.3611, lines: ['E'] },
+      { name: 'La Cienega/Jefferson', lat: 34.0250, lng: -118.3750, lines: ['E'] },
+      { name: 'Culver City', lat: 34.0278, lng: -118.3889, lines: ['E'] },
+      { name: 'Palms', lat: 34.0289, lng: -118.4050, lines: ['E'] },
+      { name: 'Westwood/Rancho Park', lat: 34.0367, lng: -118.4258, lines: ['E'] },
+      { name: 'Expo/Sepulveda', lat: 34.0322, lng: -118.4356, lines: ['E'] },
+      { name: '17th St/SMC', lat: 34.0156, lng: -118.4694, lines: ['E'] },
+      { name: 'Downtown Santa Monica', lat: 34.0106, lng: -118.4964, lines: ['E'] },
+      // Blue Line (A)
+      { name: 'Pico', lat: 34.0406, lng: -118.2661, lines: ['A', 'E'] },
+      { name: 'Grand/LATTC', lat: 34.0306, lng: -118.2694, lines: ['A'] },
+      { name: 'San Pedro St', lat: 34.0183, lng: -118.2644, lines: ['A'] },
+      { name: 'Washington', lat: 34.0003, lng: -118.2644, lines: ['A'] },
+      { name: 'Vernon', lat: 33.9817, lng: -118.2644, lines: ['A'] },
+      { name: 'Slauson', lat: 33.9647, lng: -118.2644, lines: ['A'] },
+      { name: 'Florence', lat: 33.9508, lng: -118.2644, lines: ['A'] },
+      { name: 'Firestone', lat: 33.9378, lng: -118.2644, lines: ['A'] },
+      { name: '103rd St/Watts Towers', lat: 33.9422, lng: -118.2694, lines: ['A'] },
+      { name: 'Willowbrook', lat: 33.9278, lng: -118.2378, lines: ['A', 'C'] },
+      { name: 'Compton', lat: 33.8969, lng: -118.2200, lines: ['A'] },
+      { name: 'Downtown Long Beach', lat: 33.7683, lng: -118.1892, lines: ['A'] },
+      // Gold Line (L)
+      { name: 'Little Tokyo', lat: 34.0494, lng: -118.2383, lines: ['L'] },
+      { name: 'Chinatown', lat: 34.0639, lng: -118.2356, lines: ['L'] },
+      { name: 'Lincoln Heights', lat: 34.0717, lng: -118.2175, lines: ['L'] },
+      { name: 'Highland Park', lat: 34.1114, lng: -118.1919, lines: ['L'] },
+      { name: 'South Pasadena', lat: 34.1156, lng: -118.1578, lines: ['L'] },
+      { name: 'Memorial Park', lat: 34.1483, lng: -118.1506, lines: ['L'] },
+      { name: 'Del Mar', lat: 34.1422, lng: -118.1478, lines: ['L'] },
+      { name: 'Pasadena', lat: 34.1461, lng: -118.1394, lines: ['L'] },
+      { name: 'East LA Civic Center', lat: 34.0333, lng: -118.1611, lines: ['L'] },
+      { name: 'Atlantic', lat: 34.0339, lng: -118.1544, lines: ['L'] },
+      // Green Line (C)
+      { name: 'Redondo Beach', lat: 33.8683, lng: -118.3794, lines: ['C'] },
+      { name: 'El Segundo', lat: 33.9156, lng: -118.3861, lines: ['C'] },
+      { name: 'Mariposa', lat: 33.9278, lng: -118.3750, lines: ['C'] },
+      { name: 'Aviation/LAX', lat: 33.9350, lng: -118.3722, lines: ['C'] },
+      { name: 'Crenshaw', lat: 33.9275, lng: -118.3283, lines: ['C'] },
+      { name: 'Hawthorne', lat: 33.9194, lng: -118.3094, lines: ['C'] },
+      { name: 'Norwalk', lat: 33.9139, lng: -118.1072, lines: ['C'] },
+    ];
+
+    // === FIRE HAZARD ZONES (Very High Fire Hazard Severity Zones) ===
+    // Zipcodes with significant VHFHSZ areas - these are real safety concerns
+    const FIRE_HAZARD_ZIPS = [
+      '90046', // Laurel Canyon
+      '90049', // Brentwood
+      '90068', // Hollywood Hills
+      '90077', // Bel Air
+      '90210', // Beverly Hills hillside
+      '90272', // Pacific Palisades
+      '90290', // Topanga
+      '91001', // Altadena
+      '91011', // La Canada Flintridge
+      '91103', // Pasadena Northwest (foothills)
+      '91024', // Sierra Madre
+      '91040', // Sunland
+      '91042', // Tujunga
+      '91301', // Agoura Hills
+      '91302', // Calabasas
+      '91304', // West Hills (partial)
+      '91307', // West Hills
+      '91316', // Encino hills
+      '91364', // Woodland Hills hills
+      '91403', // Sherman Oaks hills
+      '91423', // Sherman Oaks hills
+      '91436', // Encino hills
+      '91501', // Burbank hills
+      '91604', // Studio City hills
+    ];
+
+    // === REFORM TOGGLES (grouped by category) ===
+    const REFORM_INFO = {
+      // --- ZONING (Local) ---
+      removeR1: {
+        name: 'End Single-Family Only Zoning',
+        desc: 'R1 zoning restricts land to ONE housing unit per lot. 75% of LA\'s residential land is R1. Allow duplexes, fourplexes, and small apartments.',
+        impact: 'Biggest impact: 500K-1M+ units possible citywide.',
+        tag: 'pref',
+        category: 'zoning'
+      },
+      noHeightLimits: {
+        name: 'Remove Height Limits',
+        desc: 'LA limits most areas to 2-3 stories. Height limits force sprawl instead of density near transit. Tokyo, SF, Mexico City build tall in seismic zones.',
+        impact: 'Moderate: enables mid-rise near transit.',
+        tag: 'mixed',
+        category: 'zoning'
+      },
+      noParkingMins: {
+        name: 'Eliminate Parking Minimums',
+        desc: 'LA requires 2+ parking spaces per apartment—each costs $50K-100K to build. Invented in the 1950s with no scientific basis. Subsidizes cars, raises rents.',
+        impact: 'Reduces costs 15-20%. Huge for affordable housing.',
+        tag: 'mixed',
+        category: 'zoning'
+      },
+      noHillside: {
+        name: 'Remove Hillside Ordinance',
+        desc: 'The 2011 ordinance limits FAR by slope and caps grading at 500 cu yd + 5% of lot (max 1,000). Historic estates moved 10,000+ cu yd. Affects ~2.5% of LA\'s land but covers elite neighborhoods.',
+        impact: 'Targeted: Hollywood Hills, Pacific Palisades, etc.',
+        tag: 'mixed',
+        category: 'zoning'
+      },
+      noSetbacks: {
+        name: 'Reduce Setback Requirements',
+        desc: 'Current rules require 15-20ft front setbacks, 5ft side setbacks. This wastes buildable land and makes housing more expensive. Pre-war buildings sit closer to the street.',
+        impact: 'Modest: adds 5-10% buildable area per lot.',
+        tag: 'pref',
+        category: 'zoning'
+      },
+      noLotSize: {
+        name: 'Remove Minimum Lot Sizes',
+        desc: 'Many areas require 5,000-20,000 sq ft minimum lots. This forces large, expensive homes and excludes smaller/affordable housing. SB 9 allows lot splits but with limits.',
+        impact: 'Enables smaller, more affordable homes.',
+        tag: 'pref',
+        category: 'zoning'
+      },
+
+      // --- ENVIRONMENTAL (State) ---
+      noCEQA: {
+        name: 'Streamline CEQA',
+        desc: 'CEQA (1970) requires environmental review for projects. Has caught real contamination and forced traffic mitigation—but is also exploited to block housing via costly lawsuits (1-5 years, $1M+). Reform proposals exempt infill housing while keeping protections for greenfield development.',
+        impact: 'Speeds infill projects by 1-3 years.',
+        tag: 'mixed',
+        category: 'environmental'
+      },
+      noCoastal: {
+        name: 'Reform Coastal Commission',
+        desc: 'The Coastal Commission (1972) has authority from 1,000 yards to up to 5 miles inland depending on habitat. Good for beach access and environmental protection, but adds another review layer. In urban areas, jurisdiction may be just hundreds of feet.',
+        impact: 'Targeted: beach cities, Marina del Rey, etc.',
+        tag: 'mixed',
+        category: 'environmental'
+      },
+
+      // --- FISCAL (State) ---
+      reformProp13: {
+        name: 'Reform Prop 13',
+        desc: 'Prop 13 (1978) froze property taxes at 1% of purchase price. Long-term owners pay far less than new buyers. Cities favor commercial (sales tax) over housing.',
+        impact: 'Systemic: changes city incentives toward housing.',
+        tag: 'mixed',
+        category: 'fiscal'
+      },
+      noTransitFees: {
+        name: 'Reduce Impact Fees',
+        desc: 'Development fees in LA can exceed $100K per unit (schools, parks, transit, affordable housing). While funding services, they also raise housing costs.',
+        impact: 'Reduces per-unit cost $50-150K.',
+        tag: 'mixed',
+        category: 'fiscal'
+      },
+      reformRentControl: {
+        name: 'Reform Rent Control',
+        desc: 'Stanford study: SF rent control reduced rental supply 15% and raised citywide rents 5.1%. Benefits go to long-term tenants regardless of income. 64% of NYC controlled units have maintenance deficiencies vs 47% uncontrolled. Creates mobility penalty—tenants stay in wrong-sized units to keep subsidy.',
+        impact: 'Trade-off: protects incumbents, raises costs for newcomers.',
+        tag: 'mixed',
+        category: 'fiscal'
+      },
+
+      // --- LABOR (State/Local) ---
+      noPrevailingWage: {
+        name: 'Remove Prevailing Wage Req.',
+        desc: 'Public/subsidized projects must pay union-scale wages (15-30% higher). Protects workers but raises housing costs. AB 2011 requires it for by-right housing.',
+        impact: 'Reduces costs 15-30% but lowers worker pay.',
+        tag: 'labor',
+        category: 'labor'
+      },
+      noLocalHire: {
+        name: 'Remove Local Hire Requirements',
+        desc: 'Measure JJJ (2016) requires 30% local hiring and 10% from disadvantaged areas for projects needing zone changes. Good for workers, adds compliance costs.',
+        impact: 'Modest cost reduction, loses local jobs.',
+        tag: 'labor',
+        category: 'labor'
+      },
+      noUnionOnly: {
+        name: 'Allow Non-Union Construction',
+        desc: 'Some projects require Project Labor Agreements (PLAs) mandating union labor. Unions provide training and safety but limit contractor pool.',
+        impact: 'Varies: 0-20% cost reduction depending on project.',
+        tag: 'labor',
+        category: 'labor'
+      },
+
+      // --- PROCESS (Local) ---
+      byRight: {
+        name: 'By-Right Approval',
+        desc: 'Currently most projects need "discretionary" approval—public hearings where neighbors can object. By-right means if you meet the code, you get approved.',
+        impact: 'Saves 6-18 months per project.',
+        tag: 'mixed',
+        category: 'process'
+      },
+      noDesignReview: {
+        name: 'Eliminate Design Review',
+        desc: 'Many areas require architectural review boards to approve designs. Adds subjectivity, delays, and "character" arguments that block modern buildings.',
+        impact: 'Saves 3-6 months, reduces uncertainty.',
+        tag: 'pref',
+        category: 'process'
+      },
+    };
+
+    // === CUSTOM NARRATIVES (for notable zipcodes) ===
+    const CUSTOM_NARRATIVES = {
+      '90068': { name: 'Hollywood Hills', text: `The iconic estates perched on steep hillsides were built in the 1920s-40s when developers could grade freely. <strong>Today:</strong> The 2011 Hillside Ordinance caps FAR based on slope. The 2017 amendment limits grading to 1,000 cubic yards—historic estates moved 10,000+. <strong class="highlight-red">These homes could not be built today.</strong>` },
+      '90046': { name: 'Laurel Canyon', text: `Developed as an artists' colony with small cabins and eccentric homes. <strong>The irony:</strong> The "funky" character was built informally, often without permits. Today, even rebuilding a burned cabin requires years of CEQA review.` },
+      '90027': { name: 'Los Feliz', text: `LA's first streetcar suburb, built with dingbats, courtyard apartments, and corner stores around the Red Car lines. The 1956 downzoning converted multi-family zones to R1-only. Now the charming 1920s fourplexes are "non-conforming"—<strong class="highlight-red">illegal to build</strong>.` },
+      '90020': { name: 'Koreatown', text: `One of LA's densest areas—only <strong class="highlight-teal">15% R1 zoning</strong>. Compare to Bel Air's 95%. This isn't accident; it's policy. Koreatown was built before parking minimums and density caps froze land use. <span class="nar-section"><strong>The proof:</strong></span> Koreatown has transit, walkability, vitality, and relative affordability. The neighborhood shows what LA could look like if we hadn't banned this building pattern across 75% of residential land.` },
+      '90291': { name: 'Venice', text: `Abbot Kinney built "Venice of America" in 1905 with canals, dense cottages, and beachside apartments. The 1929 annexation to LA brought zoning. The 1956 downzoning converted much to R1. Venice's "bohemian" character was built under rules that <strong class="highlight-red">no longer exist</strong>.` },
+      '90024': { name: 'Westwood', text: `Master-planned in the 1920s as a "complete community" with apartments, shops, and UCLA. Westwood Village was LA's premier shopping district. <strong>The decline:</strong> Parking requirements doubled costs. Density limits prevented residential above retail.` },
+      '90049': { name: 'Brentwood', text: `Developed as an exclusive enclave with large lots. The neighborhood maintained exclusivity through zoning. <strong>The trade-off:</strong> Median home price exceeds $3M. Workers commute from hours away. Housing scarcity is a <strong>policy choice</strong>.` },
+      '90017': { name: 'Downtown', text: `LA's commercial center until the 1970s. The corporate towers west of downtown (Bonaventure, ARCO Plaza) were built on land cleared by demolishing Bunker Hill's Victorian neighborhood (1955-69). That area had no residents for 40 years. The 1999 Adaptive Reuse Ordinance finally sparked residential revival. <strong>Even here</strong>, parking minimums add $50,000+ per unit.` },
+      '90039': { name: 'Silver Lake', text: `Famous for modernist architecture. Neutra, Schindler, and others built iconic hillside homes. <strong>The irony:</strong> The Hillside Ordinance means rebuilding a Neutra home to original specs often <strong class="highlight-red">violates current code</strong>.` },
+      '90042': { name: 'Highland Park', text: `LA's first suburb, connected by the city's first streetcar (1895). Dense, walkable, mixed-use—everything modern planners want. <strong>The lesson:</strong> LA once knew how to build walkable neighborhoods. Then we made it <strong class="highlight-red">illegal</strong>.` },
+      '90028': { name: 'Hollywood', text: `The entertainment capital was built with apartments, studios, and mixed-use buildings. Walk down any block and see pre-1956 density. <strong>Today:</strong> Most of Hollywood is downzoned. New development requires years of discretionary review.` },
+      '90036': { name: 'Miracle Mile/Park La Brea', text: `Park La Brea (1941-1952) was built by Metropolitan Life Insurance with FHA financing—federally-subsidized housing for defense workers, exempt from local zoning. It was a federal policy intervention, not market development. The Miracle Mile itself (1920s-40s) shows organic pre-restriction density: retail with apartments above, built by-right. <strong>Today:</strong> The Miracle Mile pattern would be illegal under current zoning's use separation and parking requirements.` },
+      '90012': { name: 'Chinatown/Bunker Hill', text: `Two urban renewal stories. Original Chinatown was demolished for Union Station (1930s). Adjacent Bunker Hill—a dense Victorian neighborhood of 11,000 residents—was cleared via eminent domain (1955-69) for corporate towers. Urban renewal erased functioning neighborhoods. <strong>Today:</strong> Adding housing near the transit hub requires years of review.` },
+      '90013': { name: 'Arts District', text: `Former industrial zone converted to lofts in the 1990s-2000s. The Adaptive Reuse Ordinance enabled this transformation. <strong class="highlight-teal">Proof that smart deregulation creates vibrant neighborhoods.</strong>` },
+      '90015': { name: 'South Park', text: `LA Live and Staples Center transformed this area. But even with billions in investment, residential development is constrained by parking requirements and CEQA litigation.` },
+      '90026': { name: 'Echo Park', text: `Dense, diverse, and desirable—Echo Park was built with dingbats and small apartments before modern restrictions. The 1956 downzoning locked in what exists while prohibiting more.` },
+      '90029': { name: 'Thai Town/East Hollywood', text: `One of LA's most diverse areas with pre-war density. The mix of apartments, shops, and restaurants emerged before use separation was strictly enforced. Now "non-conforming."` },
+      '90031': { name: 'Lincoln Heights', text: `LA's oldest neighborhood outside downtown. Victorian homes and early apartments show what LA built before zoning. Much is now "historically significant"—protected but not replicable.` },
+      '90032': { name: 'El Sereno', text: `Annexed in 1915, developed with modest single-family homes. Represents the "Americanization" of LA's housing—away from multi-family toward suburban pattern.` },
+      '90033': { name: 'Boyle Heights', text: `LA's most diverse pre-war neighborhood—Jewish, Japanese, Mexican, Eastern European communities. Dense, transit-connected, walkable. <strong>Then freeways came:</strong> Four major freeways (101, 5, 10, 60) cut through or border the neighborhood, demolishing thousands of homes. No other LA neighborhood suffered more freeway devastation. <strong>Today:</strong> Zoning prevents rebuilding what freeways destroyed.` },
+      '90034': { name: 'Palms/Mar Vista', text: `Post-war suburb with single-family homes and scattered apartments. The Expo Line brought transit but zoning prevents density near stations. <strong class="highlight-red">Transit without housing = traffic.</strong>` },
+      '90035': { name: 'Beverlywood', text: `1920s-40s development with mix of single-family and multi-family. Demonstrates LA's pre-restriction building pattern. Current zoning would not allow this mix.` },
+      '90038': { name: 'East Hollywood', text: `Dense, diverse, transit-adjacent. Pre-war apartments and commercial strips. Under current rules, much is "non-conforming"—legal to maintain, illegal to build new.` },
+      '90041': { name: 'Eagle Rock', text: `Annexed in 1923. Mix of Craftsman homes and early apartments along Colorado Blvd. The walkable commercial strip predates auto-centric planning.` },
+      '90044': { name: 'Willowbrook', text: `Unincorporated area developed for Black families during segregation era when they were excluded from other neighborhoods. Limited investment due to redlining.` },
+      '90045': { name: 'Westchester', text: `Built in the 1940s for aviation workers. Single-family homes near LAX. Flight paths limit height, but R1 zoning restricts even where planes don't.` },
+      '90047': { name: 'South LA', text: `Developed for Black families after 1948 Shelley v. Kraemer struck down racial covenants. But exclusionary zoning continued segregation by banning apartments.` },
+      '90048': { name: 'Beverly Grove', text: `Mix of single-family and multi-family from different eras. The CBS Television City site shows how large parcels could enable density—if zoning allowed.` },
+      '90057': { name: 'Westlake', text: `One of LA's densest areas. Immigrant gateway neighborhood with pre-war apartments. MacArthur Park was designed when LA valued urban space. Density works.` },
+      '90062': { name: 'View Park/Windsor Hills', text: `Middle-class Black neighborhood developed in the 1940s-50s. Single-family homes on hillsides. Represents both achievement and the limitations of single-family-only development.` },
+      '90064': { name: 'Rancho Park/Cheviot Hills', text: `Post-war suburb with large lots and strict R1 zoning. Near transit (Expo Line) but zoning prevents density. <strong>The opportunity cost:</strong> prime land used for single-family only.` },
+      '90066': { name: 'Mar Vista', text: `Gregory Ain's Mar Vista Tract (1948) showed modernist affordable housing was possible. Today's zoning and Prop 13 make similar projects economically unfeasible.` },
+      '90067': { name: 'Century City', text: `Former 20th Century Fox backlot, master-planned in the 1960s. Proves that large-scale development works when permitted. But the zoning that enabled it no longer exists.` },
+      '90069': { name: 'West Hollywood', text: `Unincorporated until 1984. The county still regulated it, but enforcement was looser. Apartments, nightclubs, and density flourished. The LGBT community organized here partly because they could find housing. <span class="nar-section"><strong>The 1984 incorporation:</strong></span> When LA County moved to end rent control, a coalition of LGBT activists, seniors, and renters gathered 27% of registered voters' signatures in just 52 days. WeHo incorporated with 67% of the vote. Rents were frozen and rolled back. <span class="nar-section"><strong>The complexity:</strong></span> WeHo's density was built before rent control. The rent control preserved who lives there—but Stanford research shows it reduces supply and raises market rents for newcomers. WeHo proves both that density works AND that rent control has trade-offs.` },
+      '90071': { name: 'Financial District', text: `LA's tallest buildings but mostly offices. The 1999 Adaptive Reuse Ordinance converted some to housing. Still constrained by parking requirements for residential.` },
+      '90077': { name: 'Bel Air', text: `Gated community of estates on large lots. <strong class="highlight-red">95% R1 zoning</strong>—the highest in LA County. Average home price: $5M+. <span class="nar-section"><strong>The geographic equity pattern:</strong></span> Wealthy areas (Bel Air, Beverly Hills, Pacific Palisades, Calabasas) are 85-95% R1. Working-class areas (Koreatown, Pico-Union, Bell Gardens) are 15-25% R1. The map of R1 zoning is a map of who gets to exclude. Exclusion by design—and by zoning.` },
+      '90210': { name: 'Beverly Hills', text: `The symbol of LA wealth. Strict zoning, design review, and high barriers to development. <strong>The irony:</strong> Beverly Hills fights state housing mandates while its workers commute hours.` },
+      '90212': { name: 'Beverly Hills (South)', text: `South Beverly Hills has some apartments unlike the hills. Shows that even within exclusive cities, pre-existing density is tolerated but new density is blocked.` },
+      '90230': { name: 'Culver City', text: `Former movie studio town now tech hub. The Hayden Tract shows adaptive reuse potential. But residential development lags behind job growth, creating housing pressure.` },
+      '90232': { name: 'Culver City (Downtown)', text: `Historic downtown with pre-war buildings. The Platform and other projects show density is possible. But CEQA challenges and parking requirements slow development.` },
+      '90247': { name: 'Gardena', text: `Japanese-American community after WWII. Card clubs and light industry. Shows how ethnic communities built density when excluded from white suburbs.` },
+      '90248': { name: 'Gardena (South)', text: `Industrial and commercial mix near the 110. The kind of areas AB 2011 targets for housing conversion—if prevailing wage requirements are met.` },
+      '90254': { name: 'Hermosa Beach', text: `Beach city with small lots and density near the strand. Pre-war development pattern. Current zoning wouldn't allow this density to be built new.` },
+      '90266': { name: 'Manhattan Beach', text: `Wealthy beach city. Median home price exceeds $3M. Strict R1 zoning, minimal apartments. Local control used to exclude rather than include.` },
+      '90272': { name: 'Pacific Palisades', text: `Built on hillsides overlooking the ocean. <strong class="highlight-red">90% R1 zoning.</strong> Devastating fires in 2025 raised hard questions: should we rebuild the same way in fire zones? <span class="nar-section"><strong>The nuance:</strong></span> Some hillside restrictions address REAL safety—fire risk, water pressure for firefighting, evacuation routes. Toggle "Fire hazard zones" to see VHFHSZ areas. The challenge is separating legitimate fire safety from exclusionary preference. Not all regulation is bad; some protects lives.` },
+      '90274': { name: 'Rancho Palos Verdes', text: `Gated communities on the peninsula. Some of LA County's strictest development limits. Portuguese Bend landslide area further restricts building.` },
+      '90278': { name: 'Redondo Beach', text: `Beach city with mix of single-family and apartments near the pier. Pre-war density in spots. New development constrained by coastal regulations.` },
+      '90290': { name: 'Topanga', text: `Unincorporated canyon community in a Very High Fire Hazard Severity Zone. Septic systems, extreme fire risk, single-road evacuation routes. <span class="nar-section"><strong>The honest case for regulation:</strong></span> Some restrictions here address real safety. When fire sweeps through, narrow roads become death traps. Water pressure fails. This isn't about "character"—it's about lives. IMBY argues against preference-based exclusion, not against genuine safety codes. The challenge is telling them apart.` },
+      '90292': { name: 'Marina del Rey', text: `Master-planned marina community from the 1960s. County-controlled. Shows that large-scale waterfront development was once possible.` },
+      '90301': { name: 'Inglewood', text: `SoFi Stadium and Intuit Dome brought investment but housing hasn't kept pace. Jobs-housing imbalance means workers commute in. Transit (Crenshaw Line) helps but zoning doesn't.` },
+      '90302': { name: 'Inglewood (North)', text: `Historic Black neighborhood. Gentrification pressure from stadium development. The housing shortage means new residents displace existing ones.` },
+      '90401': { name: 'Santa Monica', text: `Beach city with significant pre-war density. Passed strict rent control in 1979 after 1,300+ units were demolished in 15 months. Today ~27,500 units are controlled. <span class="nar-section"><strong>The trade-off:</strong></span> Long-term tenants pay far below market. But Stanford research shows rent control reduces supply 15% and raises citywide rents 5.1%. Newcomers face higher costs because controlled tenants don't move. Santa Monica has built housing (along Wilshire, downtown) but fights state mandates to build more.` },
+      '90403': { name: 'Santa Monica (North)', text: `Mix of single-family and small apartments. Pre-war density. Measure R (2016) gave neighborhoods veto over zoning changes. Development nearly impossible.` },
+      '90501': { name: 'Torrance', text: `Aerospace suburb. Del Amo Fashion Center and industrial base. Housing costs pushed workers inland. Jobs-housing imbalance severe.` },
+      '90710': { name: 'San Pedro', text: `Port town with historic downtown. Cruise terminal and waterfront development. Housing constrained by coastal regulations and refinery neighbors.` },
+      '90731': { name: 'San Pedro (South)', text: `Working-class port community. Some pre-war density downtown. Refinery proximity affects development patterns. Environmental justice concerns.` },
+      '90802': { name: 'Long Beach (Downtown)', text: `Downtown Long Beach shows that mid-rise density works. The Pike and waterfront development attracted residents. Still constrained by parking requirements.` },
+      '91001': { name: 'Altadena', text: `Unincorporated foothill community. Historic Black neighborhood in northwest. Wildfires and the Hillside Ordinance constrain development.` },
+      '91101': { name: 'Pasadena (Old Town)', text: `Old Pasadena's revival shows adaptive reuse potential. But residential development lags commercial. Pasadena's design review adds time and cost.` },
+      '91103': { name: 'Pasadena (Northwest)', text: `Historic Black neighborhood. Pasadena resisted fair housing in the 1960s. Zoning perpetuates segregation patterns established by explicit discrimination.` },
+      '91201': { name: 'Glendale', text: `The Americana and downtown density show what's possible. But most of Glendale remains R1. Armenian immigrant community squeezed by housing costs.` },
+      '91301': { name: 'Agoura Hills', text: `Suburban city in the western Santa Monica Mountains. Very High Fire Hazard Severity Zone. Some regulations here address genuine fire safety.` },
+      '91302': { name: 'Calabasas', text: `Wealthy hillside suburb. Strict development limits, large lots. Celebrity enclave. Represents successful exclusion through zoning.` },
+      '91304': { name: 'Canoga Park', text: `Former agricultural area, now suburban San Fernando Valley. Warner Center nearby enables some density, but most area remains R1.` },
+      '91316': { name: 'Encino', text: `Affluent Valley neighborhood. Ventura Blvd commercial strip surrounded by R1. Transit-adjacent land used for single-family only.` },
+      '91324': { name: 'Northridge', text: `1994 earthquake revealed soft-story apartment vulnerabilities. Retrofit requirements added costs. CSUN brings student housing demand that zoning doesn't accommodate.` },
+      '91335': { name: 'Reseda', text: `Working-class Valley neighborhood. Pre-war apartments along commercial corridors. The Orange Line (now G Line) brought transit but zoning blocks density near stations.` },
+      '91340': { name: 'San Fernando', text: `Small city surrounded by LA. Historic Mexican-American community. Separate from LA's zoning but facing similar constraints. Housing affordable relative to region.` },
+      '91344': { name: 'Granada Hills', text: `Suburban Valley neighborhood. 1994 earthquake damage led to rebuilds—under stricter rules than original construction. The earthquake revealed what regulations had missed.` },
+      '91355': { name: 'Valencia', text: `Master-planned community in Santa Clarita. Shows that large-scale development works when permitted. But built as auto-dependent suburb.` },
+      '91364': { name: 'Woodland Hills', text: `Warner Center allows high-rises in the Valley. But surrounding area is R1. The contrast shows what's possible vs. what's permitted.` },
+      '91367': { name: 'Woodland Hills (South)', text: `Ventura Blvd commercial corridor surrounded by single-family. Warner Center specific plan enables density that would be illegal elsewhere.` },
+      '91401': { name: 'Van Nuys', text: `Valley's commercial hub. Mix of uses along Van Nuys Blvd. Pre-war buildings show denser past. Modern development constrained by parking requirements.` },
+      '91402': { name: 'Panorama City', text: `Post-war planned community, now lower-income. The Valley's first regional mall (1955) is struggling. Density exists but disinvestment shows zoning isn't everything.` },
+      '91403': { name: 'Sherman Oaks', text: `Affluent Valley neighborhood. Mix of hillside estates and flatland houses. Ventura Blvd has commercial, but surrounding area fights any change.` },
+      '91406': { name: 'Van Nuys (West)', text: `Residential Valley neighborhood. Mix of single-family and apartments along major streets. The Valley's pattern: corridors with density, blocks without.` },
+      '91423': { name: 'Sherman Oaks (South)', text: `South of Ventura Blvd, more apartments than the hills. Shows that some density exists where it was built before restrictions.` },
+      '91436': { name: 'Encino (Hills)', text: `Hillside estates overlooking the Valley. Hillside Ordinance applies. Fire risk in the hills. <strong>The trade-off:</strong> Views cost housing capacity.` },
+      '91501': { name: 'Burbank (Downtown)', text: `Burbank's downtown shows mid-rise potential. Warner Bros. and Disney employ thousands. But housing hasn't kept pace with jobs. Workers commute in.` },
+      '91502': { name: 'Burbank (Magnolia Park)', text: `Mix of single-family and small apartments. The Chandler Bikeway shows adaptive reuse of rail. Housing could follow transit if zoning allowed.` },
+      '91505': { name: 'Burbank (Media District)', text: `Studios and offices but little housing nearby. The jobs-housing imbalance creates traffic and displacement. Zoning separates work and home.` },
+      '91601': { name: 'North Hollywood', text: `NoHo Arts District shows density works in the Valley. The Red Line terminus could support more housing. <strong class="highlight-teal">Transit + housing = sustainable city.</strong>` },
+      '91602': { name: 'North Hollywood (West)', text: `Mix of Valley single-family and aging apartments. The Universal/NoHo area could be much denser given transit access. Zoning says no.` },
+      '91604': { name: 'Studio City', text: `Ventura Blvd commercial with hillside estates above. The contrast is stark: street-level shops, then nothing but single-family. Mixed-use banned.` },
+      '91606': { name: 'North Hollywood (East)', text: `Working-class Valley neighborhood. Apartments along major streets, houses behind. Pattern was established before modern restrictions froze it.` },
+      '91607': { name: 'Valley Village', text: `Between Studio City and North Hollywood. Mix of houses and apartments. The "village" name suggests community but zoning prevents walkable density.` },
+
+      // San Gabriel Valley
+      '91006': { name: 'Arcadia', text: `Home of the Santa Anita racetrack and excellent schools. Wealthy Chinese immigrant community since the 1990s. Large lots, strict R1, and resistance to change. <strong>The pattern:</strong> Buy into exclusion, then defend it.` },
+      '91007': { name: 'Arcadia (South)', text: `Commercial along Huntington Dr, single-family behind. The Gold Line could enable transit-oriented development but zoning says no. Car-dependent by law.` },
+      '91016': { name: 'Monrovia', text: `Gold Line city that hasn't built housing near its stations. The beautiful downtown could support apartments above shops. Instead: parking lots and single-family.` },
+      '91024': { name: 'Sierra Madre', text: `Small foothill city fiercely protective of "village character." Population has barely changed since 1970. Housing prices up 500%+. Character preserved, access denied.` },
+      '91030': { name: 'South Pasadena', text: `Fought the 710 freeway extension for 60 years. Historic downtown, tree-lined streets. <strong>The trade-off:</strong> Preserved beauty, but median home price exceeds $1.5M.` },
+      '91108': { name: 'San Marino', text: `LA's wealthiest city. Minimum lot size: 20,000 sq ft. No commercial, no apartments. <strong>Exclusion by design.</strong> The Huntington Library is here; housing isn't.` },
+      '91754': { name: 'Monterey Park', text: `First majority-Asian city in the continental US (1990). Chinese-American success story. But rising housing costs push out the working class that built it.` },
+      '91770': { name: 'Rosemead', text: `Working-class San Gabriel Valley. One of the more affordable areas—because it has apartments and commercial zoning. <strong class="highlight-teal">Relative affordability comes from relative density.</strong>` },
+      '91776': { name: 'San Gabriel', text: `Historic mission city, now Chinese-American cultural hub. The vibrant restaurants and shops on Valley Blvd emerged from looser zoning. Now "non-conforming."` },
+      '91780': { name: 'Temple City', text: `Suburban SGV city. Excellent schools attract families, but R1 zoning means only wealthy families can afford to live near them. <strong>Schools as exclusion.</strong>` },
+      '91801': { name: 'Alhambra', text: `Diverse SGV city with real downtown density. Pre-war apartments and mixed-use Main St. <strong class="highlight-teal">Proof that SGV can support urban form</strong> when zoning allows.` },
+      '91803': { name: 'Alhambra (South)', text: `More industrial, more affordable. The kinds of areas AB 2011 targets for housing conversion—commercial and light industrial near jobs.` },
+
+      // South Bay additions
+      '90245': { name: 'El Segundo', text: `Chevron refinery and aerospace. Massive jobs-housing imbalance. Workers commute from hours away because there's no housing near employment. Zoning separates work and home.` },
+      '90250': { name: 'Hawthorne', text: `SpaceX headquarters brought jobs; housing hasn't followed. Elon Musk can build rockets here but can't build apartments. <strong class="highlight-red">Rockets: legal. Housing: illegal.</strong>` },
+      '90260': { name: 'Lawndale', text: `Small South Bay city, more affordable than neighbors. Why? More apartments, smaller lots. <strong>The lesson:</strong> Affordability correlates with housing supply.` },
+      '90503': { name: 'Torrance (West)', text: `Near the beach, far from affordable. R1 zoning locks out everyone but homeowners. Workers at nearby refineries commute from inland.` },
+      '90504': { name: 'Torrance (Central)', text: `Del Amo Fashion Center and auto dealers but limited housing. Commercial land that could be mixed-use is instead parking lots and car dealerships.` },
+      '90505': { name: 'Torrance (South)', text: `Near the coast, heavily restricted. Coastal Commission adds another layer of review. <strong>The stack:</strong> Federal + State + Local + Coastal = nothing gets built.` },
+      '90506': { name: 'Torrance (North)', text: `Industrial and aerospace employment. Honda and Toyota headquarters. But housing is single-family only. The jobs-housing imbalance drives regional traffic.` },
+
+      // Antelope Valley
+      '93534': { name: 'Lancaster', text: `High desert city that grew when LA County became unaffordable. Long commutes to LA jobs. <strong>The sprawl consequence:</strong> When you can't build near jobs, people drive 2+ hours.` },
+      '93535': { name: 'Lancaster (East)', text: `Affordable by LA standards because it's 70+ miles from downtown. The housing crisis made even the desert expensive. Sprawl is the symptom, not the solution.` },
+      '93536': { name: 'Lancaster (West)', text: `Aerospace and solar industry. Edwards AFB nearby. Housing is available here because exclusionary zoning is less strict—not because anyone chose distance.` },
+      '93550': { name: 'Palmdale', text: `Sister city to Lancaster. LA's "drive until you qualify" destination. <strong>The tragedy:</strong> Working-class families exiled 70 miles from opportunity.` },
+      '93551': { name: 'Palmdale (West)', text: `Newer development, master-planned suburbs. What LA builds when it can't build near jobs. Car-dependent by design, isolated by necessity.` },
+      '93552': { name: 'Palmdale (East)', text: `Growing but distant. High-speed rail (if it ever comes) could change everything—if zoning allows density near stations. Current plans: don't.` },
+
+      // Pomona/Inland
+      '91710': { name: 'Chino', text: `Dairy farms becoming warehouses. The Inland Empire grows because LA won't. <strong>Regional displacement:</strong> Block housing in LA, push people to Chino.` },
+      '91711': { name: 'Claremont', text: `College town with beautiful downtown. The Claremont Colleges bring students and jobs, but housing hasn't kept pace. Professors can't afford to live near campus.` },
+      '91764': { name: 'Ontario', text: `Airport and logistics hub. Warehouses employ thousands; housing for workers is elsewhere. The IE's jobs-housing imbalance mirrors LA's.` },
+      '91765': { name: 'Diamond Bar', text: `1980s suburb, mostly R1. Master-planned exclusion. <strong>The pattern:</strong> New cities incorporated specifically to control (limit) development.` },
+      '91766': { name: 'Pomona', text: `Diverse, relatively affordable, with real urban form. Pomona proves density works when allowed. <strong class="highlight-teal">The anti-sprawl in the sprawl.</strong>` },
+      '91767': { name: 'Pomona (North)', text: `Cal Poly Pomona and fairgrounds. Student housing pressure. The campus could anchor transit-oriented development—if zoning allowed.` },
+
+      // Long Beach
+      '90803': { name: 'Belmont Shore', text: `Long Beach's charming beach neighborhood. Pre-war density with shops and apartments. <strong>Today:</strong> Zoned for what exists, but building more like it is illegal.` },
+      '90804': { name: 'Long Beach (Central)', text: `Diverse, dense, transit-served. The Blue Line connects to LA. Long Beach shows that mid-sized density works—when it's allowed to exist.` },
+      '90806': { name: 'Long Beach (North)', text: `Working-class area with mix of housing types. More affordable than coastal areas precisely because zoning allows more housing types.` },
+      '90807': { name: 'Long Beach (Bixby Knolls)', text: `Historic streetcar suburb with walkable commercial on Atlantic. The pattern was built before cars dominated. Now protected from replication.` },
+      '90808': { name: 'Long Beach (East)', text: `Post-war suburb, heavily R1. Near Cal State Long Beach but students can't afford nearby housing. Commuter campus by zoning, not choice.` },
+      '90813': { name: 'Long Beach (Downtown)', text: `The Pike, the Queen Mary, downtown revival. Long Beach proves that cities can change—when leadership allows it. <strong class="highlight-teal">Urbanism works.</strong>` },
+      '90814': { name: 'Belmont Heights', text: `Mix of historic single-family and pre-war apartments. The diversity of housing types creates diverse community. Current zoning would prohibit this mix.` },
+      '90815': { name: 'Long Beach (Los Altos)', text: `Traffic Circle and Lakewood Village. Post-war commercial strips surrounded by single-family. The car-dependent pattern that 1950s zoning mandated.` },
+
+      // Santa Clarita
+      '91321': { name: 'Newhall', text: `Historic downtown Santa Clarita. The oldest part of the valley, with some pre-war buildings. Surrounded by master-planned sprawl.` },
+      '91350': { name: 'Santa Clarita', text: `Master-planned suburb from the 1960s-present. Valencia shows that large-scale development works when permitted—but only auto-dependent sprawl was allowed.` },
+      '91354': { name: 'Valencia (Town Center)', text: `Suburban "town center" designed for cars. The irony: master-planned with every amenity except walkability. Parking minimums made it unwalkable.` },
+      '91387': { name: 'Canyon Country', text: `Working-class Santa Clarita. More affordable than Valencia because of smaller lots and older housing stock. <strong>Affordability tracks density.</strong>` },
+
+      // Southeast LA
+      '90201': { name: 'Bell Gardens', text: `Small, dense, working-class. One of LA County's poorest cities—but also one of its most urban. <strong class="highlight-teal">The accidental affordability pattern:</strong> Cities that allowed more housing types (apartments, duplexes, smaller lots) remain more affordable. Bell Gardens, Lawndale, Rosemead, Maywood—their relative affordability tracks their relative density. It's not that poor people moved here; it's that here, working-class families can still find housing.` },
+      '90220': { name: 'Compton', text: `Historic Black community, now majority Latino. Decades of disinvestment followed redlining. Housing built despite obstacles, not because of policy.` },
+      '90221': { name: 'Compton (East)', text: `Industrial and residential mix. The kinds of areas that could add housing on commercial land—if prevailing wage requirements are met.` },
+      '90222': { name: 'Compton (West)', text: `Residential neighborhoods built for Black families excluded elsewhere. The legacy of segregation shapes housing patterns today.` },
+      '90240': { name: 'Downey', text: `Suburban city with aerospace heritage. The oldest McDonald's is here (1953). Housing patterns from the same era—single-family, car-dependent.` },
+      '90241': { name: 'Downey (South)', text: `Near the 105 and 605 interchange. Freeway-adjacent but not transit-served. The infrastructure choices of the 1950s still shape development.` },
+      '90255': { name: 'Huntington Park', text: `Dense, Latino, working-class. Pacific Blvd is a vibrant commercial corridor. <strong class="highlight-teal">Urban vitality exists where zoning allows it.</strong>` },
+      '90262': { name: 'Lynwood', text: `Working-class city rebuilding after decades of disinvestment. New housing is possible here because land is cheaper and restrictions somewhat looser.` },
+      '90270': { name: 'Maywood', text: `Smallest and densest city in LA County. Proves that density is compatible with community—and with affordability. Not everyone wants a yard.` },
+      '90280': { name: 'South Gate', text: `Former GM plant, now The Citadel outlets. Industrial land conversion shows what's possible. Housing could follow if zoning allowed.` },
+    };
+
+    // === FORMAT NARRATIVE (add line breaks before bold headers) ===
+    function formatNarrative(text) {
+      // Convert <strong>Header:</strong> patterns into section breaks (but not the title)
+      let first = true;
+      return text.replace(/<strong([^>]*)>([^<]+)<\/strong>/g, (match, attrs, content) => {
+        // Skip highlights
+        if (attrs.includes('highlight')) {
+          return match;
+        }
+        // Skip the first bold (the title)
+        if (first) {
+          first = false;
+          return match;
+        }
+        // If it ends with colon, it's a section header
+        if (content.endsWith(':')) {
+          return `<span class="nar-section"><strong>${content}</strong></span>`;
+        }
+        return match;
+      });
+    }
+
+    // === DYNAMIC NARRATIVE GENERATOR ===
+    function generateNarrative(zip, data) {
+      // Check for custom narrative first
+      if (CUSTOM_NARRATIVES[zip]) {
+        const raw = `<strong>${CUSTOM_NARRATIVES[zip].name}</strong> — ${CUSTOM_NARRATIVES[zip].text}`;
+        return formatNarrative(raw);
+      }
+
+      // Generate based on characteristics
+      const name = data?.name || 'This area';
+      const r1 = data?.r1Pct || 0.5;
+      const hillside = data?.isHillside || false;
+      const commercial = data?.commercialPct || 0;
+      const industrial = data?.industrialPct || 0;
+      const acres = data?.totalAcres || 0;
+
+      let narrative = `<strong>${name}</strong> — `;
+
+      // R1 percentage determines primary narrative
+      if (r1 > 0.8) {
+        narrative += `This zipcode is <strong class="highlight-red">${Math.round(r1*100)}% single-family zoning</strong>. `;
+        narrative += `Under R1, each lot can only have ONE housing unit—no duplexes, no granny flats, no apartments. `;
+        narrative += `This restriction dates to the 1956 downzoning when LA converted millions of acres to single-family only. `;
+        if (hillside) {
+          narrative += `<br><br>As a hillside area, the 2011 ordinance adds another layer: FAR limits based on slope, grading caps of 1,000 cubic yards. The estates that define this neighborhood couldn't be built under current rules.`;
+        } else {
+          narrative += `<br><br><strong>The impact:</strong> If R1 were reformed here, an estimated <strong class="highlight-teal">${formatNumber(acres * r1 * 10 * 0.35)} additional units</strong> could be built over time.`;
+        }
+      } else if (r1 > 0.5) {
+        narrative += `About <strong>${Math.round(r1*100)}%</strong> of this area is single-family zoning. `;
+        narrative += `The remaining ${Math.round((1-r1)*100)}% allows some multi-family or commercial uses. `;
+        narrative += `This mix likely reflects development that happened before the 1956 downzoning froze land use in place. `;
+        narrative += `<br><br>Under current rules, the existing apartments and mixed-use buildings are "non-conforming"—legal to maintain but <strong class="highlight-red">illegal to build new</strong>.`;
+      } else if (commercial > 0.3 || industrial > 0.2) {
+        narrative += `This area has significant commercial (${Math.round(commercial*100)}%) or industrial (${Math.round(industrial*100)}%) zoning. `;
+        if (commercial > industrial) {
+          narrative += `Commercial corridors could be converted to mixed-use housing under reforms like AB 2011—if developers pay prevailing wages. `;
+        } else {
+          narrative += `Industrial areas face cleanup and compatibility challenges, but some could become housing. The Arts District shows successful industrial-to-residential conversion.`;
+        }
+        narrative += `<br><br><strong>The opportunity:</strong> Commercial and industrial land near jobs could add housing without touching single-family neighborhoods.`;
+      } else {
+        narrative += `This area has relatively diverse zoning with only <strong>${Math.round(r1*100)}%</strong> single-family. `;
+        narrative += `This density likely predates modern restrictions—LA's most vibrant neighborhoods were built before the 1956 downzoning. `;
+        narrative += `<br><br><strong class="highlight-teal">This is what LA could look like</strong> if we hadn't banned this building pattern in most of the city.`;
+      }
+
+      // Add hillside note if applicable but not already mentioned
+      if (hillside && r1 <= 0.8) {
+        narrative += `<br><br><strong>Hillside area:</strong> The 2011 Hillside Ordinance limits FAR based on slope and caps grading. These rules make hillside development expensive and slow.`;
+      }
+
+      return narrative;
+    }
+
+    // === DEFAULT CITYWIDE NARRATIVE ===
+    const DEFAULT_NARRATIVE = `<strong>Los Angeles County</strong> — 349 zipcodes, ~10 million people, and a housing crisis decades in the making.
+
+<span class="nar-section"><strong>The layers:</strong></span>
+<strong>Federal (1934-present)</strong><br>
+FHA redlining, highways through neighborhoods, Fair Housing Act (but exclusionary zoning continues)
+<br><br>
+<strong>State (1970-present)</strong><br>
+CEQA (legitimate uses + exploitation), Prop 13 favoring commercial, rent control (1979+), recent reforms (SB 9, AB 2011)
+<br><br>
+<strong>Local (1908-present)</strong><br>
+First zoning, parking minimums, 1956 downzoning, Hillside Ordinance, rent stabilization
+<br><br>
+<strong>Labor</strong><br>
+Prevailing wage requirements link housing reform to worker protections
+
+<span class="nar-section"><strong>Key patterns in the data:</strong></span>
+• <strong>Geographic equity:</strong> Wealthy areas (Bel Air, Beverly Hills) are 85-95% R1. Working-class areas (Koreatown, Pico-Union) are 15-25% R1. The map of R1 is a map of exclusion.
+<br><br>
+• <strong>Accidental affordability:</strong> Cities that allowed more housing types (Bell Gardens, Lawndale, Rosemead) remain more affordable. Affordability tracks density.
+<br><br>
+• <strong>Rent control trade-off:</strong> Protects incumbent tenants but reduces supply 15% and raises citywide rents 5.1% (Stanford study). Benefits long-term residents regardless of income; costs fall on newcomers.
+
+<span class="nar-section"><strong>The result:</strong></span>
+The neighborhoods we admire most—Hollywood Hills estates, Koreatown's density, Venice's cottages—would be <strong class="highlight-red">illegal to build today</strong>. Existing buildings are "non-conforming"—grandfathered in, but the pattern can't be replicated.
+
+<span class="nar-section"><strong>Explore:</strong></span>
+Click the <strong>Reform</strong> tab to toggle policies. Click any <strong>zipcode</strong> on the map to see its story.`;
+
+    // === MAP ===
+    let map, zipcodeLayer, transitLayer, freewayLayer, fireZoneLayer;
+
+    function initMap() {
+      map = L.map('map', {
+        center: [34.05, -118.25],
+        zoom: 10,
+        minZoom: 9,
+        maxZoom: 15
+      });
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        subdomains: 'abcd'
+      }).addTo(map);
+
+      console.log('Map initialized');
+    }
+
+    // Create historical transit layer based on selected era
+    function createTransitLayer(year) {
+      const layers = [];
+      const routes = getTransitForYear(year);
+
+      routes.forEach(route => {
+        // Create polyline for the route
+        const polyline = L.polyline(route.coords, {
+          color: route.color,
+          weight: route.type === 'pe' ? 4 : (route.type === 'lary' ? 3 : 5),
+          opacity: 0.8,
+          dashArray: route.type === 'lary' ? '5, 5' : null
+        });
+
+        // Add tooltip
+        const operatorLabel = route.type === 'pe' ? 'Pacific Electric (Red Car)' :
+                             route.type === 'lary' ? 'LA Railway (Yellow Car)' : 'Metro';
+        const yearInfo = route.endYear ? `${route.startYear}-${route.endYear}` : `${route.startYear}-present`;
+        polyline.bindTooltip(`<b>${route.name}</b><br>${operatorLabel}<br>${yearInfo}`, { sticky: true });
+
+        layers.push(polyline);
+      });
+
+      // Also add Metro stations for modern era
+      if (year >= 1990) {
+        METRO_STATIONS.forEach(station => {
+          const marker = L.circleMarker([station.lat, station.lng], {
+            radius: 5,
+            fillColor: '#0066cc',
+            color: '#ffffff',
+            weight: 2,
+            fillOpacity: 0.9
+          });
+          marker.bindTooltip(`<b>${station.name}</b><br>Lines: ${station.lines.join(', ')}`, { direction: 'top' });
+          layers.push(marker);
+        });
+      }
+
+      return L.layerGroup(layers);
+    }
+
+    function updateTransitLayer() {
+      if (transitLayer) {
+        map.removeLayer(transitLayer);
+        transitLayer = null;
+      }
+      if (state.showTransit) {
+        transitLayer = createTransitLayer(state.transitEra);
+        transitLayer.addTo(map);
+      }
+    }
+
+    // Create freeway layer showing routes built by current map year
+    function createFreewayLayer(year) {
+      const layers = [];
+      const freeways = getFreewaysForYear(year);
+
+      freeways.forEach(freeway => {
+        const polyline = L.polyline(freeway.coords, {
+          color: freeway.status === 'construction' ? '#999999' : '#444444',
+          weight: 6,
+          opacity: freeway.status === 'construction' ? 0.5 : 0.7,
+          dashArray: freeway.status === 'construction' ? '10, 10' : null
+        });
+
+        const statusText = freeway.status === 'construction' ? ' (under construction)' : '';
+        const noteText = freeway.note ? `<br><em>${freeway.note}</em>` : '';
+        polyline.bindTooltip(`<b>${freeway.name}</b>${statusText}<br>Opened: ${freeway.opened}${noteText}`, { sticky: true });
+
+        layers.push(polyline);
+      });
+
+      return L.layerGroup(layers);
+    }
+
+    function updateFreewayLayer() {
+      if (freewayLayer) {
+        map.removeLayer(freewayLayer);
+        freewayLayer = null;
+      }
+      if (state.showFreeways) {
+        freewayLayer = createFreewayLayer(state.year);
+        freewayLayer.addTo(map);
+      }
+    }
+
+    function updateFireZoneStyle() {
+      if (!zipcodeLayer || !state.geojson) return;
+
+      zipcodeLayer.eachLayer(layer => {
+        const zip = layer.feature.properties.zipcode;
+        const baseStyle = styleZipcode(layer.feature);
+
+        if (state.showFireZones && FIRE_HAZARD_ZIPS.includes(zip)) {
+          // Apply fire zone overlay on top of base style
+          layer.setStyle({
+            ...baseStyle,
+            color: '#d63031',
+            weight: 3,
+            dashArray: '5, 5'
+          });
+        } else {
+          // Reset to normal style (clear dashArray)
+          layer.setStyle({
+            ...baseStyle,
+            dashArray: null
+          });
+        }
+      });
+    }
+
+    function styleZipcode(feature) {
+      const props = feature.properties;
+      const r1 = props.r1Pct || 0.5;
+      const isSelected = props.zipcode === state.selectedZip;
+      const activeReforms = Object.values(state.reforms).filter(v => v).length;
+
+      let fillColor;
+      let fillOpacity = 0.45;
+
+      // If colors are off, use transparent fill
+      if (!state.showColors) {
+        fillColor = 'rgba(0, 0, 0, 0.02)';
+        fillOpacity = 0.02;
+      } else if (state.year < 1956) {
+        // Historical view: golden/sepia tones (like old photos)
+        fillColor = `rgba(180, 140, 60, ${0.2 + r1 * 0.35})`;
+        fillOpacity = 0.5;
+      } else if (activeReforms > 0) {
+        // Reform view - blue/teal for potential
+        const mf = props.r2r4Pct || 0.2;
+        const commercial = props.commercialPct || 0.1;
+        const isCoastal = ['90245','90254','90266','90272','90274','90278','90291','90292','90401','90402','90403','90405','90710','90731','90802','90803'].includes(props.zipcode);
+
+        let benefit = 0;
+
+        // Zoning reforms
+        if (state.reforms.removeR1) benefit += r1 * 0.5;  // Big impact scales with R1%
+        if (state.reforms.noHeightLimits) benefit += mf * 0.3;  // More impact in multi-family areas
+        if (state.reforms.noParkingMins) benefit += 0.12;  // Universal modest benefit
+        if (state.reforms.noHillside && props.isHillside) benefit += 0.35;
+        if (state.reforms.noSetbacks) benefit += 0.06;
+        if (state.reforms.noLotSize) benefit += r1 * 0.15;  // More impact in R1 areas
+
+        // Environmental
+        if (state.reforms.noCEQA) benefit += 0.1;  // Universal
+        if (state.reforms.noCoastal && isCoastal) benefit += 0.25;
+
+        // Fiscal
+        if (state.reforms.reformProp13) benefit += 0.05;
+        if (state.reforms.noTransitFees) benefit += 0.08;
+        if (state.reforms.reformRentControl) benefit += mf * 0.2;  // More impact in rental areas
+
+        // Labor (modest - trade-off with workers)
+        if (state.reforms.noPrevailingWage) benefit += 0.08;
+        if (state.reforms.noLocalHire) benefit += 0.02;
+        if (state.reforms.noUnionOnly) benefit += 0.04;
+
+        // Process
+        if (state.reforms.byRight) benefit += 0.12;
+        if (state.reforms.noDesignReview) benefit += 0.05;
+
+        // Color thresholds adjusted for more reforms
+        if (benefit > 0.4) fillColor = 'rgba(45, 100, 160, 0.6)';
+        else if (benefit > 0.25) fillColor = 'rgba(45, 100, 160, 0.45)';
+        else if (benefit > 0.1) fillColor = 'rgba(45, 100, 160, 0.3)';
+        else fillColor = 'rgba(100, 120, 150, 0.2)';
+      } else {
+        // Current restrictions: warm colors = more R1
+        if (r1 > 0.7) fillColor = 'rgba(184, 76, 53, 0.5)';
+        else if (r1 > 0.4) fillColor = 'rgba(184, 76, 53, 0.35)';
+        else if (r1 > 0.2) fillColor = 'rgba(200, 140, 120, 0.35)';
+        else fillColor = 'rgba(107, 91, 149, 0.3)';
+      }
+
+      return {
+        fillColor,
+        fillOpacity: isSelected ? 0.75 : fillOpacity,
+        color: isSelected ? '#b84c35' : 'rgba(60,60,60,0.3)',
+        weight: isSelected ? 3 : 1
+      };
+    }
+
+    function loadZipcodes(geojson) {
+      if (zipcodeLayer) map.removeLayer(zipcodeLayer);
+
+      zipcodeLayer = L.geoJSON(geojson, {
+        style: styleZipcode,
+        onEachFeature: (feature, layer) => {
+          const zip = feature.properties.zipcode;
+          // Prefer name from zipcode data (has proper names) over GeoJSON (many are "LA County")
+          const dataName = state.zipcodeData && state.zipcodeData[zip] ? state.zipcodeData[zip].name : null;
+          const name = dataName || feature.properties.name || 'LA Area';
+
+          layer.bindTooltip(`<b>${zip}</b> ${name}`, { direction: 'top' });
+
+          layer.on('click', () => selectZipcode(zip));
+          layer.on('mouseover', function() {
+            if (state.selectedZip !== zip) {
+              this.setStyle({ weight: 2, color: '#f5a623' });
+            }
+          });
+          layer.on('mouseout', function() {
+            if (state.selectedZip !== zip) {
+              zipcodeLayer.resetStyle(this);
+            }
+          });
+        }
+      }).addTo(map);
+
+      console.log('Loaded', geojson.features.length, 'zipcodes');
+    }
+
+    function refreshMapStyle() {
+      if (zipcodeLayer) zipcodeLayer.setStyle(styleZipcode);
+    }
+
+    // === UI UPDATES ===
+    function selectZipcode(zip) {
+      state.selectedZip = zip;
+      document.getElementById('back-btn').style.display = 'block';
+
+      // Switch to About tab
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelector('[data-tab="about"]').classList.add('active');
+      document.getElementById('tab-about').classList.add('active');
+
+      updatePanel();
+      refreshMapStyle();
+
+      // Fly to zipcode
+      const feature = state.geojson.features.find(f => f.properties.zipcode === zip);
+      if (feature && feature.properties.INTPTLAT10) {
+        map.flyTo([
+          parseFloat(feature.properties.INTPTLAT10),
+          parseFloat(feature.properties.INTPTLON10)
+        ], 13);
+      }
+    }
+
+    function clearSelection() {
+      state.selectedZip = null;
+      document.getElementById('back-btn').style.display = 'none';
+      updatePanel();
+      refreshMapStyle();
+      map.flyTo([34.05, -118.25], 10);
+    }
+
+    function updatePanel() {
+      const zip = state.selectedZip;
+      const data = zip && state.zipcodeData ? state.zipcodeData[zip] : null;
+
+      // Title
+      if (zip && data) {
+        document.getElementById('title').textContent = data.name || zip;
+        document.getElementById('subtitle').textContent = `${zip} · ${data.totalAcres?.toLocaleString() || '—'} acres · ${Math.round((data.r1Pct || 0) * 100)}% R1`;
+      } else {
+        document.getElementById('title').textContent = 'Los Angeles';
+        document.getElementById('subtitle').textContent = 'Citywide Overview · 302,000 acres · ~60% R1';
+      }
+
+      // Stats
+      const impact = calculateImpact(zip);
+      document.getElementById('stat-units').textContent = formatNumber(impact.units);
+      document.getElementById('stat-gdp').textContent = formatMoney(impact.gdp);
+      document.getElementById('stat-cost').textContent = impact.costReduction > 0 ? `-${impact.costReduction}%` : '—';
+
+      // Narrative - use dynamic generator or timeline narrative
+      if (zip && data) {
+        document.getElementById('narrative').innerHTML = generateNarrative(zip, data);
+      } else if (state.year !== 2026) {
+        // Show timeline narrative for historical view on citywide
+        updateTimelineNarrative();
+      } else {
+        document.getElementById('narrative').innerHTML = DEFAULT_NARRATIVE;
+      }
+
+      // Regulations for year
+      updateRegulations();
+    }
+
+    function updateRegulations() {
+      const year = state.year;
+      document.getElementById('reg-year').textContent = year;
+
+      const active = REGULATIONS.filter(r => r.year <= year);
+      const list = document.getElementById('reg-list');
+
+      if (active.length === 0) {
+        list.innerHTML = '<div class="reg-item"><div class="reg-header"><span class="reg-year">—</span><span class="reg-name">Minimal regulation. Most of LA was farmland, orchards, and small towns.</span></div></div>';
+      } else {
+        // Show last 8 regulations, most recent first
+        list.innerHTML = active.slice(-8).reverse().map(r =>
+          `<div class="reg-item" onclick="this.classList.toggle('expanded')">
+            <div class="reg-header">
+              <span class="reg-year">${r.year}</span>
+              <span class="reg-name">${r.name}</span>
+              <span class="reg-level ${r.level}">${r.level}</span>
+            </div>
+            <div class="reg-desc">${r.desc}</div>
+          </div>`
+        ).join('');
+      }
+    }
+
+    function updateTimelineNarrative() {
+      const narrative = getTimelineNarrative(state.year);
+      if (!narrative) return;
+
+      const moodColors = {
+        possibility: 'var(--positive)',
+        building: 'var(--positive)',
+        golden: '#b8860b',
+        turning: '#6b5b95',
+        warning: '#d4a017',
+        crisis: 'var(--accent)',
+        mixed: 'var(--text-muted)'
+      };
+
+      const html = `
+        <div class="timeline-narrative" style="margin-bottom: 24px; padding: 20px; background: var(--bg-card); border-radius: 12px; border-left: 4px solid ${moodColors[narrative.mood] || 'var(--accent)'};">
+          <div style="font-family: var(--font-display); font-size: 22px; font-weight: 700; color: ${moodColors[narrative.mood] || 'var(--accent)'}; margin-bottom: 8px;">${state.year}: ${narrative.era}</div>
+          <div style="font-size: 15px; line-height: 1.8; color: var(--text-main);">${narrative.text}</div>
+        </div>
+        ${DEFAULT_NARRATIVE}
+      `;
+      document.getElementById('narrative').innerHTML = html;
+    }
+
+    function calculateImpact(zip) {
+      const r = state.reforms;
+      const activeCount = Object.values(r).filter(v => v).length;
+
+      if (activeCount === 0) {
+        return { units: 0, gdp: 0, costReduction: 0 };
+      }
+
+      let units = 0;
+      let costMultiplier = 1.0; // Tracks cost reductions
+
+      if (zip && state.zipcodeData && state.zipcodeData[zip]) {
+        const d = state.zipcodeData[zip];
+        const acres = d.totalAcres || 1000;
+        const r1 = d.r1Pct || 0.5;
+        const mf = d.r2r4Pct || 0.2;
+        const isCoastal = ['90245','90254','90266','90272','90274','90278','90291','90292','90401','90402','90403','90405','90710','90731','90802','90803'].includes(zip);
+
+        // === ZONING ===
+        if (r.removeR1) units += acres * r1 * 10 * 0.35;
+        if (r.noHeightLimits) units += acres * mf * 5 * 0.3;
+        if (r.noSetbacks) units *= 1.06;
+        if (r.noLotSize) units *= 1.08;
+        if (r.noHillside && d.isHillside) units *= 1.5;
+
+        // === ENVIRONMENTAL ===
+        if (r.noCEQA) units *= 1.10;
+        if (r.noCoastal && isCoastal) units *= 1.25;
+
+        // === FISCAL (cost reductions increase feasible units) ===
+        if (r.noParkingMins) { units *= 1.15; costMultiplier *= 0.82; }
+        if (r.reformProp13) units *= 1.05; // Cities more willing to zone for housing
+        if (r.noTransitFees) { units *= 1.08; costMultiplier *= 0.90; }
+        if (r.reformRentControl) units *= 1.15; // Stanford: rent control reduces supply 15%
+
+        // === LABOR (cost reductions but flagged) ===
+        if (r.noPrevailingWage) { units *= 1.12; costMultiplier *= 0.78; }
+        if (r.noLocalHire) { units *= 1.02; costMultiplier *= 0.97; }
+        if (r.noUnionOnly) { units *= 1.05; costMultiplier *= 0.92; }
+
+        // === PROCESS ===
+        if (r.byRight) units *= 1.15;
+        if (r.noDesignReview) units *= 1.05;
+
+      } else {
+        // === CITYWIDE ESTIMATES ===
+        const totalR1Acres = 181000;
+        const mfAcres = 60000;
+        const hillsideAcres = 25000;
+        const coastalAcres = 15000;
+
+        // Zoning
+        if (r.removeR1) units += totalR1Acres * 10 * 0.35;
+        if (r.noHeightLimits) units += mfAcres * 5 * 0.3;
+        if (r.noSetbacks) units *= 1.06;
+        if (r.noLotSize) units *= 1.08;
+        if (r.noHillside) units += hillsideAcres * 8 * 0.3;
+
+        // Environmental
+        if (r.noCEQA) units *= 1.10;
+        if (r.noCoastal) units += coastalAcres * 5 * 0.2;
+
+        // Fiscal
+        if (r.noParkingMins) { units *= 1.15; costMultiplier *= 0.82; }
+        if (r.reformProp13) units *= 1.05;
+        if (r.noTransitFees) { units *= 1.08; costMultiplier *= 0.90; }
+        if (r.reformRentControl) units *= 1.15; // Stanford: rent control reduces supply 15%
+
+        // Labor
+        if (r.noPrevailingWage) { units *= 1.12; costMultiplier *= 0.78; }
+        if (r.noLocalHire) { units *= 1.02; costMultiplier *= 0.97; }
+        if (r.noUnionOnly) { units *= 1.05; costMultiplier *= 0.92; }
+
+        // Process
+        if (r.byRight) units *= 1.15;
+        if (r.noDesignReview) units *= 1.05;
+      }
+
+      // GDP: Hsieh-Moretti calculation
+      // workers = units × household_size × workers_per_household
+      // gdp_gain = workers × national_wage × LA_premium × agglomeration
+      const workers = units * 2.3 * 1.4;
+      const gdp = workers * 65000 * 0.20 * 1.15;
+
+      // Cost reduction percentage
+      const costReduction = Math.round((1 - costMultiplier) * 100);
+
+      return {
+        units: Math.round(units),
+        gdp: Math.round(gdp),
+        costReduction: costReduction
+      };
+    }
+
+    function formatNumber(n) {
+      if (!n) return '—';
+      if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+      if (n >= 1e3) return Math.round(n / 1e3) + 'K';
+      return n.toLocaleString();
+    }
+
+    function formatMoney(n) {
+      if (!n) return '—';
+      if (n >= 1e12) return '$' + (n / 1e12).toFixed(1) + 'T';
+      if (n >= 1e9) return '$' + (n / 1e9).toFixed(1) + 'B';
+      if (n >= 1e6) return '$' + (n / 1e6).toFixed(1) + 'M';
+      return '$' + Math.round(n / 1e3) + 'K';
+    }
+
+    // === BUILD TOGGLE LIST ===
+    function buildToggleList() {
+      const list = document.getElementById('toggle-list');
+      const categories = {
+        zoning: 'Zoning & Land Use (Local)',
+        environmental: 'Environmental (State)',
+        fiscal: 'Fiscal & Fees',
+        labor: 'Labor Requirements',
+        process: 'Approval Process'
+      };
+
+      let html = '';
+      let currentCategory = '';
+
+      for (const [id, info] of Object.entries(REFORM_INFO)) {
+        if (info.category !== currentCategory) {
+          currentCategory = info.category;
+          html += `<div class="toggle-category">${categories[currentCategory] || currentCategory}</div>`;
+        }
+        html += `
+          <div class="toggle-wrapper">
+            <label class="toggle-item">
+              <input type="checkbox" data-reform="${id}">
+              <span class="toggle-switch"></span>
+              <span class="toggle-label">${info.name}</span>
+              <span class="toggle-tag ${info.tag}">${info.tag === 'labor' ? '⚙️' : info.tag}</span>
+            </label>
+            <div class="toggle-desc">${info.desc}<br><em>${info.impact}</em></div>
+          </div>
+        `;
+      }
+      list.innerHTML = html;
+    }
+
+    // === EVENT HANDLERS ===
+    function setupEvents() {
+      // Build dynamic toggle list
+      buildToggleList();
+
+      // Search
+      document.getElementById('search-btn').addEventListener('click', () => {
+        const zip = document.getElementById('search-input').value.trim();
+        if (/^\d{5}$/.test(zip)) {
+          selectZipcode(zip);
+        }
+      });
+      document.getElementById('search-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') document.getElementById('search-btn').click();
+      });
+
+      // Back button
+      document.getElementById('back-btn').addEventListener('click', clearSelection);
+
+      // Logo click = reset to citywide
+      document.getElementById('logo').addEventListener('click', clearSelection);
+
+      // Tab switching
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          tab.classList.add('active');
+          document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+        });
+      });
+
+      // Toggles
+      document.querySelectorAll('[data-reform]').forEach(input => {
+        input.addEventListener('change', () => {
+          state.reforms[input.dataset.reform] = input.checked;
+          updatePanel();
+          refreshMapStyle();
+        });
+      });
+
+      // Timeline slider
+      const slider = document.getElementById('year-slider');
+      const yearDisplay = document.getElementById('year-display');
+
+      slider.addEventListener('input', () => {
+        state.year = parseInt(slider.value);
+        yearDisplay.textContent = state.year;
+        updateRegulations();
+        refreshMapStyle();
+        // Update freeway layer if visible (shows freeways built by current year)
+        if (state.showFreeways) {
+          updateFreewayLayer();
+        }
+        // Update citywide narrative when scrubbing timeline
+        if (!state.selectedZip) {
+          updateTimelineNarrative();
+        }
+      });
+
+      // Color toggle
+      document.getElementById('color-toggle').addEventListener('change', (e) => {
+        state.showColors = e.target.checked;
+        document.getElementById('legend-items').style.opacity = state.showColors ? 1 : 0.3;
+        refreshMapStyle();
+      });
+
+      // Transit toggle
+      document.getElementById('transit-toggle').addEventListener('change', (e) => {
+        state.showTransit = e.target.checked;
+        document.getElementById('transit-era').disabled = !e.target.checked;
+        updateTransitLayer();
+      });
+
+      // Transit era selector
+      document.getElementById('transit-era').addEventListener('change', (e) => {
+        state.transitEra = parseInt(e.target.value);
+        updateTransitLayer();
+      });
+
+      // Freeway toggle
+      document.getElementById('freeway-toggle').addEventListener('change', (e) => {
+        state.showFreeways = e.target.checked;
+        updateFreewayLayer();
+      });
+
+      // Fire zone toggle
+      document.getElementById('fire-toggle').addEventListener('change', (e) => {
+        state.showFireZones = e.target.checked;
+        updateFireZoneStyle();
+      });
+
+      // Legend collapse toggle
+      document.getElementById('legend-header').addEventListener('click', () => {
+        document.getElementById('legend').classList.toggle('collapsed');
+      });
+    }
+
+    // === INIT ===
+    async function init() {
+      initMap();
+      setupEvents();
+
+      // Sync checkbox state with initial state (browser may auto-fill)
+      document.getElementById('color-toggle').checked = state.showColors;
+      document.getElementById('transit-toggle').checked = state.showTransit;
+      document.getElementById('transit-era').disabled = !state.showTransit;
+      document.getElementById('transit-era').value = state.transitEra;
+      document.getElementById('freeway-toggle').checked = state.showFreeways;
+      document.getElementById('fire-toggle').checked = state.showFireZones;
+
+      try {
+        const [geoRes, dataRes] = await Promise.all([
+          fetch('data/la-zipcodes.geojson'),
+          fetch('data/zipcode-data.json')
+        ]);
+
+        state.geojson = await geoRes.json();
+        state.zipcodeData = await dataRes.json();
+
+        loadZipcodes(state.geojson);
+        updatePanel();
+        console.log('IMBY loaded');
+      } catch (err) {
+        console.error('Failed to load data:', err);
+        document.getElementById('narrative').innerHTML =
+          '<p style="color:var(--neon-red)">Failed to load data. Check console.</p>';
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
