@@ -219,18 +219,18 @@
     }
     .stats-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 12px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
     }
     .stat-box {
       background: var(--bg-card);
-      padding: 18px 14px;
-      border-radius: 12px;
+      padding: 10px 6px;
+      border-radius: 8px;
       text-align: center;
     }
     .stat-value {
       font-family: var(--font-display);
-      font-size: 24px;
+      font-size: 16px;
       font-weight: 700;
       color: var(--accent);
     }
@@ -709,19 +709,19 @@
           <div class="stats-grid">
             <div class="stat-box">
               <div class="stat-value" id="stat-units">—</div>
-              <div class="stat-label">Units Possible</div>
+              <div class="stat-label">Units</div>
             </div>
             <div class="stat-box">
               <div class="stat-value" id="stat-gdp">—</div>
-              <div class="stat-label">GDP/Year</div>
+              <div class="stat-label">GDP</div>
             </div>
             <div class="stat-box">
               <div class="stat-value" id="stat-cost">—</div>
-              <div class="stat-label">Cost Reduction</div>
+              <div class="stat-label">Cost</div>
             </div>
             <div class="stat-box">
               <div class="stat-value" id="stat-time">—</div>
-              <div class="stat-label">Approval Time</div>
+              <div class="stat-label">Time</div>
             </div>
           </div>
         </div>
