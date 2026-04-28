@@ -487,6 +487,27 @@
       padding: 32px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     }
+    .intro-content {
+      position: relative;
+    }
+    .intro-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--text-muted);
+      border-radius: 4px;
+    }
+    .intro-close:hover {
+      background: var(--bg-card);
+      color: var(--text-main);
+    }
     .intro-content h1 {
       font-family: var(--font-display);
       font-size: 28px;
@@ -792,6 +813,7 @@
   <!-- Intro Dialog -->
   <div id="intro-dialog">
     <div class="intro-content">
+      <span class="intro-close" onclick="document.getElementById('intro-dialog').classList.add('hidden'); localStorage.setItem('imby-intro-seen', '1');">✕</span>
       <h1>IMBY: In My Back Yard</h1>
       <p>An interactive exploration of how regulations shaped Los Angeles—and what reform could unlock.</p>
 
