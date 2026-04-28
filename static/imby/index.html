@@ -719,6 +719,10 @@
               <div class="stat-value" id="stat-cost">—</div>
               <div class="stat-label">Cost Reduction</div>
             </div>
+            <div class="stat-box">
+              <div class="stat-value" id="stat-time">—</div>
+              <div class="stat-label">Approval Time</div>
+            </div>
           </div>
         </div>
 
@@ -1827,6 +1831,7 @@ Click the <strong>Reform</strong> tab to toggle policies. Click any <strong>zipc
       document.getElementById('stat-units').textContent = formatNumber(impact.units);
       document.getElementById('stat-gdp').textContent = formatMoney(impact.gdp);
       document.getElementById('stat-cost').textContent = impact.costReduction > 0 ? `-${impact.costReduction}%` : '—';
+      document.getElementById('stat-time').textContent = impact.timeReduction > 0 ? `${impact.approvalMonths}mo (-${impact.timeReduction}%)` : '—';
 
       // Narrative - use dynamic generator or timeline narrative
       if (zip && data) {
@@ -1895,44 +1900,47 @@ Click the <strong>Reform</strong> tab to toggle policies. Click any <strong>zipc
       const activeCount = Object.values(r).filter(v => v).length;
 
       if (activeCount === 0) {
-        return { units: 0, gdp: 0, costReduction: 0 };
+        return { units: 0, gdp: 0, costReduction: 0, timeReduction: 0 };
       }
 
       let units = 0;
       let costMultiplier = 1.0; // Tracks cost reductions
+      let baseApprovalMonths = 36; // Average LA approval timeline: 3 years
+      let timeMultiplier = 1.0; // Tracks time reductions
 
       if (zip && state.zipcodeData && state.zipcodeData[zip]) {
         const d = state.zipcodeData[zip];
         const acres = d.totalAcres || 1000;
         const r1 = d.r1Pct || 0.5;
         const mf = d.r2r4Pct || 0.2;
+        const commercial = d.commercialPct || 0.1;
         const isCoastal = ['90245','90254','90266','90272','90274','90278','90291','90292','90401','90402','90403','90405','90710','90731','90802','90803'].includes(zip);
 
-        // === ZONING ===
-        if (r.removeR1) units += acres * r1 * 10 * 0.35;
-        if (r.noHeightLimits) units += acres * mf * 5 * 0.3;
-        if (r.noSetbacks) units *= 1.06;
-        if (r.noLotSize) units *= 1.08;
-        if (r.noHillside && d.isHillside) units *= 1.5;
+        // === ZONING (units + some time savings) ===
+        if (r.removeR1) { units += acres * r1 * 10 * 0.35; timeMultiplier *= 0.85; }
+        if (r.noHeightLimits) { units += acres * mf * 5 * 0.3; timeMultiplier *= 0.92; }
+        if (r.noSetbacks) { units += acres * 0.5; timeMultiplier *= 0.95; } // Small base + multiplier
+        if (r.noLotSize) { units += acres * 0.3; timeMultiplier *= 0.96; } // Small base + multiplier
+        if (r.noHillside && d.isHillside) { units += acres * 3; timeMultiplier *= 0.80; }
 
-        // === ENVIRONMENTAL ===
-        if (r.noCEQA) units *= 1.10;
-        if (r.noCoastal && isCoastal) units *= 1.25;
+        // === ENVIRONMENTAL (major time impacts) ===
+        if (r.noCEQA) { units += acres * commercial * 8; timeMultiplier *= 0.50; } // CEQA adds 1-5 years
+        if (r.noCoastal && isCoastal) { units += acres * 2; timeMultiplier *= 0.70; }
 
-        // === FISCAL (cost reductions increase feasible units) ===
-        if (r.noParkingMins) { units *= 1.15; costMultiplier *= 0.82; }
-        if (r.reformProp13) units *= 1.05; // Cities more willing to zone for housing
-        if (r.noTransitFees) { units *= 1.08; costMultiplier *= 0.90; }
-        if (r.reformRentControl) units *= 1.15; // Stanford: rent control reduces supply 15%
+        // === FISCAL (cost + modest time/unit effects) ===
+        if (r.noParkingMins) { units += acres * mf * 2; costMultiplier *= 0.82; timeMultiplier *= 0.90; }
+        if (r.reformProp13) { units += acres * 0.2; costMultiplier *= 0.95; } // Modest: changes incentives over time
+        if (r.noTransitFees) { units += acres * 0.3; costMultiplier *= 0.90; timeMultiplier *= 0.95; }
+        if (r.reformRentControl) { units += acres * mf * 1.5; } // Stanford: rent control reduces supply 15%
 
-        // === LABOR (cost reductions but flagged) ===
-        if (r.noPrevailingWage) { units *= 1.12; costMultiplier *= 0.78; }
-        if (r.noLocalHire) { units *= 1.02; costMultiplier *= 0.97; }
-        if (r.noUnionOnly) { units *= 1.05; costMultiplier *= 0.92; }
+        // === LABOR (cost reductions, minimal time) ===
+        if (r.noPrevailingWage) { units += acres * 0.4; costMultiplier *= 0.78; }
+        if (r.noLocalHire) { units += acres * 0.1; costMultiplier *= 0.97; timeMultiplier *= 0.98; }
+        if (r.noUnionOnly) { units += acres * 0.2; costMultiplier *= 0.92; }
 
-        // === PROCESS ===
-        if (r.byRight) units *= 1.15;
-        if (r.noDesignReview) units *= 1.05;
+        // === PROCESS (major time impacts) ===
+        if (r.byRight) { units += acres * commercial * 5; timeMultiplier *= 0.40; } // By-right = no hearings
+        if (r.noDesignReview) { units += acres * 0.5; timeMultiplier *= 0.75; }
 
       } else {
         // === CITYWIDE ESTIMATES ===
@@ -1940,32 +1948,33 @@ Click the <strong>Reform</strong> tab to toggle policies. Click any <strong>zipc
         const mfAcres = 60000;
         const hillsideAcres = 25000;
         const coastalAcres = 15000;
+        const commercialAcres = 40000;
 
         // Zoning
-        if (r.removeR1) units += totalR1Acres * 10 * 0.35;
-        if (r.noHeightLimits) units += mfAcres * 5 * 0.3;
-        if (r.noSetbacks) units *= 1.06;
-        if (r.noLotSize) units *= 1.08;
-        if (r.noHillside) units += hillsideAcres * 8 * 0.3;
+        if (r.removeR1) { units += totalR1Acres * 10 * 0.35; timeMultiplier *= 0.85; }
+        if (r.noHeightLimits) { units += mfAcres * 5 * 0.3; timeMultiplier *= 0.92; }
+        if (r.noSetbacks) { units += 15000; timeMultiplier *= 0.95; }
+        if (r.noLotSize) { units += 10000; timeMultiplier *= 0.96; }
+        if (r.noHillside) { units += hillsideAcres * 8 * 0.3; timeMultiplier *= 0.80; }
 
         // Environmental
-        if (r.noCEQA) units *= 1.10;
-        if (r.noCoastal) units += coastalAcres * 5 * 0.2;
+        if (r.noCEQA) { units += commercialAcres * 3; timeMultiplier *= 0.50; }
+        if (r.noCoastal) { units += coastalAcres * 5 * 0.2; timeMultiplier *= 0.70; }
 
         // Fiscal
-        if (r.noParkingMins) { units *= 1.15; costMultiplier *= 0.82; }
-        if (r.reformProp13) units *= 1.05;
-        if (r.noTransitFees) { units *= 1.08; costMultiplier *= 0.90; }
-        if (r.reformRentControl) units *= 1.15; // Stanford: rent control reduces supply 15%
+        if (r.noParkingMins) { units += mfAcres * 2; costMultiplier *= 0.82; timeMultiplier *= 0.90; }
+        if (r.reformProp13) { units += 8000; costMultiplier *= 0.95; }
+        if (r.noTransitFees) { units += 12000; costMultiplier *= 0.90; timeMultiplier *= 0.95; }
+        if (r.reformRentControl) { units += mfAcres * 1.5; }
 
         // Labor
-        if (r.noPrevailingWage) { units *= 1.12; costMultiplier *= 0.78; }
-        if (r.noLocalHire) { units *= 1.02; costMultiplier *= 0.97; }
-        if (r.noUnionOnly) { units *= 1.05; costMultiplier *= 0.92; }
+        if (r.noPrevailingWage) { units += 15000; costMultiplier *= 0.78; }
+        if (r.noLocalHire) { units += 3000; costMultiplier *= 0.97; timeMultiplier *= 0.98; }
+        if (r.noUnionOnly) { units += 8000; costMultiplier *= 0.92; }
 
         // Process
-        if (r.byRight) units *= 1.15;
-        if (r.noDesignReview) units *= 1.05;
+        if (r.byRight) { units += commercialAcres * 5; timeMultiplier *= 0.40; }
+        if (r.noDesignReview) { units += 20000; timeMultiplier *= 0.75; }
       }
 
       // GDP: Hsieh-Moretti calculation
@@ -1977,10 +1986,16 @@ Click the <strong>Reform</strong> tab to toggle policies. Click any <strong>zipc
       // Cost reduction percentage
       const costReduction = Math.round((1 - costMultiplier) * 100);
 
+      // Time reduction: calculate new approval time in months
+      const newApprovalMonths = Math.round(baseApprovalMonths * timeMultiplier);
+      const timeReduction = Math.round((1 - timeMultiplier) * 100);
+
       return {
         units: Math.round(units),
         gdp: Math.round(gdp),
-        costReduction: costReduction
+        costReduction: costReduction,
+        timeReduction: timeReduction,
+        approvalMonths: newApprovalMonths
       };
     }
 
