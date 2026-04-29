@@ -554,12 +554,13 @@
       display: none;
       position: absolute;
       top: 12px;
-      right: 12px;
+      left: 12px;
       width: 28px;
       height: 28px;
       align-items: center;
       justify-content: center;
       background: var(--bg-card);
+      border: 1px solid var(--border);
       border-radius: 6px;
       cursor: pointer;
       font-size: 14px;
@@ -605,7 +606,8 @@
     #timeline.minimized {
       padding: 12px 20px;
     }
-    #timeline.minimized .timeline-regs { display: none; }
+    #timeline.minimized .timeline-regs,
+    #timeline.minimized .timeline-narrative-box { display: none; }
     .timeline-header {
       display: flex;
       align-items: center;
@@ -622,6 +624,25 @@
       cursor: pointer;
       font-size: 12px;
       color: var(--text-muted);
+    }
+    .timeline-narrative-box {
+      display: none;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-main);
+      padding: 12px 14px;
+      background: var(--bg-card);
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+    .timeline-narrative-box.active {
+      display: block;
+    }
+    .timeline-narrative-box .era-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
     }
     .timeline-regs {
       max-height: 150px;
@@ -926,6 +947,7 @@
           <input type="range" id="year-slider" min="1900" max="2026" value="2026">
           <div id="year-display">2026</div>
         </div>
+        <div class="timeline-narrative-box" id="timeline-narrative-box"></div>
         <div class="timeline-regs">
           <div class="reg-list" id="reg-list"></div>
         </div>
@@ -2013,15 +2035,15 @@ Click the <strong>Reform</strong> tab to toggle policies. Click any <strong>zipc
       document.getElementById('stat-cost').textContent = impact.costReduction > 0 ? `-${impact.costReduction}%` : '—';
       document.getElementById('stat-time').textContent = impact.timeReduction > 0 ? `${impact.approvalMonths}mo (-${impact.timeReduction}%)` : '—';
 
-      // Narrative - use dynamic generator or timeline narrative
+      // Narrative - use dynamic generator or default
       if (zip && data) {
         document.getElementById('narrative').innerHTML = generateNarrative(zip, data);
-      } else if (state.year !== 2026) {
-        // Show timeline narrative for historical view on citywide
-        updateTimelineNarrative();
       } else {
         document.getElementById('narrative').innerHTML = DEFAULT_NARRATIVE;
       }
+
+      // Update timeline narrative box (shown in slider when not 2026)
+      updateTimelineNarrative();
 
       // Regulations for year
       updateRegulations();
@@ -2050,8 +2072,14 @@ Click the <strong>Reform</strong> tab to toggle policies. Click any <strong>zipc
     }
 
     function updateTimelineNarrative() {
+      const narrativeBox = document.getElementById('timeline-narrative-box');
       const narrative = getTimelineNarrative(state.year);
-      if (!narrative) return;
+
+      if (!narrative || state.year === 2026) {
+        narrativeBox.classList.remove('active');
+        narrativeBox.innerHTML = '';
+        return;
+      }
 
       const moodColors = {
         possibility: 'var(--positive)',
@@ -2063,14 +2091,12 @@ Click the <strong>Reform</strong> tab to toggle policies. Click any <strong>zipc
         mixed: 'var(--text-muted)'
       };
 
-      const html = `
-        <div class="timeline-narrative" style="margin-bottom: 24px; padding: 20px; background: var(--bg-card); border-radius: 12px; border-left: 4px solid ${moodColors[narrative.mood] || 'var(--accent)'};">
-          <div style="font-family: var(--font-display); font-size: 22px; font-weight: 700; color: ${moodColors[narrative.mood] || 'var(--accent)'}; margin-bottom: 8px;">${state.year}: ${narrative.era}</div>
-          <div style="font-size: 15px; line-height: 1.8; color: var(--text-main);">${narrative.text}</div>
-        </div>
-        ${DEFAULT_NARRATIVE}
+      narrativeBox.style.borderLeft = `3px solid ${moodColors[narrative.mood] || 'var(--accent)'}`;
+      narrativeBox.innerHTML = `
+        <div class="era-title" style="color: ${moodColors[narrative.mood] || 'var(--accent)'};">${state.year}: ${narrative.era}</div>
+        <div>${narrative.text}</div>
       `;
-      document.getElementById('narrative').innerHTML = html;
+      narrativeBox.classList.add('active');
     }
 
     function calculateImpact(zip) {
@@ -2284,13 +2310,10 @@ Click the <strong>Reform</strong> tab to toggle policies. Click any <strong>zipc
         yearDisplay.textContent = state.year;
         updateRegulations();
         refreshMapStyle();
+        updateTimelineNarrative();
         // Update freeway layer if visible (shows freeways built by current year)
         if (state.showFreeways) {
           updateFreewayLayer();
-        }
-        // Update citywide narrative when scrubbing timeline
-        if (!state.selectedZip) {
-          updateTimelineNarrative();
         }
       });
 
