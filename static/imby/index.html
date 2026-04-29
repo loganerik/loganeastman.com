@@ -2075,7 +2075,7 @@ Click the <strong>Reform</strong> tab to toggle policies. Click any <strong>zipc
       const narrativeBox = document.getElementById('timeline-narrative-box');
       const narrative = getTimelineNarrative(state.year);
 
-      if (!narrative || state.year === 2026) {
+      if (!narrative) {
         narrativeBox.classList.remove('active');
         narrativeBox.innerHTML = '';
         return;
