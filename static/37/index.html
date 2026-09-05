@@ -322,6 +322,34 @@
     text-shadow: 0 0 12px rgba(255,140,66,.6);
   }
   .map .vn { color: var(--sand); font-weight: 700; }
+  /* ---------- entry overlay ---------- */
+  .enter {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: radial-gradient(ellipse 120% 60% at 50% 40%, #3a2415 0%, var(--room-deep) 75%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    transition: opacity .8s ease;
+  }
+  .enter.gone { opacity: 0; pointer-events: none; }
+  .enter .invited { animation: threadglow 3s ease-in-out infinite; }
+  .enter-hint {
+    margin-top: 14px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    letter-spacing: .12em;
+    color: var(--sand-dim);
+  }
+
+  .mbr { display: none; }
+  @media (max-width: 640px) {
+    .mbr { display: inline; }
+  }
+
   /* ---------- sound toggle ---------- */
   .sound {
     position: fixed;
@@ -374,7 +402,7 @@
     <div class="wall-frame">
       <pre class="wall" id="wall" aria-label="37"></pre>
     </div>
-    <h1>Logan is turning 37 and needs to relax.</h1>
+    <h1>Logan is turning 37<br class="mbr"> and needs to relax.</h1>
     <div class="scrollhint" aria-hidden="true">⌄</div>
   </header>
 
@@ -477,6 +505,13 @@
 </div>
 
 <button class="sound on" id="soundToggle" type="button" aria-pressed="true">◉ sound bath: on</button>
+
+<div class="enter" id="enter" role="button" tabindex="0" aria-label="Enter">
+  <div>
+    <p class="invited"><span class="fl">· ✦ ·</span>&nbsp; tap to enter &nbsp;<span class="fl">· ✦ ·</span></p>
+    <p class="enter-hint">gentle sound within</p>
+  </div>
+</div>
 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyavqdvpvXsdbz11lXFMbAUKZL-qIIJ61w34Q8eTFvMvQUyd1UY0w0L6ULxsm8sdd8G/exec';
@@ -710,7 +745,7 @@ let bathWanted = true;
 let gongsStarted = false;
 bath = makeSoundbath();
 
-const unlockEvents = ['pointerdown', 'pointerup', 'click', 'touchstart', 'touchend', 'keydown', 'wheel', 'scroll'];
+const unlockEvents = ['pointerdown', 'keydown'];
 
 function tryUnlock() {
   if (!bathWanted) return;
@@ -721,7 +756,34 @@ function tryUnlock() {
   }).catch(() => {});
 }
 unlockEvents.forEach(ev => window.addEventListener(ev, tryUnlock, { passive: true }));
-tryUnlock(); // some browsers allow it immediately (e.g. repeat visitors)
+
+// iOS mutes Web Audio when the physical silent switch is on. Playing an HTML
+// <audio> element (even a silent one) flips the audio session to "playback",
+// which ignores the switch. Harmless everywhere else.
+function unmuteIOS() {
+  const a = document.createElement('audio');
+  a.setAttribute('playsinline', '');
+  a.loop = true;
+  a.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+  a.play().catch(() => {});
+  window.__iosUnmute = a; // keep a reference so it isn't garbage-collected
+}
+
+// entry overlay: the guaranteed first tap that browsers require before audio
+const enterEl = document.getElementById('enter');
+let entered = false;
+function enterSite() {
+  if (entered) return;
+  entered = true;
+  unmuteIOS();
+  tryUnlock();
+  enterEl.classList.add('gone');
+  setTimeout(() => enterEl.remove(), 900);
+}
+enterEl.addEventListener('click', enterSite);
+enterEl.addEventListener('touchend', enterSite);
+window.addEventListener('keydown', enterSite, { once: true });
+if (/noenter/.test(location.search)) { entered = true; enterEl.remove(); }
 
 soundBtn.addEventListener('click', () => {
   const on = soundBtn.getAttribute('aria-pressed') !== 'true';
