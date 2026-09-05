@@ -42,7 +42,18 @@
   a { color: var(--glow-1); }
 
   /* ---------- hero: salt wall ---------- */
-  .hero { text-align: center; padding-top: 56px; }
+  .hero { text-align: center; padding-top: 48px; }
+  .invited {
+    font-family: 'Courier Prime', monospace;
+    font-size: 14px;
+    letter-spacing: .5em;
+    text-indent: .5em; /* balance the trailing letter-space */
+    text-transform: uppercase;
+    color: var(--glow-1);
+    text-shadow: 0 0 18px rgba(255,140,66,.5);
+    margin-bottom: 24px;
+  }
+  .invited .fl { color: var(--glow-3); letter-spacing: .2em; }
   .wall-frame {
     display: inline-block;
     position: relative;
@@ -58,7 +69,7 @@
   }
   @media (prefers-reduced-motion: reduce) { .wall-frame { animation: none; } }
   .wall {
-    font-size: clamp(6px, 1.9vw, 13px);
+    font-size: clamp(6px, 2.6vw, 13px);
     line-height: 1.18;
     letter-spacing: .06em;
     text-align: left;
@@ -73,21 +84,51 @@
     text-shadow: none;
   }
   .hero h1 {
-    margin-top: 40px;
+    margin-top: 26px;
     font-weight: 500;
     font-size: 26px;
     color: var(--glow-hi);
     text-shadow: 0 0 24px rgba(255,140,66,.35);
   }
-
-  /* ---------- dividers ---------- */
-  .ripple {
-    text-align: center;
-    color: var(--line);
+  .scrollhint {
+    margin-top: 10px;
     font-family: 'Courier Prime', monospace;
-    letter-spacing: .35em;
-    margin: 56px 0 48px;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--glow-2);
+    animation: bob 2.4s ease-in-out infinite;
     user-select: none;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); opacity: .55; }
+    50%      { transform: translateY(6px); opacity: 1; }
+  }
+
+  /* ---------- connecting thread ---------- */
+  .thread {
+    width: 1px;
+    height: 76px;
+    margin: 26px auto;
+    position: relative;
+    background: linear-gradient(180deg, transparent, var(--glow-2) 50%, transparent);
+    animation: threadglow 4.5s ease-in-out infinite;
+  }
+  .thread::after {
+    content: '◆';
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    transform: translateX(-50%);
+    color: var(--glow-2);
+    font-size: 7px;
+    line-height: 1;
+  }
+  @keyframes threadglow {
+    0%, 100% { opacity: .45; }
+    50%      { opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scrollhint, .thread { animation: none; }
   }
 
   /* ---------- sections ---------- */
@@ -112,19 +153,27 @@
   .firsts a { text-decoration: none; border-bottom: 1px solid var(--line); }
   .firsts a:hover { border-bottom-color: var(--glow-1); }
 
-  .after { max-width: 620px; margin: 0 auto; }
+  .after { max-width: 640px; margin: 0 auto; }
   .after-cols {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 22px;
+    align-items: center;
   }
-  .spot {
-    background: var(--panel);
+  .or {
+    font-family: 'Courier Prime', monospace;
+    font-size: 14px;
+    color: var(--glow-2);
     border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 20px 22px;
-    text-align: center;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 14px rgba(255,140,66,.14);
   }
+  .spot { text-align: center; }
   .spot .name { font-size: 19px; font-weight: 500; color: var(--glow-hi); }
   .spot .what {
     font-family: 'Courier Prime', monospace;
@@ -248,10 +297,47 @@
   .cal { text-align: center; }
   .cal-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
+  /* ---------- sound toggle ---------- */
+  .sound {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 10;
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    letter-spacing: .06em;
+    color: var(--sand-dim);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: color .2s, border-color .2s, box-shadow .2s;
+  }
+  .sound.on {
+    color: var(--glow-1);
+    border-color: var(--glow-2);
+    box-shadow: 0 0 16px rgba(255,140,66,.25);
+  }
+
   @media (max-width: 700px) {
     .after-cols, .rsvp-grid { grid-template-columns: 1fr; }
+    .after-cols { gap: 14px; justify-items: center; }
     .rsvp-grid { gap: 40px; }
     form { max-width: none; }
+  }
+  @media (max-width: 480px) {
+    body { font-size: 16px; }
+    .wrap { padding: 0 16px 110px; }
+    .hero { padding-top: 36px; }
+    .invited { font-size: 12px; letter-spacing: .34em; text-indent: .34em; margin-bottom: 18px; }
+    .wall-frame { padding: 12px 10px; }
+    .hero h1 { font-size: 21px; padding: 0 8px; }
+    .thread { height: 56px; margin: 20px auto; }
+    .details .when { font-size: 19px; }
+    .firsts { font-size: 16px; }
+    .openinvite { font-size: 17px; }
+    .sound { bottom: 12px; right: 12px; padding: 7px 13px; }
   }
 </style>
 </head>
@@ -259,13 +345,15 @@
 <div class="wrap">
 
   <header class="hero">
+    <p class="invited"><span class="fl">· ✦ ·</span>&nbsp; You're Invited &nbsp;<span class="fl">· ✦ ·</span></p>
     <div class="wall-frame">
       <pre class="wall" id="wall" aria-label="37"></pre>
     </div>
     <h1>Logan is turning 37 and needs to relax.</h1>
+    <div class="scrollhint" aria-hidden="true">⌄</div>
   </header>
 
-  <div class="ripple" aria-hidden="true">· · ·</div>
+  <div class="thread" aria-hidden="true"></div>
 
   <section class="details">
     <p class="when">Thursday, September 10, 2026 · 6:00 PM</p>
@@ -277,7 +365,7 @@
     </ul>
   </section>
 
-  <div class="ripple" aria-hidden="true">· · ·</div>
+  <div class="thread" aria-hidden="true"></div>
 
   <section class="after">
     <h2>Then After?</h2>
@@ -287,6 +375,7 @@
         <p class="what">coffee &amp; treats</p>
         <p class="addr"><a href="https://maps.google.com/?q=About+Time,+3287+Wilshire+Blvd,+Los+Angeles,+CA+90010" target="_blank" rel="noopener">3287 Wilshire Blvd Unit B<br>Los Angeles, CA 90010</a></p>
       </div>
+      <div class="or" aria-hidden="true">or</div>
       <div class="spot">
         <p class="name">HMS Bounty</p>
         <p class="what">a beer</p>
@@ -295,11 +384,11 @@
     </div>
   </section>
 
-  <div class="ripple" aria-hidden="true">· · ·</div>
+  <div class="thread" aria-hidden="true"></div>
 
   <p class="openinvite">This is a low pressure open invite. Not expecting a crowd!</p>
 
-  <div class="ripple" aria-hidden="true">· · ·</div>
+  <div class="thread" aria-hidden="true"></div>
 
   <section class="rsvp-grid">
     <div>
@@ -335,7 +424,7 @@
     </div>
   </section>
 
-  <div class="ripple" aria-hidden="true">· · ·</div>
+  <div class="thread" aria-hidden="true"></div>
 
   <section class="cal">
     <h2>Add To Calendar</h2>
@@ -346,6 +435,8 @@
   </section>
 
 </div>
+
+<button class="sound" id="soundToggle" type="button" aria-pressed="false">◌ sound bath: off</button>
 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyavqdvpvXsdbz11lXFMbAUKZL-qIIJ61w34Q8eTFvMvQUyd1UY0w0L6ULxsm8sdd8G/exec';
@@ -504,6 +595,87 @@ form.addEventListener('submit', (e) => {
       formMsg.textContent = 'Hmm, that didn’t go through — try again or text Logan.';
     })
     .finally(() => { submitBtn.disabled = false; });
+});
+
+// ---- soundbath: synthesized gong + drone (no audio file) ----
+const soundBtn = document.getElementById('soundToggle');
+let bath = null;
+
+function makeSoundbath() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const master = ctx.createGain();
+  master.gain.value = 0;
+  const lp = ctx.createBiquadFilter();
+  lp.type = 'lowpass';
+  lp.frequency.value = 1400;
+  master.connect(lp);
+  lp.connect(ctx.destination);
+
+  // warm drone: detuned low sines + soft fifth and octave
+  [[55, .28], [55.4, .24], [82.41, .10], [110, .08]].forEach(([f, g]) => {
+    const o = ctx.createOscillator();
+    o.type = 'sine';
+    o.frequency.value = f;
+    const og = ctx.createGain();
+    og.gain.value = g;
+    o.connect(og);
+    og.connect(master);
+    o.start();
+  });
+
+  // very slow filter sweep so the drone breathes
+  const lfo = ctx.createOscillator();
+  lfo.frequency.value = 0.04;
+  const lfoG = ctx.createGain();
+  lfoG.gain.value = 500;
+  lfo.connect(lfoG);
+  lfoG.connect(lp.frequency);
+  lfo.start();
+
+  master.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 5);
+
+  // occasional gong: inharmonic sine partials with long decay
+  let gongTimer = null;
+  function gong() {
+    const t = ctx.currentTime;
+    const base = [98, 110, 123.5][Math.floor(Math.random() * 3)] * (Math.random() < .35 ? 2 : 1);
+    [[1, .5], [2.76, .22], [5.4, .1], [8.93, .04]].forEach(([m, g]) => {
+      const o = ctx.createOscillator();
+      o.type = 'sine';
+      o.frequency.value = base * m * (1 + (Math.random() - .5) * .004);
+      const og = ctx.createGain();
+      og.gain.setValueAtTime(0, t);
+      og.gain.linearRampToValueAtTime(g, t + .03 + Math.random() * .05);
+      og.gain.exponentialRampToValueAtTime(.0001, t + 8 + Math.random() * 5);
+      o.connect(og);
+      og.connect(master);
+      o.start(t);
+      o.stop(t + 14);
+    });
+    gongTimer = setTimeout(gong, 11000 + Math.random() * 14000);
+  }
+
+  return {
+    ctx,
+    start() { gong(); },
+    pause() { clearTimeout(gongTimer); ctx.suspend(); },
+    resume() { ctx.resume(); gongTimer = setTimeout(gong, 1500 + Math.random() * 4000); }
+  };
+}
+
+soundBtn.addEventListener('click', () => {
+  const on = soundBtn.getAttribute('aria-pressed') !== 'true';
+  if (!bath) {
+    bath = makeSoundbath();
+    bath.start();
+  } else if (on) {
+    bath.resume();
+  } else {
+    bath.pause();
+  }
+  soundBtn.setAttribute('aria-pressed', String(on));
+  soundBtn.classList.toggle('on', on);
+  soundBtn.textContent = on ? '◉ sound bath: on' : '◌ sound bath: off';
 });
 </script>
 </body>
