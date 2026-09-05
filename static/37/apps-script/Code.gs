@@ -51,16 +51,24 @@ function doPost(e) {
   return json_({ ok: true });
 }
 
-function doGet() {
+function doGet(e) {
+  // visit the /exec URL with ?debug=1 to see where this script is reading/writing
+  if (e && e.parameter && e.parameter.debug) {
+    return json_({
+      spreadsheet: SpreadsheetApp.getActiveSpreadsheet().getName(),
+      tab: sheet_().getName(),
+      lastRow: sheet_().getLastRow()
+    });
+  }
   var rows = sheet_().getDataRange().getValues();
   var guests = [];
   var maybeCount = 0;
 
   rows.forEach(function (r) {
-    // skip header rows / anything without a real timestamp
-    if (!(r[0] instanceof Date)) return;
     var name = String(r[1] || '').trim();
     if (!name) return;
+    // skip a header row like "Timestamp | Name | Status | Note"
+    if (name.toLowerCase() === 'name') return;
     if (r[2] === 'maybe') {
       maybeCount++;
     } else {
