@@ -483,7 +483,7 @@
         </div>
 
         <div class="submit-row">
-          <button class="btn solid" type="submit" id="submitBtn">RSVP</button>
+          <button class="btn solid" type="submit" id="submitBtn">Submit RSVP.</button>
         </div>
         <p class="form-msg" id="formMsg" role="status"></p>
       </form>
@@ -501,7 +501,7 @@
     <h2>Add To Calendar</h2>
     <div class="cal-buttons">
       <a class="btn" id="gcal" href="#" target="_blank" rel="noopener">+ Google Calendar</a>
-      <button class="btn" id="ical" type="button">+ Apple / iCal (.ics)</button>
+      <a class="btn" href="/37/event.ics">+ Apple / iCal (.ics)</a>
     </div>
   </section>
 
@@ -538,9 +538,6 @@ const EVENT = {
   title: "Logan's 37th — Wi Spa",
   location: 'Wi Spa, 2700 Wilshire Blvd, Los Angeles, CA 90057',
   details: "Logan is turning 37 and needs to relax. $40 gets you in and covers the communal saunas; feel free to add on your own services. After, maybe About Time (coffee & treats, 3287 Wilshire Blvd) or HMS Bounty (a beer, 3357 Wilshire Blvd). Until 11 PM at the latest. Low pressure open invite. Details: https://loganeastman.com/37/",
-  // 6 PM – 11 PM PDT = 01:00–06:00 UTC on Sept 11
-  utcStart: '20260911T010000Z',
-  utcEnd: '20260911T060000Z',
   localStart: '20260910T180000',
   localEnd: '20260910T230000'
 };
@@ -603,29 +600,8 @@ document.getElementById('gcal').href =
   '&location=' + encodeURIComponent(EVENT.location) +
   '&details=' + encodeURIComponent(EVENT.details);
 
-document.getElementById('ical').addEventListener('click', () => {
-  const ics = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//loganeastman.com//37//EN',
-    'BEGIN:VEVENT',
-    'UID:logan-37-wispa@loganeastman.com',
-    'DTSTAMP:' + EVENT.utcStart,
-    'DTSTART:' + EVENT.utcStart,
-    'DTEND:' + EVENT.utcEnd,
-    'SUMMARY:' + EVENT.title,
-    'LOCATION:' + EVENT.location.replace(/,/g, '\\,'),
-    'DESCRIPTION:' + EVENT.details.replace(/,/g, '\\,'),
-    'END:VEVENT',
-    'END:VCALENDAR'
-  ].join('\r\n');
-  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'logan-37-wi-spa.ics';
-  a.click();
-  URL.revokeObjectURL(url);
-});
+// (the Apple/iCal button links straight to /37/event.ics — no JS needed;
+// iOS opens the Add to Calendar flow, desktop downloads and opens Calendar)
 
 // ---- guest list ----
 const tubCount = document.getElementById('tubCount');

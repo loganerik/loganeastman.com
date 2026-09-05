@@ -1,0 +1,17 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//loganeastman.com//37//EN
+BEGIN:VEVENT
+UID:logan-37-wispa@loganeastman.com
+DTSTAMP:20260911T010000Z
+DTSTART:20260911T010000Z
+DTEND:20260911T060000Z
+SUMMARY:Logan's 37th — Wi Spa
+LOCATION:Wi Spa\, 2700 Wilshire Blvd\, Los Angeles\, CA 90057
+DESCRIPTION:Logan is turning 37 and needs to relax. $40 gets you in and cov
+ ers the communal saunas\; feel free to add on your own services. After\, m
+ aybe About Time (coffee & treats\, 3287 Wilshire Blvd) or HMS Bounty (a be
+ er\, 3357 Wilshire Blvd). Until 11 PM at the latest. Low pressure open inv
+ ite. Details: https://loganeastman.com/37/
+END:VEVENT
+END:VCALENDAR
