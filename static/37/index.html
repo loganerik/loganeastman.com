@@ -7,6 +7,13 @@
 <meta name="description" content="Logan is turning 37 and needs to relax. Come to Wi Spa. Open invite, zero pressure.">
 <meta property="og:title" content="37 — a spa birthday">
 <meta property="og:description" content="Sept 10, 2026 · 6 PM · Wi Spa, Koreatown. Logan is turning 37 and needs to relax.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://loganeastman.com/37/">
+<meta property="og:image" content="https://loganeastman.com/37/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://loganeastman.com/37/og.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -349,6 +356,12 @@
   @media (max-width: 640px) {
     .mbr { display: inline; }
   }
+
+  /* ?ogcard — capture mode for the social preview image: hero only, centered */
+  body.og .wrap > :not(.hero),
+  body.og .hero .scrollhint,
+  body.og .sound { display: none; }
+  body.og .hero { padding-top: 72px; }
 
   /* ---------- sound toggle ---------- */
   .sound {
@@ -713,6 +726,7 @@ enterEl.addEventListener('click', enterSite);
 enterEl.addEventListener('touchend', enterSite);
 window.addEventListener('keydown', enterSite, { once: true });
 if (/noenter/.test(location.search)) { entered = true; enterEl.remove(); }
+if (/ogcard/.test(location.search)) { entered = true; enterEl.remove(); document.body.classList.add('og'); }
 
 soundBtn.addEventListener('click', () => {
   const on = soundBtn.getAttribute('aria-pressed') !== 'true';
