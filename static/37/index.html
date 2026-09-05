@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>37 — a spa birthday</title>
+<meta name="description" content="Logan is turning 37. Come soak at Wi Spa. Open invite, zero pressure.">
+<meta property="og:title" content="37 — a spa birthday">
+<meta property="og:description" content="Sept 10, 2026 · 6 PM · Wi Spa, Koreatown. The only agenda is relaxing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --stone: #f3efe6;
+    --stone-deep: #eae4d6;
+    --ink: #3d4a43;
+    --ink-soft: #6b7a71;
+    --jade: #2e6e54;
+    --jade-mist: #dce8e0;
+    --cedar: #a2704a;
+    --steam: #9db3a8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--stone);
+    color: var(--ink);
+    font-family: 'Lora', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 0 24px 96px;
+  }
+  pre, .mono { font-family: 'Courier Prime', 'Courier New', monospace; }
+
+  /* ---------- hero ---------- */
+  .hero {
+    text-align: center;
+    padding-top: 48px;
+  }
+  .steam {
+    position: relative;
+    height: 130px;
+    overflow: hidden;
+  }
+  .steam span {
+    position: absolute;
+    bottom: -20px;
+    color: var(--steam);
+    font-family: 'Courier Prime', monospace;
+    font-size: 20px;
+    opacity: 0;
+    animation: rise linear infinite;
+  }
+  @keyframes rise {
+    0%   { transform: translateY(0) translateX(0); opacity: 0; }
+    15%  { opacity: .75; }
+    70%  { opacity: .35; }
+    100% { transform: translateY(-130px) translateX(var(--drift, 6px)); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .steam span { animation: none; opacity: .4; bottom: auto; top: calc(100% - 20px - var(--still, 0px)); }
+  }
+  .ascii37 {
+    display: inline-block;
+    text-align: left;
+    color: var(--jade);
+    font-size: clamp(15px, 5.4vw, 34px);
+    line-height: 1.15;
+    font-weight: 700;
+    text-shadow: 0 1px 0 rgba(255,255,255,.6);
+  }
+  .hero h1 {
+    margin-top: 34px;
+    font-weight: 500;
+    font-size: 26px;
+    letter-spacing: .01em;
+  }
+  .hero .sub {
+    margin-top: 10px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  .hero .agenda {
+    display: inline-block;
+    margin-top: 26px;
+    padding: 8px 18px;
+    border: 1px solid var(--jade);
+    border-radius: 999px;
+    color: var(--jade);
+    font-family: 'Courier Prime', monospace;
+    font-size: 14px;
+    letter-spacing: .06em;
+    text-transform: lowercase;
+  }
+
+  /* ---------- dividers ---------- */
+  .ripple {
+    text-align: center;
+    color: var(--steam);
+    font-family: 'Courier Prime', monospace;
+    letter-spacing: .35em;
+    margin: 60px 0 52px;
+    user-select: none;
+  }
+
+  /* ---------- sections ---------- */
+  h2 {
+    font-family: 'Courier Prime', monospace;
+    font-size: 15px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--cedar);
+    margin-bottom: 22px;
+    text-align: center;
+  }
+  .details { text-align: center; }
+  .details .when {
+    font-size: 22px;
+    font-weight: 500;
+  }
+  .details .until { color: var(--ink-soft); font-style: italic; margin-top: 2px; }
+  .details .where { margin-top: 22px; font-size: 19px; }
+  .details .where a {
+    color: var(--jade);
+    text-decoration: none;
+    border-bottom: 1px solid var(--jade-mist);
+  }
+  .details .where a:hover { border-bottom-color: var(--jade); }
+  .fine {
+    margin-top: 30px;
+    text-align: left;
+    background: var(--stone-deep);
+    border-radius: 14px;
+    padding: 22px 26px;
+  }
+  .fine p + p { margin-top: 12px; }
+  .fine .tag {
+    font-family: 'Courier Prime', monospace;
+    color: var(--jade);
+    font-weight: 700;
+    margin-right: 6px;
+  }
+  .openinvite {
+    margin-top: 30px;
+    text-align: center;
+    font-style: italic;
+    color: var(--ink-soft);
+    padding: 0 12px;
+  }
+
+  /* ---------- calendar ---------- */
+  .cal { text-align: center; }
+  .cal-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    font-family: 'Courier Prime', monospace;
+    font-size: 15px;
+    padding: 11px 22px;
+    border-radius: 999px;
+    border: 1.5px solid var(--jade);
+    background: transparent;
+    color: var(--jade);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+  }
+  .btn:hover { background: var(--jade); color: var(--stone); }
+  .btn.solid { background: var(--jade); color: var(--stone); }
+  .btn.solid:hover { background: #245944; border-color: #245944; }
+
+  /* ---------- rsvp ---------- */
+  form { max-width: 420px; margin: 0 auto; }
+  label {
+    display: block;
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 18px 0 6px;
+  }
+  input[type=text], textarea, select {
+    width: 100%;
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    color: var(--ink);
+    background: #fbf9f4;
+    border: 1px solid #d8d2c2;
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  input:focus, textarea:focus, select:focus { outline: 2px solid var(--jade-mist); border-color: var(--jade); }
+  textarea { resize: vertical; min-height: 64px; }
+  .status-row { display: flex; gap: 10px; }
+  .status-row label { margin: 0; flex: 1; }
+  .pill {
+    display: block;
+    text-align: center;
+    padding: 10px 0;
+    border: 1.5px solid #d8d2c2;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: 'Courier Prime', monospace;
+    font-size: 15px;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--ink);
+    transition: all .15s;
+  }
+  .status-row input { position: absolute; opacity: 0; pointer-events: none; }
+  .status-row input:checked + .pill { border-color: var(--jade); background: var(--jade); color: var(--stone); }
+  .hp { position: absolute; left: -9999px; top: -9999px; }
+  .submit-row { text-align: center; margin-top: 26px; }
+  .form-msg {
+    text-align: center;
+    margin-top: 16px;
+    font-style: italic;
+    color: var(--jade);
+    min-height: 1.5em;
+  }
+  .form-msg.err { color: var(--cedar); }
+
+  /* ---------- guest list ---------- */
+  .tub { text-align: center; }
+  .tub-count {
+    font-family: 'Courier Prime', monospace;
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin-bottom: 18px;
+  }
+  .bubbles { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .bubble {
+    font-family: 'Courier Prime', monospace;
+    font-size: 15px;
+    background: var(--jade-mist);
+    color: var(--jade);
+    border-radius: 999px;
+    padding: 7px 16px;
+    animation: surface .5s ease both;
+  }
+  @keyframes surface {
+    from { transform: translateY(8px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) { .bubble { animation: none; } }
+
+  footer {
+    margin-top: 70px;
+    text-align: center;
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    color: var(--steam);
+  }
+  footer a { color: var(--steam); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="steam" id="steam" aria-hidden="true"></div>
+    <pre class="ascii37" aria-label="37"> ____   ______
+|___ \ |____  |
+  __) |    / /
+ |__ &lt;    / /
+ ___) |  / /
+|____/  /_/</pre>
+    <h1>Logan is turning 37</h1>
+    <p class="sub">and would very much like to be horizontal in a hot room about it</p>
+    <div class="agenda">the only agenda is relaxing</div>
+  </header>
+
+  <div class="ripple" aria-hidden="true">~ ~ ~ · ~ ~ ~</div>
+
+  <section class="details">
+    <h2>The Soak</h2>
+    <p class="when">Thursday, September 10, 2026 · 6:00 PM</p>
+    <p class="until">until midnight at the very latest — leave whenever</p>
+    <p class="where">
+      <strong>Wi Spa</strong><br>
+      <a href="https://maps.google.com/?q=Wi+Spa,+2700+Wilshire+Blvd,+Los+Angeles,+CA+90057" target="_blank" rel="noopener">2700 Wilshire Blvd, Los Angeles, CA 90057</a><br>
+      <span style="color:var(--ink-soft)">Koreatown · open 24 hours</span>
+    </p>
+
+    <div class="fine">
+      <p><span class="tag">$40</span> gets you in the door and covers every spa, sauna, tub, and communal space in the building. Jade igloo included.</p>
+      <p><span class="tag">+ à la carte</span> want a body scrub or a massage? Add on whatever services you like — that part's your call and your tab.</p>
+      <p><span class="tag">after?</span> depending on the collective vibe, we may drift to <strong>About Time</strong> for coffee &amp; treats or <strong>HMS Bounty</strong> for a beer. Or we may simply remain very, very relaxed.</p>
+    </div>
+
+    <p class="openinvite">This is an open invite — come if you want, skip it if you can't, bring a friend, no pressure whatsoever. I'm not expecting a crowd. Even one pal in a jade igloo is a good birthday.</p>
+  </section>
+
+  <div class="ripple" aria-hidden="true">~ ~ ~ · ~ ~ ~</div>
+
+  <section class="cal">
+    <h2>Put It Somewhere Safe</h2>
+    <div class="cal-buttons">
+      <a class="btn" id="gcal" href="#" target="_blank" rel="noopener">+ Google Calendar</a>
+      <button class="btn" id="ical" type="button">+ Apple / iCal (.ics)</button>
+    </div>
+  </section>
+
+  <div class="ripple" aria-hidden="true">~ ~ ~ · ~ ~ ~</div>
+
+  <section>
+    <h2>Getting In The Tub?</h2>
+    <form id="rsvp">
+      <label for="name">Your name</label>
+      <input type="text" id="name" name="name" required maxlength="80" autocomplete="name" placeholder="First and last">
+
+      <label>Are you soaking?</label>
+      <div class="status-row">
+        <label><input type="radio" name="status" value="yes" checked><span class="pill">yes, I'm in 🧖</span></label>
+        <label><input type="radio" name="status" value="maybe"><span class="pill">maybe / lurking</span></label>
+      </div>
+
+      <label for="note">Note for Logan <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
+      <textarea id="note" name="note" maxlength="280" placeholder="birthday wishes, scrub recommendations, etc."></textarea>
+
+      <div class="hp" aria-hidden="true">
+        <label for="website">Website</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="submit-row">
+        <button class="btn solid" type="submit" id="submitBtn">RSVP</button>
+      </div>
+      <p class="form-msg" id="formMsg" role="status"></p>
+    </form>
+  </section>
+
+  <div class="ripple" aria-hidden="true">~ ~ ~ · ~ ~ ~</div>
+
+  <section class="tub">
+    <h2>Who's Soaking</h2>
+    <p class="tub-count" id="tubCount">checking the water…</p>
+    <div class="bubbles" id="bubbles"></div>
+  </section>
+
+  <footer>
+    <p>~ steam provided by wi spa · page by <a href="/">logan</a> ~</p>
+  </footer>
+
+</div>
+
+<script>
+// Paste the Apps Script web app /exec URL here once deployed (see apps-script/Code.gs)
+const SCRIPT_URL = '';
+
+const EVENT = {
+  title: "Logan's 37th — Wi Spa Soak",
+  location: 'Wi Spa, 2700 Wilshire Blvd, Los Angeles, CA 90057',
+  details: "Logan is turning 37 and the only agenda is relaxing. $40 at the door covers all spas + communal spaces; add your own services if you want. Afterward, maybe About Time (coffee/treats) or HMS Bounty (a beer) — whatever the vibe is. Ends by midnight. Open invite, zero pressure. Details: https://loganeastman.com/37/",
+  // 6 PM – midnight PDT = 01:00–07:00 UTC on Sept 11
+  utcStart: '20260911T010000Z',
+  utcEnd: '20260911T070000Z',
+  localStart: '20260910T180000',
+  localEnd: '20260911T000000'
+};
+
+// ---- steam ----
+(function makeSteam() {
+  const chars = ['~', '(', ')', '·', '~', '˜'];
+  const box = document.getElementById('steam');
+  for (let i = 0; i < 16; i++) {
+    const s = document.createElement('span');
+    s.textContent = chars[Math.floor(Math.random() * chars.length)];
+    s.style.left = (14 + Math.random() * 72) + '%';
+    s.style.animationDuration = (4 + Math.random() * 5) + 's';
+    s.style.animationDelay = (Math.random() * 6) + 's';
+    s.style.setProperty('--drift', (Math.random() * 24 - 12) + 'px');
+    s.style.setProperty('--still', Math.floor(Math.random() * 90) + 'px');
+    box.appendChild(s);
+  }
+})();
+
+// ---- calendar ----
+document.getElementById('gcal').href =
+  'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+  '&text=' + encodeURIComponent(EVENT.title) +
+  '&dates=' + EVENT.localStart + '/' + EVENT.localEnd +
+  '&ctz=America/Los_Angeles' +
+  '&location=' + encodeURIComponent(EVENT.location) +
+  '&details=' + encodeURIComponent(EVENT.details);
+
+document.getElementById('ical').addEventListener('click', () => {
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//loganeastman.com//37//EN',
+    'BEGIN:VEVENT',
+    'UID:logan-37-wispa@loganeastman.com',
+    'DTSTAMP:' + EVENT.utcStart,
+    'DTSTART:' + EVENT.utcStart,
+    'DTEND:' + EVENT.utcEnd,
+    'SUMMARY:' + EVENT.title,
+    'LOCATION:' + EVENT.location.replace(/,/g, '\\,'),
+    'DESCRIPTION:' + EVENT.details.replace(/,/g, '\\,'),
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'logan-37-wi-spa.ics';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// ---- guest list ----
+const tubCount = document.getElementById('tubCount');
+const bubbles = document.getElementById('bubbles');
+
+function renderGuests(data) {
+  bubbles.innerHTML = '';
+  const n = data.guests.length;
+  let line = n === 0 ? 'the tub is warm and waiting' :
+             n === 1 ? '1 in the tub' : n + ' in the tub';
+  if (data.maybeCount) line += ' · +' + data.maybeCount + ' maybe' + (data.maybeCount > 1 ? 's' : '');
+  tubCount.textContent = line;
+  data.guests.forEach((g, i) => {
+    const b = document.createElement('span');
+    b.className = 'bubble';
+    b.textContent = g;
+    b.style.animationDelay = (i * 0.06) + 's';
+    bubbles.appendChild(b);
+  });
+}
+
+function loadGuests() {
+  if (!SCRIPT_URL) { tubCount.textContent = 'the RSVP list is still warming up — check back soon'; return; }
+  fetch(SCRIPT_URL)
+    .then(r => r.json())
+    .then(renderGuests)
+    .catch(() => { tubCount.textContent = 'couldn’t check the water — try a refresh'; });
+}
+loadGuests();
+
+// ---- rsvp form ----
+const form = document.getElementById('rsvp');
+const formMsg = document.getElementById('formMsg');
+const submitBtn = document.getElementById('submitBtn');
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  formMsg.classList.remove('err');
+  if (!SCRIPT_URL) {
+    formMsg.classList.add('err');
+    formMsg.textContent = 'The RSVP line isn’t connected yet — text Logan instead.';
+    return;
+  }
+  const fd = new FormData(form);
+  const body = new URLSearchParams(fd);
+  submitBtn.disabled = true;
+  formMsg.textContent = 'slipping you into the water…';
+  fetch(SCRIPT_URL, { method: 'POST', body })
+    .then(r => r.json())
+    .then(res => {
+      if (!res.ok) throw new Error(res.error || 'error');
+      const status = fd.get('status');
+      formMsg.textContent = status === 'yes'
+        ? 'You’re in. Bring flip-flops, or don’t. See you in the steam. 🧖'
+        : 'Noted — the tub will hold a spot for your maybe.';
+      form.reset();
+      setTimeout(loadGuests, 1200);
+    })
+    .catch(() => {
+      formMsg.classList.add('err');
+      formMsg.textContent = 'Hmm, that didn’t go through — try again or just text Logan.';
+    })
+    .finally(() => { submitBtn.disabled = false; });
+});
+</script>
+</body>
+</html>
