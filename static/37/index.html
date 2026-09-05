@@ -703,32 +703,33 @@ function makeSoundbath() {
   };
 }
 
-// default ON: browsers require a user gesture before audio can start, so the
-// bath begins on the first interaction anywhere — unless it's been toggled off
+// default ON: browsers refuse to start audio until the visitor interacts, so the
+// engine is built now (suspended) and we keep trying to unlock it on every kind
+// of interaction until it's actually running — unless it's been toggled off
 let bathWanted = true;
+let gongsStarted = false;
+bath = makeSoundbath();
 
-function ensureBath() {
-  if (!bathWanted || bath) return;
-  bath = makeSoundbath();
-  bath.start();
-}
+const unlockEvents = ['pointerdown', 'pointerup', 'click', 'touchstart', 'touchend', 'keydown', 'wheel', 'scroll'];
 
-function firstTouch(e) {
-  if (e.target && e.target.closest && e.target.closest('#soundToggle')) return;
-  window.removeEventListener('pointerdown', firstTouch);
-  window.removeEventListener('keydown', firstTouch);
-  ensureBath();
+function tryUnlock() {
+  if (!bathWanted) return;
+  bath.ctx.resume().then(() => {
+    if (bath.ctx.state !== 'running') return;
+    if (!gongsStarted) { gongsStarted = true; bath.start(); }
+    unlockEvents.forEach(ev => window.removeEventListener(ev, tryUnlock));
+  }).catch(() => {});
 }
-window.addEventListener('pointerdown', firstTouch);
-window.addEventListener('keydown', firstTouch);
+unlockEvents.forEach(ev => window.addEventListener(ev, tryUnlock, { passive: true }));
+tryUnlock(); // some browsers allow it immediately (e.g. repeat visitors)
 
 soundBtn.addEventListener('click', () => {
   const on = soundBtn.getAttribute('aria-pressed') !== 'true';
   bathWanted = on;
   if (on) {
-    if (!bath) { bath = makeSoundbath(); bath.start(); }
+    if (!gongsStarted) { gongsStarted = true; bath.ctx.resume(); bath.start(); }
     else bath.resume();
-  } else if (bath) {
+  } else {
     bath.pause();
   }
   soundBtn.setAttribute('aria-pressed', String(on));
