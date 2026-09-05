@@ -297,6 +297,40 @@
   .cal { text-align: center; }
   .cal-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
+  /* ---------- ascii map ---------- */
+  .mapsec { text-align: center; }
+  .map-frame {
+    display: inline-block;
+    background: var(--room-deep);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px 24px;
+    box-shadow: inset 0 0 30px rgba(0,0,0,.4), 0 0 40px rgba(255,140,66,.08);
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  .map {
+    font-size: clamp(7px, 2vw, 13px);
+    line-height: 1.4;
+    letter-spacing: .04em;
+    text-align: left;
+    color: var(--sand-dim);
+  }
+  .map .mk {
+    color: var(--glow-hi);
+    font-weight: 700;
+    text-shadow: 0 0 12px rgba(255,140,66,.6);
+  }
+  .map .vn { color: var(--sand); font-weight: 700; }
+  .map-legend {
+    margin-top: 16px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    color: var(--sand-dim);
+    line-height: 1.9;
+  }
+  .map-legend .mk { color: var(--glow-1); }
+
   /* ---------- sound toggle ---------- */
   .sound {
     position: fixed;
@@ -434,9 +468,25 @@
     </div>
   </section>
 
+  <div class="thread" aria-hidden="true"></div>
+
+  <section class="mapsec">
+    <h2>The Map</h2>
+    <div class="map-frame">
+<pre class="map">                                                      N
+                                                      ↑
+    │NORMANDIE               │VERMONT         │RAMPART
+    │                        │                │
+────┼───<span class="mk">[3]</span>──────<span class="mk">[2]</span>─────────┼──────<span class="mk">[1]</span>───────┼────────────→
+    │   <span class="vn">HMS      ABOUT</span>       │     <span class="vn">WI SPA</span>     │   WILSHIRE
+    │   <span class="vn">BOUNTY   TIME</span>        │      <span class="vn">6 PM</span>      │     BLVD</pre>
+    </div>
+    <p class="map-legend"><span class="mk">[1]</span> Wi Spa, 6 PM &nbsp;·&nbsp; <span class="mk">[2]</span> About Time &nbsp;·&nbsp; <span class="mk">[3]</span> HMS Bounty<br>all on Wilshire — about a 15 minute walk end to end</p>
+  </section>
+
 </div>
 
-<button class="sound" id="soundToggle" type="button" aria-pressed="false">◌ sound bath: off</button>
+<button class="sound on" id="soundToggle" type="button" aria-pressed="true">◉ sound bath: on</button>
 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyavqdvpvXsdbz11lXFMbAUKZL-qIIJ61w34Q8eTFvMvQUyd1UY0w0L6ULxsm8sdd8G/exec';
@@ -481,7 +531,7 @@ const EVENT = {
   ];
   const COLS = 48, ROWS = 16, TOP = 3;
   const L3 = 11, L7 = 27; // left column of each digit
-  const bricks = ['▓','▓','▓','▓','▒','▒','▒','█','#','8'];
+  const bricks = ['▓','▓','▓','▓','▒','▒','▒','█','#','7'];
 
   function carved(r, c) {
     const dr = r - TOP;
@@ -607,12 +657,12 @@ function makeSoundbath() {
   master.gain.value = 0;
   const lp = ctx.createBiquadFilter();
   lp.type = 'lowpass';
-  lp.frequency.value = 1400;
+  lp.frequency.value = 1800;
   master.connect(lp);
   lp.connect(ctx.destination);
 
-  // warm drone: detuned low sines + soft fifth and octave
-  [[55, .28], [55.4, .24], [82.41, .10], [110, .08]].forEach(([f, g]) => {
+  // warm drone: detuned sines + soft fifth and octave
+  [[110, .28], [110.7, .24], [164.81, .12], [220, .09]].forEach(([f, g]) => {
     const o = ctx.createOscillator();
     o.type = 'sine';
     o.frequency.value = f;
@@ -632,45 +682,63 @@ function makeSoundbath() {
   lfoG.connect(lp.frequency);
   lfo.start();
 
-  master.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 5);
+  master.gain.linearRampToValueAtTime(0.34, ctx.currentTime + 4);
 
-  // occasional gong: inharmonic sine partials with long decay
+  // recurring gong: inharmonic sine partials with long decay
   let gongTimer = null;
   function gong() {
     const t = ctx.currentTime;
     const base = [98, 110, 123.5][Math.floor(Math.random() * 3)] * (Math.random() < .35 ? 2 : 1);
-    [[1, .5], [2.76, .22], [5.4, .1], [8.93, .04]].forEach(([m, g]) => {
+    [[1, .7], [2.76, .32], [5.4, .15], [8.93, .06]].forEach(([m, g]) => {
       const o = ctx.createOscillator();
       o.type = 'sine';
       o.frequency.value = base * m * (1 + (Math.random() - .5) * .004);
       const og = ctx.createGain();
       og.gain.setValueAtTime(0, t);
       og.gain.linearRampToValueAtTime(g, t + .03 + Math.random() * .05);
-      og.gain.exponentialRampToValueAtTime(.0001, t + 8 + Math.random() * 5);
+      og.gain.exponentialRampToValueAtTime(.0001, t + 6 + Math.random() * 3);
       o.connect(og);
       og.connect(master);
       o.start(t);
-      o.stop(t + 14);
+      o.stop(t + 10);
     });
-    gongTimer = setTimeout(gong, 11000 + Math.random() * 14000);
+    gongTimer = setTimeout(gong, 6000 + Math.random() * 7000);
   }
 
   return {
     ctx,
     start() { gong(); },
     pause() { clearTimeout(gongTimer); ctx.suspend(); },
-    resume() { ctx.resume(); gongTimer = setTimeout(gong, 1500 + Math.random() * 4000); }
+    resume() { ctx.resume(); gongTimer = setTimeout(gong, 1000 + Math.random() * 2000); }
   };
 }
 
+// default ON: browsers require a user gesture before audio can start, so the
+// bath begins on the first interaction anywhere — unless it's been toggled off
+let bathWanted = true;
+
+function ensureBath() {
+  if (!bathWanted || bath) return;
+  bath = makeSoundbath();
+  bath.start();
+}
+
+function firstTouch(e) {
+  if (e.target && e.target.closest && e.target.closest('#soundToggle')) return;
+  window.removeEventListener('pointerdown', firstTouch);
+  window.removeEventListener('keydown', firstTouch);
+  ensureBath();
+}
+window.addEventListener('pointerdown', firstTouch);
+window.addEventListener('keydown', firstTouch);
+
 soundBtn.addEventListener('click', () => {
   const on = soundBtn.getAttribute('aria-pressed') !== 'true';
-  if (!bath) {
-    bath = makeSoundbath();
-    bath.start();
-  } else if (on) {
-    bath.resume();
-  } else {
+  bathWanted = on;
+  if (on) {
+    if (!bath) { bath = makeSoundbath(); bath.start(); }
+    else bath.resume();
+  } else if (bath) {
     bath.pause();
   }
   soundBtn.setAttribute('aria-pressed', String(on));
