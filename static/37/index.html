@@ -686,8 +686,8 @@ function makeSoundbath() {
   master.connect(lp);
   lp.connect(ctx.destination);
 
-  // warm drone: detuned sines + soft fifth and octave
-  [[110, .28], [110.7, .24], [164.81, .12], [220, .09]].forEach(([f, g]) => {
+  // warm drone: detuned sines + soft fifth/octave + mids for phone speakers
+  [[110, .28], [110.7, .24], [164.81, .12], [220, .09], [329.63, .07], [440, .05]].forEach(([f, g]) => {
     const o = ctx.createOscillator();
     o.type = 'sine';
     o.frequency.value = f;
@@ -707,7 +707,7 @@ function makeSoundbath() {
   lfoG.connect(lp.frequency);
   lfo.start();
 
-  master.gain.linearRampToValueAtTime(0.34, ctx.currentTime + 4);
+  master.gain.linearRampToValueAtTime(0.38, ctx.currentTime + 4);
 
   // recurring gong: inharmonic sine partials with long decay
   let gongTimer = null;
@@ -738,24 +738,9 @@ function makeSoundbath() {
   };
 }
 
-// default ON: browsers refuse to start audio until the visitor interacts, so the
-// engine is built now (suspended) and we keep trying to unlock it on every kind
-// of interaction until it's actually running — unless it's been toggled off
+// default ON. iOS is only reliable when the AudioContext is CREATED inside a
+// real tap/click, so nothing is built until the first gesture.
 let bathWanted = true;
-let gongsStarted = false;
-bath = makeSoundbath();
-
-const unlockEvents = ['pointerdown', 'keydown'];
-
-function tryUnlock() {
-  if (!bathWanted) return;
-  bath.ctx.resume().then(() => {
-    if (bath.ctx.state !== 'running') return;
-    if (!gongsStarted) { gongsStarted = true; bath.start(); }
-    unlockEvents.forEach(ev => window.removeEventListener(ev, tryUnlock));
-  }).catch(() => {});
-}
-unlockEvents.forEach(ev => window.addEventListener(ev, tryUnlock, { passive: true }));
 
 // iOS mutes Web Audio when the physical silent switch is on. Playing an HTML
 // <audio> element (even a silent one) flips the audio session to "playback",
@@ -769,14 +754,44 @@ function unmuteIOS() {
   window.__iosUnmute = a; // keep a reference so it isn't garbage-collected
 }
 
+// must be called synchronously from inside a user-gesture event handler
+function startBathFromGesture() {
+  if (!bathWanted || bath) return;
+  unmuteIOS();
+  bath = makeSoundbath();
+  // classic iOS unlock: push a 1-sample buffer through the fresh context
+  try {
+    const blip = bath.ctx.createBufferSource();
+    blip.buffer = bath.ctx.createBuffer(1, 1, 22050);
+    blip.connect(bath.ctx.destination);
+    blip.start(0);
+  } catch (e) {}
+  if (bath.ctx.state !== 'running') bath.ctx.resume().catch(() => {});
+  bath.start();
+}
+
+// fallback for visitors who arrive via ?noenter (no overlay tap)
+const unlockEvents = ['pointerdown', 'keydown'];
+function fallbackUnlock() {
+  startBathFromGesture();
+  if (bath) unlockEvents.forEach(ev => window.removeEventListener(ev, fallbackUnlock));
+}
+unlockEvents.forEach(ev => window.addEventListener(ev, fallbackUnlock, { passive: true }));
+
+// iOS can leave the context 'interrupted'/'suspended' after calls or tab switches
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && bath && bathWanted && bath.ctx.state !== 'running') {
+    bath.ctx.resume().catch(() => {});
+  }
+});
+
 // entry overlay: the guaranteed first tap that browsers require before audio
 const enterEl = document.getElementById('enter');
 let entered = false;
 function enterSite() {
   if (entered) return;
   entered = true;
-  unmuteIOS();
-  tryUnlock();
+  startBathFromGesture();
   enterEl.classList.add('gone');
   setTimeout(() => enterEl.remove(), 900);
 }
@@ -789,15 +804,23 @@ soundBtn.addEventListener('click', () => {
   const on = soundBtn.getAttribute('aria-pressed') !== 'true';
   bathWanted = on;
   if (on) {
-    if (!gongsStarted) { gongsStarted = true; bath.ctx.resume(); bath.start(); }
+    if (!bath) startBathFromGesture();
     else bath.resume();
-  } else {
+  } else if (bath) {
     bath.pause();
   }
   soundBtn.setAttribute('aria-pressed', String(on));
   soundBtn.classList.toggle('on', on);
   soundBtn.textContent = on ? '◉ sound bath: on' : '◌ sound bath: off';
 });
+
+// ?debug — live-append the AudioContext state to the toggle so failures are reportable
+if (/debug/.test(location.search)) {
+  setInterval(() => {
+    const state = bath ? bath.ctx.state : 'not created';
+    soundBtn.textContent = soundBtn.textContent.split(' · ')[0] + ' · ' + state;
+  }, 1000);
+}
 </script>
 </body>
 </html>
