@@ -504,6 +504,7 @@
 
 </div>
 
+<audio id="bathAudio" src="/37/soundbath.m4a" loop preload="auto" playsinline></audio>
 <button class="sound on" id="soundToggle" type="button" aria-pressed="true">◉ sound bath: on</button>
 
 <div class="enter" id="enter" role="button" tabindex="0" aria-label="Enter">
@@ -672,117 +673,30 @@ form.addEventListener('submit', (e) => {
     .finally(() => { submitBtn.disabled = false; });
 });
 
-// ---- soundbath: synthesized gong + drone (no audio file) ----
+// ---- soundbath: pre-rendered 90s loop via HTML5 audio ----
+// (an <audio> element is the only audio iOS treats reliably: it starts from a
+// tap every time and plays even when the physical silent switch is on)
 const soundBtn = document.getElementById('soundToggle');
-let bath = null;
-
-function makeSoundbath() {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  const master = ctx.createGain();
-  master.gain.value = 0;
-  const lp = ctx.createBiquadFilter();
-  lp.type = 'lowpass';
-  lp.frequency.value = 1800;
-  master.connect(lp);
-  lp.connect(ctx.destination);
-
-  // warm drone: detuned sines + soft fifth/octave + mids for phone speakers
-  [[110, .28], [110.7, .24], [164.81, .12], [220, .09], [329.63, .07], [440, .05]].forEach(([f, g]) => {
-    const o = ctx.createOscillator();
-    o.type = 'sine';
-    o.frequency.value = f;
-    const og = ctx.createGain();
-    og.gain.value = g;
-    o.connect(og);
-    og.connect(master);
-    o.start();
-  });
-
-  // very slow filter sweep so the drone breathes
-  const lfo = ctx.createOscillator();
-  lfo.frequency.value = 0.04;
-  const lfoG = ctx.createGain();
-  lfoG.gain.value = 500;
-  lfo.connect(lfoG);
-  lfoG.connect(lp.frequency);
-  lfo.start();
-
-  master.gain.linearRampToValueAtTime(0.38, ctx.currentTime + 4);
-
-  // recurring gong: inharmonic sine partials with long decay
-  let gongTimer = null;
-  function gong() {
-    const t = ctx.currentTime;
-    const base = [98, 110, 123.5][Math.floor(Math.random() * 3)] * (Math.random() < .35 ? 2 : 1);
-    [[1, .7], [2.76, .32], [5.4, .15], [8.93, .06]].forEach(([m, g]) => {
-      const o = ctx.createOscillator();
-      o.type = 'sine';
-      o.frequency.value = base * m * (1 + (Math.random() - .5) * .004);
-      const og = ctx.createGain();
-      og.gain.setValueAtTime(0, t);
-      og.gain.linearRampToValueAtTime(g, t + .03 + Math.random() * .05);
-      og.gain.exponentialRampToValueAtTime(.0001, t + 6 + Math.random() * 3);
-      o.connect(og);
-      og.connect(master);
-      o.start(t);
-      o.stop(t + 10);
-    });
-    gongTimer = setTimeout(gong, 6000 + Math.random() * 7000);
-  }
-
-  return {
-    ctx,
-    start() { gong(); },
-    pause() { clearTimeout(gongTimer); ctx.suspend(); },
-    resume() { ctx.resume(); gongTimer = setTimeout(gong, 1000 + Math.random() * 2000); }
-  };
-}
-
-// default ON. iOS is only reliable when the AudioContext is CREATED inside a
-// real tap/click, so nothing is built until the first gesture.
+const bathAudio = document.getElementById('bathAudio');
+bathAudio.volume = 0.9; // ignored by iOS (always 1.0) — fine
 let bathWanted = true;
 
-// iOS mutes Web Audio when the physical silent switch is on. Playing an HTML
-// <audio> element (even a silent one) flips the audio session to "playback",
-// which ignores the switch. Harmless everywhere else.
-function unmuteIOS() {
-  const a = document.createElement('audio');
-  a.setAttribute('playsinline', '');
-  a.loop = true;
-  a.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-  a.play().catch(() => {});
-  window.__iosUnmute = a; // keep a reference so it isn't garbage-collected
-}
-
-// must be called synchronously from inside a user-gesture event handler
-function startBathFromGesture() {
-  if (!bathWanted || bath) return;
-  unmuteIOS();
-  bath = makeSoundbath();
-  // classic iOS unlock: push a 1-sample buffer through the fresh context
-  try {
-    const blip = bath.ctx.createBufferSource();
-    blip.buffer = bath.ctx.createBuffer(1, 1, 22050);
-    blip.connect(bath.ctx.destination);
-    blip.start(0);
-  } catch (e) {}
-  if (bath.ctx.state !== 'running') bath.ctx.resume().catch(() => {});
-  bath.start();
+function startBath() {
+  if (!bathWanted || !bathAudio.paused) return;
+  bathAudio.play().catch(() => {});
 }
 
 // fallback for visitors who arrive via ?noenter (no overlay tap)
 const unlockEvents = ['pointerdown', 'keydown'];
 function fallbackUnlock() {
-  startBathFromGesture();
-  if (bath) unlockEvents.forEach(ev => window.removeEventListener(ev, fallbackUnlock));
+  startBath();
+  if (!bathAudio.paused) unlockEvents.forEach(ev => window.removeEventListener(ev, fallbackUnlock));
 }
 unlockEvents.forEach(ev => window.addEventListener(ev, fallbackUnlock, { passive: true }));
 
-// iOS can leave the context 'interrupted'/'suspended' after calls or tab switches
+// resume after calls / tab switches if iOS paused us
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && bath && bathWanted && bath.ctx.state !== 'running') {
-    bath.ctx.resume().catch(() => {});
-  }
+  if (!document.hidden && bathWanted && bathAudio.paused) bathAudio.play().catch(() => {});
 });
 
 // entry overlay: the guaranteed first tap that browsers require before audio
@@ -791,7 +705,7 @@ let entered = false;
 function enterSite() {
   if (entered) return;
   entered = true;
-  startBathFromGesture();
+  startBath();
   enterEl.classList.add('gone');
   setTimeout(() => enterEl.remove(), 900);
 }
@@ -803,22 +717,18 @@ if (/noenter/.test(location.search)) { entered = true; enterEl.remove(); }
 soundBtn.addEventListener('click', () => {
   const on = soundBtn.getAttribute('aria-pressed') !== 'true';
   bathWanted = on;
-  if (on) {
-    if (!bath) startBathFromGesture();
-    else bath.resume();
-  } else if (bath) {
-    bath.pause();
-  }
+  if (on) bathAudio.play().catch(() => {});
+  else bathAudio.pause();
   soundBtn.setAttribute('aria-pressed', String(on));
   soundBtn.classList.toggle('on', on);
-  soundBtn.textContent = on ? '◉ sound bath: on' : '◌ sound bath: off';
+  soundBtn.textContent = on ? '\u25c9 sound bath: on' : '\u25cc sound bath: off';
 });
 
-// ?debug — live-append the AudioContext state to the toggle so failures are reportable
+// ?debug — live-append the audio state to the toggle so failures are reportable
 if (/debug/.test(location.search)) {
   setInterval(() => {
-    const state = bath ? bath.ctx.state : 'not created';
-    soundBtn.textContent = soundBtn.textContent.split(' · ')[0] + ' · ' + state;
+    const state = (bathAudio.paused ? 'paused' : 'playing') + ' rs' + bathAudio.readyState;
+    soundBtn.textContent = soundBtn.textContent.split(' \u00b7 ')[0] + ' \u00b7 ' + state;
   }, 1000);
 }
 </script>
