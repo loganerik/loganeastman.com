@@ -333,3 +333,25 @@ body.th-site { min-width: 320px; margin: 0; background: #e5ede6; color: var(--th
 .th-nav a { font-size: .8rem; }
 .th-section-topline h2 { font-size: 1rem; }
 .th-brand-author { font-size: clamp(.5rem, 2.9cqw, .8rem); letter-spacing: .18em; }
+
+/* Label face: Cinzel Decorative for the nav, eyebrows, bylines and small interface labels.
+   It is a caps-only face, so these are set uppercase. Major Mono stays for the wordmark
+   and headlines, always lowercase to avoid its symbol-like capitals. */
+:root { --th-label: 'Cinzel Decorative', 'Cinzel', Georgia, serif; }
+.th-eyebrow, .th-section-topline span, .th-section-topline a, .th-section-topline h2, .th-edition-day,
+.th-archive-date, .th-topic-label, .th-term-count, .th-aside-label, .th-week-label,
+.th-post-nav a span, .th-small, .th-pill, .th-outline-btn, .th-nav a, .th-prose h4, .th-prose th,
+.th-brand-author, .th-topic-pill, .th-skip { font-family: var(--th-label); font-weight: 400; text-transform: uppercase; letter-spacing: .08em; }
+.th-eyebrow { font-size: .7rem; }
+.th-nav a { font-size: .74rem; letter-spacing: .1em; }
+.th-nav a:hover, .th-nav a[aria-current] { font-weight: 700; color: #bc7477; }
+.th-section-topline h2 { font-size: .92rem; letter-spacing: .1em; }
+.th-section-topline span, .th-section-topline a { font-size: .58rem; }
+.th-edition-day, .th-archive-date, .th-week-label { font-size: .58rem; }
+.th-topic-pill { font-size: .62rem; letter-spacing: .05em; }
+.th-pill, .th-outline-btn { font-size: .66rem; }
+.th-brand-author { font-size: clamp(.46rem, 2.7cqw, .76rem); letter-spacing: .2em; font-weight: 700; }
+.th-brand-title, .th-footer-name { text-transform: lowercase; }
+.th-brand-title { letter-spacing: .08em; padding-left: .08em; }
+.th-footer-name span { font-family: var(--th-display); }
+.th-footer .th-small { font-size: .6rem; }
