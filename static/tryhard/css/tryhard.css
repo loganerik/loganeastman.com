@@ -446,3 +446,18 @@ body.th-site { min-width: 320px; margin: 0; background: #e5ede6; color: var(--th
 .th-edition-copy { min-width: 0; }
 .th-edition-title { width: 100%; max-width: 100%; min-width: 0; }
 @media (max-width: 700px) { .th-wall-grid .th-edition-copy { padding: 12px 12px 26px; } .th-wall-grid .th-edition-title { font-size: .72rem; } }
+
+/* Reading face: Fenix, set in black like magazine copy. Buda stays for nav and labels. */
+:root { --th-body: 'Fenix', Georgia, 'Times New Roman', serif; --th-text: #111111; }
+body.th-site { font-family: var(--th-body); font-weight: 400; color: var(--th-text); }
+.th-article-body { font-family: var(--th-body); font-weight: 400; font-size: clamp(1.08rem, 1.35vw, 1.2rem); line-height: 1.72; color: var(--th-text); }
+.th-deck, .th-article-deck, .th-home-story .th-deck, .th-explore-head > p:not(.th-eyebrow), .th-explore-callout p:not(.th-eyebrow),
+.th-topic-result p, .th-prose blockquote, .th-prose .th-aside, .th-figure figcaption, .th-standfirst { font-family: var(--th-body); font-weight: 400; color: var(--th-text); }
+.th-article-deck, .th-deck { color: #1a1a1a; }
+.th-prose blockquote { color: #222; }
+.th-prose .th-aside { color: #222; }
+.th-figure figcaption { color: #444; }
+.th-site strong { font-weight: 700; color: var(--th-text); }
+.th-site em { color: var(--th-text); }
+.th-prose a { color: var(--th-forest); }
+@media (max-width: 700px) { .th-article-body { font-size: 1.08rem; line-height: 1.7; } }
