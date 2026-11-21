@@ -1,0 +1,10 @@
+{{ define "main" }}
+<article class="th-article th-page">
+  <section class="th-explore-head">
+    {{ with .Params.eyebrow }}<p class="th-eyebrow">{{ . }}</p>{{ end }}
+    <h1>{{ .Title }}</h1>
+    {{ with .Description }}<p>{{ . }}</p>{{ end }}
+  </section>
+  <div class="th-article-body th-prose th-prose--plain">{{ .Content }}</div>
+</article>
+{{ end }}

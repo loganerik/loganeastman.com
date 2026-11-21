@@ -1,0 +1,9 @@
+{{- $p := . -}}
+<a class="th-edition" href="{{ $p.RelPermalink }}" aria-label="{{ $p.Date.Format "Monday January 2" }}: {{ $p.Title }}">
+  <div class="th-edition-art">{{ partialCached "tryhard/edition-cover.html" $p $p.RelPermalink }}</div>
+  <div class="th-edition-copy">
+    <span class="th-edition-day">{{ $p.Date.Format "Mon" | upper }} <span>{{ $p.Date.Format "02" }}</span></span>
+    <span class="th-edition-title">{{ $p.Title }}</span>
+    <span class="th-edition-arrow" aria-hidden="true">↗</span>
+  </div>
+</a>

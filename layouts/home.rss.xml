@@ -1,0 +1,3 @@
+{{- /* The home feed is the columns feed. */ -}}
+{{- $cols := site.GetPage "columns" -}}
+{{- with $cols }}{{ partial "tryhard/rss-channel.html" . }}{{ end -}}

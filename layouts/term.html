@@ -1,0 +1,11 @@
+{{ define "main" }}
+  <section class="th-explore-head"><p class="th-eyebrow">{{ if eq .Data.Plural "categories" }}FILED UNDER{{ else }}ALSO ON{{ end }}</p><h1>{{ .Title }}</h1><p>Every column on this subject, whenever it was written.</p></section>
+  <section class="th-explore-block">
+    <div class="th-section-topline"><h2>{{ with .Pages }}{{ len . }} {{ if eq (len .) 1 }}column{{ else }}columns{{ end }}{{ end }}</h2><a href="/{{ .Data.Plural }}/">All {{ .Data.Plural }} ↗</a></div>
+    <div class="th-topic-results">
+    {{ range (where .Pages "Section" "columns").ByDate.Reverse }}
+    <a class="th-topic-result" href="{{ .RelPermalink }}"><div class="th-topic-result-image">{{ partialCached "tryhard/edition-cover.html" . .RelPermalink }}</div><div><span class="th-eyebrow">{{ .Date.Format "Jan 02, 2006" }}</span><h3>{{ .Title }}</h3>{{ with .Description }}<p>{{ . }}</p>{{ end }}</div><span class="th-archive-arrow" aria-hidden="true">↗</span></a>
+    {{ else }}<p class="th-muted">No columns have been filed here yet.</p>{{ end }}
+    </div>
+  </section>
+{{ end }}

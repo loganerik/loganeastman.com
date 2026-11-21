@@ -1,0 +1,26 @@
+{{ define "main" }}
+<section class="th-explore-head"><p class="th-eyebrow">THE COLLECTED EDITIONS</p><h1>The archive.</h1><p>{{ .Description }}</p></section>
+{{ $posts := (where site.RegularPages "Section" "columns").ByDate.Reverse }}
+{{ with $posts }}
+  {{ range .GroupByDate "January 2006" }}
+  <section class="th-explore-block th-month" aria-label="{{ .Key }}">
+    <div class="th-section-topline"><h2>{{ .Key }}</h2><span>{{ len .Pages }} {{ if eq (len .Pages) 1 }}edition{{ else }}editions{{ end }}</span></div>
+    {{- /* group this month's pages by ISO week (Monday start) */ -}}
+    {{- $weeks := dict -}}{{- $order := slice -}}
+    {{- range .Pages -}}
+      {{- $wd := int .Date.Weekday -}}{{- if eq $wd 0 }}{{ $wd = 7 }}{{ end -}}
+      {{- $mon := (.Date.AddDate 0 0 (sub 1 $wd)).Format "2006-01-02" -}}
+      {{- if not (isset $weeks $mon) }}{{ $order = $order | append $mon }}{{ end -}}
+      {{- $weeks = merge $weeks (dict $mon ((index $weeks $mon | default slice) | append .)) -}}
+    {{- end -}}
+    {{- range $order -}}
+      {{- $mon := time.AsTime . -}}
+      <div class="th-week-row">
+        <p class="th-week-label"><span>Week of</span> {{ $mon.Format "Jan 02" }} – {{ ($mon.AddDate 0 0 6).Format "Jan 02" }}</p>
+        <div class="th-wall-grid">{{ range sort (index $weeks .) "Date" "desc" }}{{ partial "tryhard/edition-card.html" . }}{{ end }}</div>
+      </div>
+    {{- end -}}
+  </section>
+  {{ end }}
+{{ else }}<section class="th-empty-state"><p class="th-eyebrow">THE ARCHIVE</p><h1>Nothing here yet.</h1><p>The first edition has yet to be published.</p></section>{{ end }}
+{{ end }}

@@ -1,0 +1,14 @@
+{{- $kind := .Kind -}}
+{{- $entries := index site.Taxonomies $kind -}}
+{{- $any := false -}}
+{{- with $entries -}}
+  <div class="th-term-grid">
+  {{- range .ByCount -}}
+    {{- $pages := where .Page.Pages "Section" "columns" -}}
+    {{- if gt (len $pages) 0 -}}{{- $any = true -}}
+      <a class="th-term-card" href="{{ .Page.RelPermalink }}"><span class="th-term-name">{{ .Page.LinkTitle }}</span><span class="th-term-count">{{ len $pages }} {{ if eq (len $pages) 1 }}column{{ else }}columns{{ end }} ↗</span></a>
+    {{- end -}}
+  {{- end -}}
+  </div>
+{{- end -}}
+{{- if not $any }}<p class="th-muted">Nothing filed here yet.</p>{{ end -}}

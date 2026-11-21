@@ -1,0 +1,13 @@
+{{- /* Markdown images: ![alt](photo.jpg "caption") get the gold frame.
+       Bundle resources are resized; external/static URLs pass through. */ -}}
+{{- $r := .Page.Resources.GetMatch .Destination -}}
+{{- $duo := in (.Attributes.class | default "") "duotone" -}}
+<figure class="th-figure">
+  {{- with $r -}}
+    {{- $large := .Resize "1400x webp q85" -}}{{- $small := .Resize "800x webp q85" -}}
+    <img class="{{ if $duo }}th-duotone{{ end }}" src="{{ $large.RelPermalink }}" srcset="{{ $small.RelPermalink }} 800w, {{ $large.RelPermalink }} {{ $large.Width }}w" sizes="(max-width: 900px) 100vw, 760px" alt="{{ $.PlainText }}" width="{{ $large.Width }}" height="{{ $large.Height }}" loading="lazy">
+  {{- else -}}
+    <img class="{{ if $duo }}th-duotone{{ end }}" src="{{ .Destination | safeURL }}" alt="{{ .PlainText }}" loading="lazy">
+  {{- end -}}
+  {{- with .Title }}<figcaption>{{ . | markdownify }}</figcaption>{{ end -}}
+</figure>

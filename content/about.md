@@ -1,30 +1,21 @@
 ---
 title: "About"
-chapter: "02. The Usual Suspect"
+description: "What TRYHARD is, and who writes it."
+eyebrow: "BY LOGAN EASTMAN"
 ---
 
-<div class="intro">
+TRYHARD in a whytry world is a column by Logan Eastman: observations, connections, digressions, and other things that seemed worth writing down.
 
-*Inside, the man sat behind a desk covered in half-finished scripts and a cold cup of coffee. Two cats somewhere nearby. He leaned back and said, "Look, I know you've been on a billion profile pages that look just like this one. You're just going to have to trust me."*
+It is published on weekdays, more or less, from Los Angeles. Some weeks have five editions. Some have one. The archive keeps all of them, and the [Explore](/explore/) page lets you read by subject instead of by date.
 
-</div>
+## The name
 
-<div class="about-grid">
-<div class="about-bio">
+Trying hard is unfashionable. This is a place to do it anyway.
 
-I'm Logan, a writer, strategist and technologist. 
-I've worked in <a href="http://www.wefirstbranding.com">branding</a>, <a href="https://www.linkedin.com/in/loganeastman/">thought leadership</a>, and <a href="https://www.imdb.com/name/nm4530434/">entertainment</a>.
+## The cats
 
-Living in Los Angeles since 2008, where I've always wanted to be a noir detective.
+Ares (left) and Artemis (right) keep watch over the masthead. Artemis is the one with the white paws.
 
-John Le Carré, Tina Fey, and Matt Weiner taught me to trust my audience. Jane Jacobs inspired my sidewalk philosophizing. Hayek made me a believer in chaos theory.
+## Elsewhere
 
-I'm an amateur <a href="https://www.strava.com/athletes/24642045">runner</a>, <a href="http://www.instagram.com/loganerik">photographer</a>, and <a href="https://soundcloud.com/los-feels">music producer</a>. 
-
-</div>
-<div class="about-photo">
-
-![Logan Eastman](/img/about.jpg)
-
-</div>
-</div>
+Columns arrive here first. There is an [RSS feed](/columns/index.xml) if you would like them delivered.

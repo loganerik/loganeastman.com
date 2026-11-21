@@ -1,0 +1,24 @@
+{{- /* Deterministic cover attributes for a column. Returns a dict.
+       style and accent come from separate seeds so they combine freely;
+       variant tunes stripe pitch/width; motif picks the bottom ornament. */ -}}
+{{- $p := . -}}
+{{- $cover := $p.Params.cover | default dict -}}
+{{- $styles := slice "lines" "waves" "steps" "rays" "arches" "scallops" -}}
+{{- $accents := slice "sage" "rose" "jade" "brown" "olive" -}}
+{{- $tl := len $p.Title -}}
+{{- $dl := len ($p.Description | default "") -}}
+{{- $yd := $p.Date.YearDay -}}
+{{- $yr := $p.Date.Year -}}
+{{- $mo := int $p.Date.Month -}}
+{{- $dy := $p.Date.Day -}}
+{{- $styleSeed := mod (add (add $yd (mul $yr 17)) $tl) (len $styles) -}}
+{{- $accentSeed := mod (add (add (mul $yd 7) $mo) (add $dl (mul $tl 3))) (len $accents) -}}
+{{- $variant := mod (add $dy (mul $tl 5)) 3 -}}
+{{- $motif := mod (add (add $yd $yr) $dl) 3 -}}
+{{- $style := $cover.style | default "" -}}
+{{- if not (in $styles $style) }}{{ $style = index $styles $styleSeed }}{{ end -}}
+{{- $accent := $cover.accent | default "" -}}
+{{- if not (in $accents $accent) }}{{ $accent = index $accents $accentSeed }}{{ end -}}
+{{- $inks := dict "sage" "#39745b" "rose" "#bc7f82" "jade" "#39847a" "brown" "#8d6e58" "olive" "#768b60" -}}
+{{- $tints := dict "sage" "#edf3e8" "rose" "#f6ede9" "jade" "#e9f2ee" "brown" "#f3efe6" "olive" "#eff2e6" -}}
+{{- return (dict "style" $style "accent" $accent "variant" $variant "motif" $motif "ink" (index $inks $accent) "tint" (index $tints $accent)) -}}

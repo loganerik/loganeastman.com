@@ -1,0 +1,21 @@
+{{ define "main" }}
+  <section class="th-explore-head">
+    <p class="th-eyebrow">BEYOND THE DATE LINE</p>
+    <h1>Follow the threads.</h1>
+    <p>Every column belongs to a day. Some ideas keep coming back. Start with a subject and see where it leads.</p>
+  </section>
+  <section class="th-explore-block" aria-labelledby="th-categories-title">
+    <div class="th-section-topline"><h2 id="th-categories-title">Categories</h2><span>The broad subjects</span></div>
+    {{ partial "tryhard/term-list.html" (dict "Kind" "categories") }}
+  </section>
+  <section class="th-explore-block th-explore-block--tags" aria-labelledby="th-tags-title">
+    <div class="th-section-topline"><h2 id="th-tags-title">Tags</h2><span>The recurring ideas</span></div>
+    {{ partial "tryhard/term-list.html" (dict "Kind" "tags") }}
+  </section>
+  {{ with (where site.RegularPages "Section" "columns").ByDate.Reverse }}
+  <section class="th-explore-block" aria-labelledby="th-all-title">
+    <div class="th-section-topline"><h2 id="th-all-title">Everything, by date</h2><a href="/archive/">The cover wall ↗</a></div>
+    <div class="th-archive-list">{{ range . }}{{ partial "tryhard/archive-row.html" . }}{{ end }}</div>
+  </section>
+  {{ end }}
+{{ end }}

@@ -1,0 +1,8 @@
+{{ define "main" }}
+{{ $kind := .Data.Plural }}
+<section class="th-explore-head"><p class="th-eyebrow">EXPLORE TRYHARD</p><h1>{{ if eq $kind "categories" }}The subjects.{{ else }}The recurring ideas.{{ end }}</h1><p>{{ if eq $kind "categories" }}Broad territories the columns keep returning to.{{ else }}Smaller threads that run through the writing.{{ end }}</p></section>
+<section class="th-explore-block {{ if eq $kind "tags" }}th-explore-block--tags{{ end }}">
+  <div class="th-section-topline"><h2>All {{ $kind }}</h2><a href="/explore/">Explore ↗</a></div>
+  {{ partial "tryhard/term-list.html" (dict "Kind" $kind) }}
+</section>
+{{ end }}

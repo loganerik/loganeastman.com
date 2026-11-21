@@ -1,0 +1,9 @@
+{{ define "main" }}
+<section class="th-explore-head"><p class="th-eyebrow">ALL COLUMNS</p><h1>Every edition.</h1><p>{{ .Description }}</p></section>
+<section class="th-explore-block">
+  <div class="th-section-topline"><h2>By date</h2><a href="/explore/">Explore topics ↗</a></div>
+  {{ with .RegularPages.ByDate.Reverse }}
+  <div class="th-archive-list">{{ range . }}{{ partial "tryhard/archive-row.html" . }}{{ end }}</div>
+  {{ else }}<p class="th-muted">The first edition has yet to be published.</p>{{ end }}
+</section>
+{{ end }}
