@@ -355,3 +355,94 @@ body.th-site { min-width: 320px; margin: 0; background: #e5ede6; color: var(--th
 .th-brand-title { letter-spacing: .08em; padding-left: .08em; }
 .th-footer-name span { font-family: var(--th-display); }
 .th-footer .th-small { font-size: .6rem; }
+
+/* ---------- v3: theatrical home, intimate article, composed covers ---------- */
+/* Home masthead: brand arch alone, wider; reclining cats appear only on interior pages. */
+.th-masthead--home { height: clamp(170px, 18vw, 230px); }
+.th-masthead--home::before, .th-masthead--home::after { width: 29%; }
+.th-masthead--home .th-brand { left: 15%; right: 15%; top: 10%; padding: 5% 4% 4%; }
+/* Interior masthead: transparent cats sit on the baseline inside the pink arches. */
+.th-header:not(.th-header--home) .th-cat-arch img { object-fit: contain; object-position: center bottom; }
+
+/* Home stage: upright cats | latest column | Eastern Columbia clocktower */
+.th-home-stage { position: relative; display: grid; grid-template-columns: minmax(120px, .88fr) minmax(0, 2.2fr) minmax(130px, .92fr); align-items: stretch; min-height: 470px; margin: 0 calc(-1 * clamp(36px, 6vw, 86px)); overflow: hidden; background: #fffefa; border-bottom: 2px solid var(--th-gold); }
+.th-home-art { position: relative; min-width: 0; overflow: hidden; }
+.th-home-art--cats { background: repeating-linear-gradient(90deg, #add1bd 0 18px, #e7efd8 18px 32px, #2a6150 32px 38px, #f3c6bb 38px 42px, #f5f7ed 42px 56px); }
+.th-home-art--cats .th-home-arch { position: absolute; left: 5%; right: 3%; top: 24px; bottom: -95px; border: 3px solid #bda16a; border-radius: 60% 60% 0 0; background: #e6b8ae; }
+.th-home-art--cats img { position: absolute; left: -10%; bottom: -30px; width: 120%; max-width: none; height: 94%; object-fit: contain; object-position: bottom; filter: drop-shadow(0 7px 4px #244e3a18); }
+.th-home-star { position: absolute; top: 15px; right: 20px; color: #fdfaf1; font-size: 2.6rem; }
+.th-home-art--tower { background: repeating-linear-gradient(90deg, #c9dfd3 0 18px, #fff9eb 18px 32px, #e9b9b1 32px 37px, #eaf2ea 37px 52px); }
+.th-home-art--tower img { position: absolute; left: -10%; bottom: -10px; width: 120%; max-width: none; height: 100%; object-fit: contain; object-position: bottom; filter: drop-shadow(0 0 5px #1b473924); }
+.th-home-story { position: relative; min-width: 0; padding: 48px clamp(22px, 3.3vw, 50px) 36px; background: #fffefa; border-left: 2px solid var(--th-gold); border-right: 2px solid var(--th-gold); }
+.th-home-story::before { content: ""; position: absolute; left: 22px; right: 22px; top: 15px; height: 5px; background: linear-gradient(90deg, var(--th-gold), transparent 43%, var(--th-rose) 58%, var(--th-gold)); }
+.th-home-story h1 { margin: 22px 0 18px; font: 400 clamp(1.6rem, 2.5vw, 2.85rem)/1.28 var(--th-display); letter-spacing: -.02em; text-transform: lowercase; overflow-wrap: anywhere; text-wrap: balance; }
+.th-home-story h1 a { color: var(--th-forest); text-decoration: none; }
+.th-home-story h1 a:hover { color: var(--th-accent); }
+.th-home-story .th-deck { margin-bottom: 24px; font: 300 clamp(1.1rem, 1.5vw, 1.28rem)/1.57 var(--th-body); }
+.th-home-feature-image { display: block; max-width: 460px; margin-top: 30px; padding: 4px; background: #fff; border: 1px solid var(--th-gold); }
+.th-home-feature-image img { width: 100%; height: 150px; object-fit: cover; }
+
+/* Edition cards: date, headline and arrow live inside the cover itself. */
+.th-edition { position: relative; display: block; min-height: 268px; aspect-ratio: 4 / 5; overflow: hidden; isolation: isolate; background: #e6eee2; }
+.th-edition-art { position: absolute; inset: 0; z-index: 0; padding: 0; overflow: hidden; background: #e6eee2; }
+.th-edition-art .th-cover-svg { width: 100%; height: 100%; display: block; }
+.th-edition-copy { position: absolute; inset: 0; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; min-height: 0; padding: 18px 18px 28px; border: 0; background: linear-gradient(90deg, rgba(255,253,247,.98) 0%, rgba(255,253,247,.96) 56%, rgba(255,253,247,.65) 78%, transparent 99%); }
+.th-edition-day { margin-bottom: 18px; font-size: .62rem; color: #775e51; }
+.th-edition-title { max-width: 92%; margin: 0; font-size: clamp(.78rem, 1vw, 1rem); line-height: 1.42; color: var(--th-dark); }
+.th-edition-arrow { left: 17px; right: auto; bottom: 10px; font-size: 1.25rem; }
+.th-edition--empty .th-edition-copy { background: linear-gradient(90deg, rgba(255,253,247,.92), rgba(255,253,247,.4)); }
+.th-edition--empty .th-edition-art .th-empty-cover { height: 100%; aspect-ratio: auto; }
+.th-wall-grid .th-edition { min-height: 268px; }
+@media (max-width: 1100px) {
+  .th-home-stage { grid-template-columns: minmax(100px, .7fr) minmax(0, 2.6fr) minmax(100px, .7fr); min-height: 440px; }
+  .th-home-story { padding: 48px 24px 28px; }
+  .th-edition { min-height: 235px; }
+  .th-edition-copy { padding: 13px 10px 28px; }
+  .th-edition-title { font-size: .78rem; line-height: 1.4; }
+}
+@media (max-width: 950px) { .th-home-stage { margin: 0 -45px; } }
+@media (max-width: 700px) {
+  .th-masthead--home { height: clamp(150px, 42vw, 180px); }
+  .th-masthead--home .th-brand { left: 7%; right: 7%; }
+  .th-home-stage { grid-template-columns: 1fr 1fr; margin: 0 -28px; min-height: 0; }
+  .th-home-art { height: 185px; }
+  .th-home-art--cats img { left: 10%; width: 84%; height: 94%; bottom: -5px; }
+  .th-home-art--tower img { left: 14%; width: 75%; height: 112%; bottom: -7px; }
+  .th-home-story { grid-column: 1 / -1; grid-row: 2; padding: 30px 26px 32px; border-top: 2px solid var(--th-gold); border-left: 0; border-right: 0; }
+  .th-home-story::before { display: none; }
+  .th-home-story h1 { font-size: clamp(1.7rem, 6.3vw, 2.5rem); }
+  .th-edition { width: 190px; min-width: 190px; min-height: 255px; }
+  .th-edition-title { font-size: .85rem; }
+  .th-wall-grid .th-edition { width: auto; min-width: 0; }
+}
+@media (max-width: 430px) {
+  .th-home-stage { margin: 0 -20px; }
+  .th-home-art { height: 150px; }
+  .th-masthead--home .th-brand { left: 5%; right: 5%; }
+  .th-edition-title { font-size: .83rem; }
+}
+
+/* Labels, nav, bylines and eyebrows: Buda in Title Case (template text is already
+   title-cased; no transform). Replaces the earlier Cinzel Decorative pass. */
+:root { --th-label: 'Buda', Georgia, serif; }
+.th-eyebrow, .th-section-topline span, .th-section-topline a, .th-section-topline h2, .th-edition-day,
+.th-archive-date, .th-topic-label, .th-term-count, .th-aside-label, .th-week-label,
+.th-post-nav a span, .th-small, .th-pill, .th-outline-btn, .th-nav a, .th-prose h4, .th-prose th,
+.th-brand-author, .th-topic-pill, .th-skip { font-family: var(--th-label); font-weight: 300; text-transform: none; letter-spacing: .04em; }
+.th-eyebrow { font-size: .98rem; color: #5a6e5f; }
+.th-nav a { font-size: 1.02rem; letter-spacing: .05em; font-weight: 300; }
+.th-nav a:hover, .th-nav a[aria-current] { font-weight: 300; color: #bc7477; }
+.th-section-topline h2 { font-size: 1.15rem; letter-spacing: .05em; color: var(--th-forest); }
+.th-section-topline span, .th-section-topline a { font-size: .85rem; }
+.th-edition-day, .th-archive-date, .th-week-label { font-size: .82rem; }
+.th-topic-label, .th-aside-label, .th-post-nav a span, .th-term-count { font-size: .85rem; }
+.th-topic-pill { font-size: .88rem; letter-spacing: .02em; }
+.th-pill, .th-outline-btn { font-size: .92rem; letter-spacing: .05em; }
+.th-brand-author { font-size: clamp(.62rem, 3.4cqw, 1rem); letter-spacing: .14em; font-weight: 300; }
+.th-footer .th-small { font-size: .85rem; }
+.th-prose h4 { font-size: 1.05rem; }
+.th-prose th { font-size: .9rem; }
+.th-skip { font-size: .95rem; }
+.th-edition-copy { min-width: 0; }
+.th-edition-title { width: 100%; max-width: 100%; min-width: 0; }
+@media (max-width: 700px) { .th-wall-grid .th-edition-copy { padding: 12px 12px 26px; } .th-wall-grid .th-edition-title { font-size: .72rem; } }

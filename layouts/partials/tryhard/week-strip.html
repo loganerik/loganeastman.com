@@ -31,7 +31,7 @@
       {{- $future := $day.After now -}}
       <div class="th-edition th-edition--empty" aria-label="{{ if $future }}Nothing yet for{{ else }}No column on{{ end }} {{ $day.Format "Monday January 2" }}">
         <div class="th-edition-art"><div class="th-empty-cover" aria-hidden="true"><span>✳</span></div></div>
-        <div class="th-edition-copy"><span class="th-edition-day">{{ $day.Format "Mon" | upper }} <span>{{ $day.Format "02" }}</span></span><span class="th-edition-title">{{ if $future }}Not yet{{ else }}No edition{{ end }}</span></div>
+        <div class="th-edition-copy"><span class="th-edition-day">{{ $day.Format "Mon" }} <span>{{ $day.Format "02" }}</span></span><span class="th-edition-title">{{ if $future }}Not yet{{ else }}No edition{{ end }}</span></div>
       </div>
     {{- end -}}
     {{- end -}}

@@ -3,24 +3,29 @@
 {{ with $posts }}
   {{ $latest := index . 0 }}
   {{ $m := partial "tryhard/cover-meta.html" $latest }}
-  <section class="th-feature th-accent--{{ $m.accent }}" aria-labelledby="feature-title">
-    <div class="th-feature-copy">
-      <p class="th-eyebrow">{{ if eq ($latest.Date.Format "2006-01-02") (now.Format "2006-01-02") }}TODAY{{ else }}THE LATEST{{ end }} <span aria-hidden="true">·</span> {{ $latest.Date.Format "Mon, Jan 02, 2006" | upper }}</p>
+  <section class="th-home-stage th-accent--{{ $m.accent }}" aria-labelledby="feature-title">
+    <div class="th-home-art th-home-art--cats" aria-hidden="true">
+      <div class="th-home-arch"><span class="th-home-star">✳</span></div>
+      <img src="/tryhard/img/cats-upright-home.webp" alt="" width="677" height="960" loading="eager" fetchpriority="high" decoding="async">
+    </div>
+    <article class="th-home-story">
+      <p class="th-eyebrow">{{ if eq ($latest.Date.Format "2006-01-02") (now.Format "2006-01-02") }}Today{{ else }}The latest{{ end }} <span aria-hidden="true">·</span> {{ $latest.Date.Format "Mon, Jan 02, 2006" }}</p>
       <h1 id="feature-title"><a href="{{ $latest.RelPermalink }}">{{ $latest.Title }}</a></h1>
       {{ with $latest.Description }}<p class="th-deck">{{ . }}</p>{{ end }}
       <a class="th-pill" href="{{ $latest.RelPermalink }}">Read the column <span aria-hidden="true">→</span></a>
-    </div>
-    <a class="th-feature-visual" href="{{ $latest.RelPermalink }}" aria-label="Read {{ $latest.Title }}">
       {{- $img := false -}}{{- with $latest.Params.cover -}}{{- with .image -}}{{- $img = $latest.Resources.GetMatch . -}}{{- end -}}{{- end -}}
       {{- with $img -}}
-        {{- $r := .Resize "1000x webp q82" -}}
-        <img class="{{ if $latest.Params.cover.duotone }}th-duotone{{ end }}" src="{{ $r.RelPermalink }}" alt="{{ $latest.Params.cover.alt | default $latest.Title }}" width="{{ $r.Width }}" height="{{ $r.Height }}" loading="eager">
-      {{- else -}}{{ partialCached "tryhard/edition-cover.html" $latest $latest.RelPermalink }}{{- end -}}
-    </a>
+        {{- $r := .Resize "850x webp q82" -}}
+        <a class="th-home-feature-image" href="{{ $latest.RelPermalink }}"><img class="{{ if $latest.Params.cover.duotone }}th-duotone{{ end }}" src="{{ $r.RelPermalink }}" alt="{{ $latest.Params.cover.alt | default $latest.Title }}" width="{{ $r.Width }}" height="{{ $r.Height }}" loading="lazy"></a>
+      {{- end -}}
+    </article>
+    <div class="th-home-art th-home-art--tower" aria-hidden="true">
+      <img src="/tryhard/ornaments/eastern-clocktower.svg" alt="" width="300" height="600" loading="eager" decoding="async">
+    </div>
   </section>
   {{ partial "tryhard/week-strip.html" (dict "Posts" $posts) }}
   <section class="th-explore-callout" aria-labelledby="th-explore-callout-title">
-    <div><p class="th-eyebrow">FOLLOW A THREAD</p><h2 id="th-explore-callout-title">An archive of recurring curiosities.</h2><p>Read by subject, connection, or obsession, regardless of when it was written.</p></div>
+    <div><p class="th-eyebrow">Follow a Thread</p><h2 id="th-explore-callout-title">An archive of recurring curiosities.</h2><p>Read by subject, connection, or obsession, regardless of when it was written.</p></div>
     <a href="/explore/" class="th-outline-btn">Explore the topics ↗</a>
   </section>
   {{ with after 1 $posts }}
@@ -32,6 +37,6 @@
   </section>
   {{ end }}
 {{ else }}
-  <section class="th-empty-state"><p class="th-eyebrow">THE FIRST EDITION</p><h1>Something is about to begin.</h1><p>New writing will appear here as it is published.</p><a class="th-outline-btn" href="/about/">About TRYHARD ↗</a></section>
+  <section class="th-empty-state"><p class="th-eyebrow">The First Edition</p><h1>Something is about to begin.</h1><p>New writing will appear here as it is published.</p><a class="th-outline-btn" href="/about/">About TRYHARD ↗</a></section>
 {{ end }}
 {{ end }}
