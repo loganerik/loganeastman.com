@@ -29,7 +29,7 @@
       {{- $m := partial "tryhard/cover-meta.html" $latest -}}
       <article class="th-home-editorial th-accent--{{ $m.accent }}" aria-labelledby="th-home-feature-title">
         <div class="th-home-editorial-copy">
-          <p class="th-eyebrow">{{ if eq ($latest.Date.Format "2006-01-02") (now.Format "2006-01-02") }}Today{{ else }}Latest edition{{ end }} <span aria-hidden="true">·</span> {{ $latest.Date.Format "Mon, Jan 02, 2006" }}</p>
+          <p class="th-eyebrow">{{ $latest.Date.Format "Monday, January 2, 2006" }}</p>
           <h1 id="th-home-feature-title"><a href="{{ $latest.RelPermalink }}">{{ $latest.Title }}</a></h1>
           {{ with $latest.Description }}<p class="th-deck">{{ . }}</p>{{ end }}
           <a class="th-pill" href="{{ $latest.RelPermalink }}">Read the column <span aria-hidden="true">→</span></a>

@@ -4,10 +4,11 @@
   {{ $latest := index . 0 }}
   {{ partial "tryhard/week-strip.html" (dict "Posts" $posts) }}
   <section class="th-explore-callout" aria-labelledby="th-explore-callout-title">
-    <div><p class="th-eyebrow">Follow a Thread</p><h2 id="th-explore-callout-title">An archive of recurring curiosities.</h2><p>Read by subject, connection, or obsession, regardless of when it was written.</p></div>
-    <a href="/explore/" class="th-outline-btn">Explore the topics ↗</a>
+    <div><h2 id="th-explore-callout-title">The archive.</h2><p>Explore by categories, tags or dates.</p></div>
+    <a href="/archive/" class="th-outline-btn">Read more.</a>
   </section>
-  {{ with after 1 $posts }}
+  {{ $monday := partial "tryhard/week-anchor.html" $posts }}
+  {{ with where $posts "Date" "lt" $monday }}
   <section class="th-archive" aria-labelledby="th-archive-heading">
     <div class="th-section-topline"><h2 id="th-archive-heading">Previously</h2><a href="/archive/">Browse all covers ↗</a></div>
     <div class="th-archive-list">

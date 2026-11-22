@@ -400,3 +400,11 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
   .th-header, .th-footer, .th-topics-bottom, .th-post-nav, .th-article-end, .th-main::before, .th-main::after { display: none; }
   .th-main { width: 100%; border: 0; padding: 0; }
 }
+
+/* Weekly cards: titles fill the card. */
+.th-edition-copy { padding: 16px 16px 34px; }
+.th-edition-title { font-size: clamp(1.35rem, 1.75vw, 1.7rem); line-height: 1.22; max-width: 100%; }
+.th-edition-day { margin-bottom: 10px; }
+@media (max-width: 1100px) { .th-edition-title { font-size: 1.25rem; } }
+@media (max-width: 700px) { .th-edition-title { font-size: 1.3rem; } .th-wall-grid .th-edition-title { font-size: 1.1rem; } }
+.th-footer-links { display: flex; justify-content: center; gap: 1.6em; }

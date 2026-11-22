@@ -1,0 +1,16 @@
+{{- /* Returns the Monday of the week the homepage strip shows: the current
+       week if any column was published in it, else the latest column's week. */ -}}
+{{- $posts := . -}}
+{{- $latest := index $posts 0 -}}
+{{- $wd := int now.Weekday -}}{{- if eq $wd 0 }}{{ $wd = 7 }}{{ end -}}
+{{- $thisMonday := (now.AddDate 0 0 (sub 1 $wd)) -}}
+{{- $thisMonday = time.AsTime (printf "%sT00:00:00%s" ($thisMonday.Format "2006-01-02") ($thisMonday.Format "-07:00")) -}}
+{{- $lwd := int $latest.Date.Weekday -}}{{- if eq $lwd 0 }}{{ $lwd = 7 }}{{ end -}}
+{{- $latestMonday := ($latest.Date.AddDate 0 0 (sub 1 $lwd)) -}}
+{{- $latestMonday = time.AsTime (printf "%sT00:00:00%s" ($latestMonday.Format "2006-01-02") ($latestMonday.Format "-07:00")) -}}
+{{- $monday := $latestMonday -}}
+{{- $sunday := $thisMonday.AddDate 0 0 6 -}}
+{{- range $posts -}}
+  {{- if and (not (.Date.Before $thisMonday)) (not (.Date.After $sunday)) }}{{ $monday = $thisMonday }}{{ end -}}
+{{- end -}}
+{{- return $monday -}}

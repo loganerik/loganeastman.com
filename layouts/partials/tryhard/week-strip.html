@@ -3,17 +3,9 @@
        Mon–Fri always render (empty days as quiet placeholders); Sat/Sun
        appear only when a column exists on them. Newest wins on a day. */ -}}
 {{- $posts := .Posts -}}
-{{- $latest := index $posts 0 -}}
+{{- $monday := partial "tryhard/week-anchor.html" $posts -}}
 {{- $wd := int now.Weekday -}}{{- if eq $wd 0 }}{{ $wd = 7 }}{{ end -}}
 {{- $thisMonday := (now.AddDate 0 0 (sub 1 $wd)) -}}
-{{- $thisMonday = time.AsTime (printf "%sT00:00:00%s" ($thisMonday.Format "2006-01-02") ($thisMonday.Format "-07:00")) -}}
-{{- $lwd := int $latest.Date.Weekday -}}{{- if eq $lwd 0 }}{{ $lwd = 7 }}{{ end -}}
-{{- $latestMonday := ($latest.Date.AddDate 0 0 (sub 1 $lwd)) -}}
-{{- $monday := $latestMonday -}}
-{{- $sunday := $thisMonday.AddDate 0 0 6 -}}
-{{- range $posts -}}
-  {{- if and (not (.Date.Before $thisMonday)) (not (.Date.After $sunday)) }}{{ $monday = $thisMonday }}{{ end -}}
-{{- end -}}
 {{- $isCurrent := eq ($monday.Format "2006-01-02") ($thisMonday.Format "2006-01-02") -}}
 <section class="th-week" id="this-week" aria-labelledby="th-week-heading">
   <div class="th-section-topline"><h2 id="th-week-heading">{{ if $isCurrent }}This week{{ else }}The latest week{{ end }}</h2><span>{{ $monday.Format "Jan 02" }} – {{ ($monday.AddDate 0 0 4).Format "Jan 02, 2006" }}</span></div>
