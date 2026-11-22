@@ -1,5 +1,4 @@
 {{ define "main" }}
-{{ with .Description }}<div class="th-explore-head th-post-head"><p>{{ . }}</p></div>{{ end }}
 {{ $posts := (where site.RegularPages "Section" "columns").ByDate.Reverse }}
 {{ with $posts }}
   {{ range .GroupByDate "January 2006" }}

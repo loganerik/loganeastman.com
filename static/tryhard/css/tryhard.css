@@ -448,3 +448,4 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 .th-page .th-prose--plain > p:first-of-type { font-size: 1.22em; line-height: 1.6; color: var(--th-title-ink); }
 .th-page .th-prose--plain > p:last-of-type::after { content: "✦"; display: block; margin-top: 2.2em; color: var(--th-gold); font-size: .9rem; text-align: center; }
 @media (max-width: 700px) { .th-page { padding-top: 44px; } .th-page .th-article-body::before { margin-bottom: 30px; } }
+.th-main > .th-explore-block:first-child { margin-top: 48px; }
