@@ -1,7 +1,7 @@
 {{ define "main" }}
 {{- $m := partial "tryhard/cover-meta.html" . -}}
 <article class="th-article th-accent--{{ $m.accent }}" itemscope itemtype="https://schema.org/Article">
-  <meta itemprop="headline" content="{{ .Title }}">
+  {{ with .Description }}<div class="th-explore-head th-post-head"><p itemprop="description">{{ . }}</p></div>{{ end }}
   {{- $img := false -}}{{- with .Params.cover -}}{{- with .image -}}{{- $img = $.Resources.GetMatch . -}}{{- end -}}{{- end -}}
   {{- with $img -}}
     {{- $large := .Resize "1400x webp q85" -}}
