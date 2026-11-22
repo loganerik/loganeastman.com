@@ -633,17 +633,6 @@ body.th-site { font-family: var(--th-body); font-weight: 400; color: var(--th-te
 @media (max-width: 1100px) { .th-edition-title { font-size: .95rem; } }
 @media (max-width: 700px) { .th-edition-title { font-size: 1rem; } .th-wall-grid .th-edition-title { font-size: .86rem; } }
 
-/* ---------- Column pages: a warmer, darker parchment surface than the home page ---------- */
-.th-main--column { background: #f1e8d6; }
-.th-main--column .th-figure, .th-main--column .th-article-cover { background: #f8f1e3; box-shadow: 0 0 0 4px #f8f1e3, 0 0 0 5px var(--th-gold-soft); }
-.th-main--column .th-prose hr::after { background: #f1e8d6; }
-.th-main--column .th-prose .th-aside { background: #e9e0cc; }
-.th-main--column .th-prose .th-pullquote { background: #e3ead9; box-shadow: 6px 6px 0 #e8c8c0; }
-.th-main--column .th-topic-pill { background: #e6dcc6; border-color: #cfc1a3; }
-.th-main--column .th-topic-pill--small { background: #f8f1e3; }
-.th-main--column .th-prose code { background: #ebe1cd; }
-.th-main--column .th-prose pre { background: #e7e3d2; }
-.th-main--column .th-article-body { color: #141414; }
 
 /* ---------- Interior masthead: nav sits inside the arch column; pink arches and cats run beside it ---------- */
 .th-masthead--post { --th-arch-inset: 22%; --th-nav-h: 58px; height: clamp(290px, 27vw, 390px); overflow: hidden; }
@@ -667,3 +656,13 @@ body.th-site { font-family: var(--th-body); font-weight: 400; color: var(--th-te
 @media (max-width: 430px) { .th-masthead--post { --th-arch-inset: 12%; } }
 @media (max-width: 700px) { .th-masthead--post { --th-arch-inset: 25%; } .th-brand-title--post { font-size: clamp(.82rem, 5.4cqw, 1.3rem); } }
 @media (max-width: 430px) { .th-masthead--post { --th-arch-inset: 22%; } }
+
+/* ---------- Column pages: the arch behind the headline is parchment; the body stays ivory like home ---------- */
+.th-header--post .th-brand--post { background: linear-gradient(135deg, #e9dcc2, #d9c9a6 70%); color: #1b3a2c !important; border-color: #c9a865; box-shadow: 0 0 0 5px rgba(255,253,248,.72); }
+.th-header--post .th-brand-sig { color: #4d5f50 !important; }
+.th-header--post .th-brand-sig:hover { color: #1b3a2c !important; }
+.th-header--post .th-brand-title--post { color: #112a1f; }
+.th-header--post .th-brand-author { color: #4d5f50; }
+.th-header--post .th-brand-author > span:first-child, .th-header--post .th-brand-author > span:last-child { background: #b8975f; }
+.th-header--post .th-brand-sep { color: #b8975f; }
+.th-header--post .th-masthead--post .th-nav { border-top-color: #b8975f; }
