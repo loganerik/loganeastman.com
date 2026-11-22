@@ -1,5 +1,5 @@
 {{ define "main" }}
-<section class="th-explore-head"><h1>{{ .Title }}</h1>{{ with .Description }}<p>{{ . }}</p>{{ end }}</section>
+{{ with .Description }}<div class="th-explore-head th-post-head"><p>{{ . }}</p></div>{{ end }}
 <div class="th-article-body th-prose th-prose--plain">{{ .Content }}</div>
 {{ with .RegularPages.ByDate.Reverse }}<section class="th-explore-block"><div class="th-archive-list">{{ range . }}{{ partial "tryhard/archive-row.html" . }}{{ end }}</div></section>{{ end }}
 {{ end }}

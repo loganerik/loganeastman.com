@@ -1,5 +1,5 @@
 {{ define "main" }}
-  <section class="th-explore-head"><p class="th-eyebrow">{{ if eq .Data.Plural "categories" }}Filed Under{{ else }}Also On{{ end }}</p><h1>{{ .Title }}</h1><p>Every column on this subject, whenever it was written.</p></section>
+  <div class="th-explore-head th-post-head"><p>Every column on this subject, whenever it was written.</p></div>
   <section class="th-explore-block">
     <div class="th-section-topline"><h2>{{ with .Pages }}{{ len . }} {{ if eq (len .) 1 }}column{{ else }}columns{{ end }}{{ end }}</h2><a href="/{{ .Data.Plural }}/">All {{ .Data.Plural }} ↗</a></div>
     <div class="th-topic-results">

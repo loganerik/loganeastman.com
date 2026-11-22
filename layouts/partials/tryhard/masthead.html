@@ -1,19 +1,26 @@
-{{- /* Header router: one poster on the home page, a composed title header on
-       columns, and the reclining-cats masthead everywhere else. */ -}}
+{{- /* Header router: one poster on the home page; everywhere else the
+       reclining-cats masthead with the page's own title inside the green arch. */ -}}
 {{- if .IsHome -}}
   {{ partial "tryhard/home-cover.html" . }}
-{{- else if and .IsPage (eq .Section "columns") -}}
-  {{ partial "tryhard/post-cover.html" . }}
 {{- else -}}
-<header class="th-header th-header--interior" role="banner">
-  <div class="th-masthead th-masthead--interior">
+{{- $isColumn := and .IsPage (eq .Section "columns") -}}
+{{- $sub := "" -}}
+{{- if $isColumn -}}
+  {{- $sub = printf "%s <span class=\"th-brand-sep\" aria-hidden=\"true\">✦</span> By %s" (.Date.Format "Monday, January 02, 2006") site.Params.author -}}
+{{- else if .Params.eyebrow -}}
+  {{- $sub = .Params.eyebrow -}}
+{{- else if eq .Kind "term" -}}
+  {{- $sub = cond (eq .Data.Plural "categories") "Filed under" "Also on" -}}
+{{- end -}}
+<header class="th-header th-header--interior{{ if $isColumn }} th-header--post{{ end }}" role="banner">
+  <div class="th-masthead th-masthead--interior th-masthead--post">
     <div class="th-cat-arch th-cat-arch--left"><img src="/tryhard/img/ares.webp" alt="Ares, a tabby cat, reclining" width="764" height="480" loading="eager" fetchpriority="high" decoding="async"></div>
-    <a class="th-brand" href="/" aria-label="TRYHARD in a whytry world, home">
+    <div class="th-brand th-brand--post">
       <span class="th-brand-crown" aria-hidden="true"><img src="/tryhard/ornaments/crown.svg" alt="" width="94" height="52"></span>
-      <span class="th-brand-title">{{ site.Title }}</span>
-      <span class="th-brand-subtitle">{{ site.Params.tagline }}</span>
-      <span class="th-brand-author"><span aria-hidden="true"></span>By {{ site.Params.author }}<span aria-hidden="true"></span></span>
-    </a>
+      <a class="th-brand-sig" href="/" aria-label="TRYHARD in a whytry world, home"><span>{{ site.Title }}</span><span>{{ site.Params.tagline }}</span></a>
+      <h1 class="th-brand-title th-brand-title--post"{{ if $isColumn }} itemprop="headline"{{ end }}>{{ .Title }}</h1>
+      {{ with $sub }}<span class="th-brand-author"><span aria-hidden="true"></span>{{ . | safeHTML }}<span aria-hidden="true"></span></span>{{ end }}
+    </div>
     <div class="th-cat-arch th-cat-arch--right"><img src="/tryhard/img/artemis.webp" alt="Artemis, a tabby cat with white paws, reclining" width="800" height="554" loading="eager" fetchpriority="high" decoding="async"></div>
   </div>
   {{ partial "tryhard/nav.html" . }}

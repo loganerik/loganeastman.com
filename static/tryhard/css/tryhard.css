@@ -556,3 +556,12 @@ body.th-site { font-family: var(--th-body); font-weight: 400; color: var(--th-te
 }
 .th-brand--post .th-brand-author .th-brand-sep { height: auto; background: none; display: inline; }
 @media (max-width: 700px) { .th-brand-sig { white-space: normal; font-size: .55rem; text-align: center; line-height: 1.2; } }
+
+/* Interior masthead signature: wordmark and tagline stacked, no separator. */
+.th-brand-sig { display: flex; flex-direction: column; align-items: center; gap: .1em; line-height: 1.2; }
+.th-brand-sig span { color: inherit; margin: 0; }
+.th-brand-sig span:first-child { letter-spacing: .16em; }
+.th-brand-sig span:last-child { font-size: .82em; opacity: .85; }
+.th-brand-title--post { margin-top: .3em; }
+.th-post-head { padding: 30px 0 4px; }
+.th-article .th-post-head { padding-top: 34px; }

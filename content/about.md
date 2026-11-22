@@ -1,7 +1,7 @@
 ---
 title: "About"
 description: "What TRYHARD is, and who writes it."
-eyebrow: "BY LOGAN EASTMAN"
+eyebrow: "By Logan Eastman"
 ---
 
 TRYHARD in a whytry world is a column by Logan Eastman: observations, connections, digressions, and other things that seemed worth writing down.
