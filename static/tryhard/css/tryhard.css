@@ -644,3 +644,26 @@ body.th-site { font-family: var(--th-body); font-weight: 400; color: var(--th-te
 .th-main--column .th-prose code { background: #ebe1cd; }
 .th-main--column .th-prose pre { background: #e7e3d2; }
 .th-main--column .th-article-body { color: #141414; }
+
+/* ---------- Interior masthead: nav sits inside the arch column; pink arches and cats run beside it ---------- */
+.th-masthead--post { --th-arch-inset: 22%; --th-nav-h: 58px; height: clamp(290px, 27vw, 390px); overflow: hidden; }
+.th-masthead--post::before, .th-masthead--post::after { height: 100%; bottom: 0; width: var(--th-arch-inset); min-width: 0; border-radius: 50% 50% 0 0 / 34% 34% 0 0; }
+.th-masthead--post::before { left: 0; }
+.th-masthead--post::after { right: 0; }
+.th-masthead--post .th-cat-arch { width: var(--th-arch-inset); bottom: 0; }
+.th-masthead--post .th-cat-arch img { object-position: center bottom; }
+.th-brand--post { left: var(--th-arch-inset); right: var(--th-arch-inset); bottom: var(--th-nav-h); top: 7%; padding: 8% 4% 4%; }
+.th-masthead--post .th-nav { position: absolute; z-index: 3; left: var(--th-arch-inset); right: var(--th-arch-inset); bottom: 0; min-height: var(--th-nav-h); margin: 0; padding: 8px 10px; border: 2px solid var(--th-gold); border-top: 2px solid #ccae77; border-bottom: 0; box-shadow: 0 0 0 5px rgba(255,253,248,.72); justify-content: center; gap: clamp(10px, 1.6vw, 28px); overflow-x: auto; scrollbar-width: none; }
+/* Same nav type everywhere. */
+.th-nav a, .th-home-center .th-nav a, .th-masthead--post .th-nav a { font-size: clamp(.8rem, 1.05vw, .98rem); letter-spacing: .12em; }
+@media (max-width: 950px) { .th-masthead--post { --th-arch-inset: 20%; } }
+@media (max-width: 700px) {
+  .th-masthead--post { --th-arch-inset: 19%; --th-nav-h: 50px; height: clamp(250px, 66vw, 300px); }
+  .th-masthead--post .th-nav { left: 0; right: 0; justify-content: flex-start; padding: 9px 12px; border-left: 0; border-right: 0; box-shadow: none; }
+  .th-masthead--post .th-cat-arch { bottom: var(--th-nav-h); }
+  .th-masthead--post::before, .th-masthead--post::after { bottom: var(--th-nav-h); }
+  .th-nav a, .th-home-center .th-nav a, .th-masthead--post .th-nav a { font-size: .86rem; }
+}
+@media (max-width: 430px) { .th-masthead--post { --th-arch-inset: 12%; } }
+@media (max-width: 700px) { .th-masthead--post { --th-arch-inset: 25%; } .th-brand-title--post { font-size: clamp(.82rem, 5.4cqw, 1.3rem); } }
+@media (max-width: 430px) { .th-masthead--post { --th-arch-inset: 22%; } }

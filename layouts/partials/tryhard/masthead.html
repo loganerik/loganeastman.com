@@ -22,7 +22,7 @@
       {{ with $sub }}<span class="th-brand-author"><span aria-hidden="true"></span>{{ . | safeHTML }}<span aria-hidden="true"></span></span>{{ end }}
     </div>
     <div class="th-cat-arch th-cat-arch--right"><img src="/tryhard/img/artemis.webp" alt="Artemis, a tabby cat with white paws, reclining" width="800" height="554" loading="eager" fetchpriority="high" decoding="async"></div>
+    {{ partial "tryhard/nav.html" . }}
   </div>
-  {{ partial "tryhard/nav.html" . }}
 </header>
 {{- end -}}
