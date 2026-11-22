@@ -449,3 +449,7 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 .th-page .th-prose--plain > p:last-of-type::after { content: "✦"; display: block; margin-top: 2.2em; color: var(--th-gold); font-size: .9rem; text-align: center; }
 @media (max-width: 700px) { .th-page { padding-top: 44px; } .th-page .th-article-body::before { margin-bottom: 30px; } }
 .th-main > .th-explore-block:first-child { margin-top: 48px; }
+
+/* Column pages: the date and byline under the title are set in Fenix. */
+.th-header--post .th-brand-author { font: 400 clamp(.8rem, 1.05vw, 1rem)/1.5 var(--th-body); letter-spacing: .02em; color: #3f5245; }
+@media (max-width: 700px) { .th-header--post .th-brand-author { font-size: .82rem; } }
