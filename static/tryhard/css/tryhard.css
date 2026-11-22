@@ -453,3 +453,5 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 /* Column pages: the date and byline under the title are set in Fenix. */
 .th-header--post .th-brand-author { font: 400 clamp(.8rem, 1.05vw, 1rem)/1.5 var(--th-body); letter-spacing: .02em; color: #3f5245; }
 @media (max-width: 700px) { .th-header--post .th-brand-author { font-size: .82rem; } }
+.th-footer-name a { display: inline-block; color: inherit; text-decoration: none; }
+.th-footer-name a:hover { color: #3e7960; }
