@@ -137,20 +137,23 @@ const idea = "Start here";
             <dt>Tags</dt><dd>Specific recurring ideas such as attention or Los Angeles. Separate names with commas, for example <code>attention, Los Angeles</code>. Matching tags connect columns in Explore.</dd>
             <dt>Cover → Pattern</dt><dd><strong>lines</strong>: vertical stripes; <strong>waves</strong>: flowing curves; <strong>steps</strong>: stepped buildings; <strong>rays</strong>: sun rays; <strong>arches</strong>: repeating arches; <strong>scallops</strong>: overlapping semicircles. Leave blank for an automatic choice.</dd>
             <dt>Cover → Accent</dt><dd>Choose sage, rose, jade, brown, or olive. Leave blank for an automatic palette. Generated artwork remains available for the archive cards even when the entry has a featured photo.</dd>
-            <dt>About → Portrait</dt><dd>An optional image above the About text. Upload it through this page’s Portrait field, and describe it in Portrait alt text.</dd>
+            <dt>About → Portrait</dt><dd>Your original photo above the About text. Upload it through Portrait and describe it in Portrait alt text. Portrait Deco frame is a separate transparent overlay; keep the existing frame to retain the rose and arch, or clear it for a plain photo.</dd>
             <dt>About → Body</dt><dd>The same formatting, special blocks, figures, and footnotes work here. Its Title and optional Description are separate fields.</dd>
           </dl>
         </div>
       </details>
 
       <details class="th-guide-section" id="th-guide-publishing">
-        <summary>Drafts, saving, and publishing</summary>
+        <summary>Drafts, saving, previewing, and publishing</summary>
         <div class="th-guide-section-body">
           <ol>
-            <li>Keep <strong>Draft</strong> on while preparing a column. It stays out of the public site’s normal build.</li>
-            <li>Use the CMS save/publish controls to save your entry. The <strong>Publish</strong> action saves the Markdown file to the connected repository; the Draft setting still determines whether it appears publicly.</li>
-            <li>When ready, check Title, Date, image descriptions, and the Body. Switch <strong>Draft</strong> off, then publish the entry.</li>
-            <li>The public site updates after its deployment finishes. A future Date keeps the column out until that date and a subsequent site update; it does not schedule a deployment by itself.</li>
+            <li><strong>Save</strong> stores the column as an unpublished draft on its own branch. Nothing reaches the public site until you publish.</li>
+            <li>The <strong>Workflow</strong> board (top bar) shows every unpublished column in three lanes: Drafts, In review, Ready. Drag a card or use the status menu in the editor to move it.</li>
+            <li>While writing, the <strong>preview pane</strong> beside the form shows the column in the site's type and layout. It is an approximation; blocks look simplified there.</li>
+            <li>For the real thing, use <strong>Preview build ↗</strong> (bottom corner). A minute or two after each save, it opens a private copy of the whole site with this column included, at a pages.dev address. Share that link with a reader if you like; it is not indexed.</li>
+            <li><strong>Publish</strong> (editor top bar, or the Ready lane) merges the column into the site. The public site updates after its build finishes, about a minute.</li>
+            <li>The <strong>Draft</strong> switch is a second safety: leave it on and the column stays out of the public site even after publishing. Switch it off before you publish.</li>
+            <li>A future Date keeps the column out of the public site until that date and the next site build; it does not schedule a build by itself.</li>
           </ol>
           <p>Opening this guide keeps your current editor open. Close it to resume writing.</p>
         </div>

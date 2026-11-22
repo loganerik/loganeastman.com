@@ -1,5 +1,28 @@
 /* Independent of Decap's React tree: opening help preserves the entry form. */
 (() => {
+  // Preview build link: each unpublished column lives on branch cms/columns/<slug>,
+  // which Cloudflare Pages builds at https://<branch>.loganeastman-com.pages.dev.
+  const PAGES_HOST = 'loganeastman-com.pages.dev';
+  const previewLink = document.createElement('a');
+  previewLink.id = 'th-preview-link';
+  previewLink.target = '_blank';
+  previewLink.rel = 'noopener';
+  previewLink.hidden = true;
+  previewLink.textContent = 'Preview build ↗';
+  document.body.appendChild(previewLink);
+  const updatePreviewLink = () => {
+    const m = location.hash.match(/^#\/collections\/(columns|pages)\/entries\/([^/?#]+)/);
+    if (!m) { previewLink.hidden = true; return; }
+    const [, collection, slug] = m;
+    const branch = `cms-${collection}-${slug}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 28).replace(/-+$/, '');
+    const path = collection === 'columns' ? `/columns/${slug}/` : '/about/';
+    previewLink.href = `https://${branch}.${PAGES_HOST}${path}`;
+    previewLink.title = 'Opens the private preview build of this unpublished entry. It appears a minute or two after you save.';
+    previewLink.hidden = false;
+  };
+  window.addEventListener('hashchange', updatePreviewLink);
+  updatePreviewLink();
+
   const launcher = document.getElementById('th-guide-launcher');
   const dialog = document.getElementById('th-writing-guide');
   const status = document.getElementById('th-guide-status');

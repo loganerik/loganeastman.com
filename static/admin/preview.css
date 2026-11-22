@@ -1,0 +1,10 @@
+/* Decap preview pane: the site stylesheet does the work; this sets the frame. */
+body { margin: 0; background: #fffdf9; font: 400 19px/1.6 'Fenix', Georgia, serif; color: #111; }
+.th-preview-head { padding: 28px 24px 18px; text-align: center; background: linear-gradient(135deg, #e9dcc2, #d9c9a6 70%); border-bottom: 3px solid #d5b57b; }
+.th-preview-sig { margin: 0 0 10px; font: 400 .7rem/1.3 'Julius Sans One', sans-serif; letter-spacing: .2em; text-transform: uppercase; color: #4d5f50; }
+.th-preview-title { margin: 0 0 10px; font: 400 clamp(1.3rem, 3.5vw, 2rem)/1.25 'Julius Sans One', sans-serif; letter-spacing: .06em; color: #112a1f; }
+.th-preview-byline { margin: 0; font: 400 .95rem/1.5 'Fenix', Georgia, serif; color: #3f5245; }
+.th-preview-main { width: auto; max-width: none; min-height: 0; margin: 0; padding: 10px 24px 48px; border: 0; }
+.th-preview-main::before, .th-preview-main::after { display: none; }
+.th-preview .th-article { padding-top: 10px; }
+.th-preview .th-post-head { padding-top: 18px; }

@@ -63,3 +63,6 @@
   .th-guide-section-body tr { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #d5ddcf; }
   .th-guide-section-body td { width: auto !important; padding: 3px 0; border: 0; overflow-wrap: anywhere; }
 }
+
+#th-preview-link { position: fixed; right: 20px; bottom: 72px; z-index: 9999; padding: 9px 14px; font: 600 13px/1.2 system-ui, sans-serif; color: #214e3b; background: #f2f6ef; border: 1px solid #b99c67; border-radius: 6px; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+#th-preview-link:hover { background: #e5eee4; }

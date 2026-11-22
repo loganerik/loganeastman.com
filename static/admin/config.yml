@@ -14,6 +14,7 @@ backend:
     uploadMedia: "Media: {{path}}"
     deleteMedia: "Media: remove {{path}}"
 
+publish_mode: editorial_workflow
 site_url: https://loganeastman.com
 display_url: https://loganeastman.com
 logo_url: https://loganeastman.com/tryhard/og.jpg
@@ -37,7 +38,7 @@ collections:
     summary: "{{title}} — {{date | date('ddd, MMM D, YYYY')}}"
     sortable_fields: [date, title]
     editor:
-      preview: false
+      preview: true
     fields:
       - label: Title
         name: title
@@ -140,7 +141,14 @@ collections:
             required: false
             media_folder: ""
             public_folder: ""
-            hint: "Optional portrait above the About text. Upload it beside the About page; the site handles responsive sizing."
+            hint: "Your original photo above the About text. Upload it beside the About page; the site crops it behind the separate Deco frame without regenerating your face."
+          - label: Portrait Deco frame
+            name: portraitFrame
+            widget: image
+            required: false
+            media_folder: ""
+            public_folder: ""
+            hint: "Transparent decorative overlay, separate from your photo. Keep portrait-frame-v2.png for the current rose and arch design. Clear this field to display a plain photo."
           - label: Portrait alt text
             name: portraitAlt
             widget: string
