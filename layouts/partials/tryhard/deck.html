@@ -1,14 +1,14 @@
-{{- /* Standfirst for a column: the description if set, otherwise the first
-       real paragraph of the body (skipping headings, shortcodes, images,
-       rules and blank lines), as plain text. */ -}}
-{{- $p := . -}}
-{{- $deck := $p.Description -}}
+{{- /* Standfirst: use the description, otherwise the first prose paragraph.
+       Read rendered content so a multi-paragraph shortcode is never split
+       and passed back through markdownify as an incomplete shortcode. */ -}}
+{{- $deck := .Description -}}
 {{- if not $deck -}}
-  {{- range split $p.RawContent "\n\n" -}}
-    {{- $b := trim . " \n\r\t" -}}
-    {{- if and (not $deck) (ne $b "") (not (hasPrefix $b "#")) (not (hasPrefix $b "{{")) (not (hasPrefix $b "!")) (not (hasPrefix $b "---")) (not (hasPrefix $b ">")) (not (hasPrefix $b "<")) -}}
-      {{- $deck = $b | markdownify | plainify | truncate 200 "…" -}}
-    {{- end -}}
+  {{- $content := .Content -}}
+  {{- range slice "aside" "blockquote" "figure" "pre" "table" -}}
+    {{- $content = replaceRE (printf "(?s)<%s(?:\\s[^>]*)?>.*?</%s>" . .) "" $content -}}
+  {{- end -}}
+  {{- with findRE "(?s)<p(?:\\s[^>]*)?>.*?</p>" $content 1 -}}
+    {{- $deck = index . 0 | plainify | htmlUnescape | truncate 200 "…" -}}
   {{- end -}}
 {{- end -}}
 {{- return $deck -}}

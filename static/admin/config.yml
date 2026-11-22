@@ -39,29 +39,84 @@ collections:
     editor:
       preview: false
     fields:
-      - { label: Title, name: title, widget: string }
-      - { label: Date, name: date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ", date_format: "YYYY-MM-DD", time_format: "HH:mm", picker_utc: false }
-      - { label: Description, name: description, widget: string, required: false, hint: "One line under the title. Optional." }
-      - { label: Draft, name: draft, widget: boolean, default: true, hint: "Drafts never publish. Switch off to go live." }
-      - { label: Categories, name: categories, widget: list, required: false, hint: "Broad subjects, e.g. Observations, Culture, Technology" }
-      - { label: Tags, name: tags, widget: list, required: false, hint: "Recurring ideas, e.g. coincidence, attention, Los Angeles" }
+      - label: Title
+        name: title
+        widget: string
+        hint: "The column headline. The page supplies the main heading, so start Body sections with Heading 2 (##)."
+      - label: Date
+        name: date
+        widget: datetime
+        format: "YYYY-MM-DDTHH:mm:ssZ"
+        date_format: "YYYY-MM-DD"
+        time_format: "HH:mm"
+        picker_utc: false
+        hint: "Publication date and time, used for the archive and weekly lineup. The picker uses your device's local time; the site displays Los Angeles time. Future-dated columns appear only after that time and the next site update."
+      - label: Description
+        name: description
+        widget: string
+        required: false
+        hint: "Optional plain-text standfirst under the headline and in link previews. On the homepage, leaving this blank uses the first prose paragraph as an excerpt."
+      - label: Draft
+        name: draft
+        widget: boolean
+        default: true
+        hint: "Keep on while writing. To make the column public, switch off and use Publish. The public site updates after its build finishes."
+      - label: Categories
+        name: categories
+        widget: list
+        required: false
+        hint: "Broad subjects, such as Culture or Technology. Separate subjects with commas; reuse the same spelling to group columns together in Explore."
+      - label: Tags
+        name: tags
+        widget: list
+        required: false
+        hint: "More specific recurring ideas, such as attention or Los Angeles. Separate ideas with commas; matching tags link columns together."
       - label: Cover
         name: cover
         widget: object
         required: false
         collapsed: true
-        hint: "All optional. With no image, a patterned cover is generated from the date."
+        hint: "Optional cover settings. Pattern and Accent control the generated artwork; Image adds a featured photo to the homepage and column. Open Writing guide for examples."
         fields:
-          - { label: Pattern, name: style, widget: select, required: false, options: [lines, waves, steps, rays, arches, scallops] }
-          - { label: Accent, name: accent, widget: select, required: false, options: [sage, rose, jade, brown, olive] }
-          - { label: Image, name: image, widget: image, required: false, hint: "Featured photo, shown in a gold frame." }
-          - { label: Alt text, name: alt, widget: string, required: false }
-          - { label: Caption, name: caption, widget: string, required: false }
-          - { label: Duotone, name: duotone, widget: boolean, required: false, default: false, hint: "Green and cream treatment for the featured image." }
+          - label: Pattern
+            name: style
+            widget: select
+            required: false
+            options: [lines, waves, steps, rays, arches, scallops]
+            hint: "Generated cover motif: stripes, waves, stepped buildings, sun rays, arches, or overlapping scallops. Leave blank for an automatic choice."
+          - label: Accent
+            name: accent
+            widget: select
+            required: false
+            options: [sage, rose, jade, brown, olive]
+            hint: "Color palette for the generated cover. Leave blank for an automatic choice."
+          - label: Image
+            name: image
+            widget: image
+            required: false
+            hint: "Upload a JPG, PNG, or WebP beside this column. It appears as a framed featured image; the generated pattern remains available for archive cards."
+          - label: Alt text
+            name: alt
+            widget: string
+            required: false
+            hint: "Describe the photo's meaningful content for readers who cannot see it. This is separate from the visible caption; avoid filenames or 'image of'."
+          - label: Caption
+            name: caption
+            widget: string
+            required: false
+            hint: "Visible note or photo credit below the featured image. Markdown links and emphasis are supported, for example Photo by [Name](https://example.com)."
+          - label: Duotone
+            name: duotone
+            widget: boolean
+            required: false
+            default: false
+            hint: "Applies the site's green-toned treatment to the featured photo on the column page. Leave off to retain its original colors."
       - label: Body
         name: body
         widget: markdown
-        hint: "## for a major section, ### for a smaller one. Pull quotes, asides and ornaments: see the archetype."
+        modes: [rich_text, raw]
+        editor_components: [image, code-block, pullquote, aside, ornament, figure]
+        hint: "Rich Text: select text to format it; use + for images, code, Pull quote, Aside, Ornament, and Figure. Markdown: use ## / ### for sections and paste the examples in Writing guide. Put special blocks on their own lines with a blank line on each side."
 
   - name: pages
     label: Pages
@@ -70,8 +125,30 @@ collections:
         name: about
         file: content/about/index.md
         fields:
-          - { label: Title, name: title, widget: string }
-          - { label: Description, name: description, widget: string, required: false }
-          - { label: Portrait, name: portrait, widget: image, required: false, media_folder: "", public_folder: "" }
-          - { label: Portrait alt text, name: portraitAlt, widget: string, required: false }
-          - { label: Body, name: body, widget: markdown }
+          - label: Title
+            name: title
+            widget: string
+            hint: "The title inside this page's masthead. Do not repeat it as a Heading 1 in Body."
+          - label: Description
+            name: description
+            widget: string
+            required: false
+            hint: "Optional introduction and description for search and link previews. Leave blank to begin with the portrait and body."
+          - label: Portrait
+            name: portrait
+            widget: image
+            required: false
+            media_folder: ""
+            public_folder: ""
+            hint: "Optional portrait above the About text. Upload it beside the About page; the site handles responsive sizing."
+          - label: Portrait alt text
+            name: portraitAlt
+            widget: string
+            required: false
+            hint: "Describe the portrait for readers who cannot see it. This is not a visible caption."
+          - label: Body
+            name: body
+            widget: markdown
+            modes: [rich_text, raw]
+            editor_components: [image, code-block, pullquote, aside, ornament, figure]
+            hint: "Write the About text here. The same Markdown, + menu blocks, framed images, and footnotes work here as in columns. Open Writing guide for copyable examples."

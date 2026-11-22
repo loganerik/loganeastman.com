@@ -6,51 +6,157 @@
   <meta name="robots" content="noindex">
   <title>TRYHARD editor</title>
   <link rel="icon" href="/tryhard/favicon.svg">
+  <link rel="stylesheet" href="./writing-guide.css">
+  <script src="./writing-guide.js" defer></script>
+  <script>window.CMS_MANUAL_INIT = true;</script>
+  <script src="https://unpkg.com/decap-cms@3.4.0/dist/decap-cms.js" defer></script>
+  <script src="./editor-components.js" defer></script>
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@3.4.0/dist/decap-cms.js"></script>
-  <script>
-    // Decorative sections as one-click blocks in the editor's "+" menu.
-    CMS.registerEditorComponent({
-      id: "pullquote", label: "Pull quote",
-      fields: [{ name: "text", label: "Quote", widget: "string" }],
-      pattern: /^{{< pullquote >}}([\s\S]*?){{< \/pullquote >}}$/,
-      fromBlock: m => ({ text: m[1].trim() }),
-      toBlock: d => `{{< pullquote >}}${d.text || ""}{{< /pullquote >}}`,
-      toPreview: d => `<blockquote style="text-align:center;font-size:1.3em;border:1px solid #c5d5c6;padding:1em">${d.text || ""}</blockquote>`,
-    });
-    CMS.registerEditorComponent({
-      id: "aside", label: "Aside (digression)",
-      fields: [
-        { name: "label", label: "Label", widget: "string", required: false, hint: "Defaults to “A small digression”." },
-        { name: "text", label: "Text", widget: "text" },
-      ],
-      pattern: /^{{< aside(?: label="([^"]*)")? >}}([\s\S]*?){{< \/aside >}}$/,
-      fromBlock: m => ({ label: m[1] || "", text: m[2].trim() }),
-      toBlock: d => `{{< aside${d.label ? ` label="${d.label}"` : ""} >}}${d.text || ""}{{< /aside >}}`,
-      toPreview: d => `<aside style="border-top:1px solid #b99c67;border-bottom:1px solid #b99c67;padding:1em"><small>${d.label || "A small digression"}</small><p>${d.text || ""}</p></aside>`,
-    });
-    CMS.registerEditorComponent({
-      id: "ornament", label: "Ornament (sunburst divider)",
-      fields: [],
-      pattern: /^{{< ornament >}}$/,
-      fromBlock: () => ({}),
-      toBlock: () => `{{< ornament >}}`,
-      toPreview: () => `<p style="text-align:center;color:#b99c67">— ✦ —</p>`,
-    });
-    CMS.registerEditorComponent({
-      id: "figure", label: "Figure (framed image)",
-      fields: [
-        { name: "src", label: "Image", widget: "image", media_folder: "", public_folder: "" },
-        { name: "alt", label: "Alt text", widget: "string" },
-        { name: "caption", label: "Caption", widget: "string", required: false },
-        { name: "duotone", label: "Duotone", widget: "boolean", default: false, required: false },
-      ],
-      pattern: /^{{< figure src="([^"]*)"(?: alt="([^"]*)")?(?: caption="([^"]*)")?(?: duotone="(true|false)")? >}}$/,
-      fromBlock: m => ({ src: m[1], alt: m[2] || "", caption: m[3] || "", duotone: m[4] === "true" }),
-      toBlock: d => `{{< figure src="${d.src || ""}" alt="${d.alt || ""}"${d.caption ? ` caption="${d.caption}"` : ""}${d.duotone ? ` duotone="true"` : ""} >}}`,
-      toPreview: d => `<figure style="border:1px solid #b99c67;padding:4px"><img src="${d.src || ""}" alt="${d.alt || ""}" style="max-width:100%"><figcaption>${d.caption || ""}</figcaption></figure>`,
-    });
-  </script>
+  <button class="th-guide-launcher" id="th-guide-launcher" type="button" aria-haspopup="dialog" aria-controls="th-writing-guide">Writing guide</button>
+  <dialog class="th-guide" id="th-writing-guide" aria-labelledby="th-guide-title">
+    <header class="th-guide-header">
+      <div><p class="th-guide-eyebrow">TRYHARD editor</p><h1 id="th-guide-title">Writing guide</h1></div>
+      <button class="th-guide-close" type="button" data-close-guide autofocus>Close guide</button>
+    </header>
+    <div class="th-guide-body">
+      <p class="th-guide-intro">Everything you can use in a column or the About page. Expand a section for instructions; copy an example and paste it into the Body editor’s <strong>Markdown</strong> mode.</p>
+      <nav class="th-guide-nav" aria-label="Writing guide sections">
+        <button type="button" data-guide-section="th-guide-editor">Editor basics</button>
+        <button type="button" data-guide-section="th-guide-blocks">Special blocks</button>
+        <button type="button" data-guide-section="th-guide-formatting">Formatting</button>
+        <button type="button" data-guide-section="th-guide-images">Images</button>
+        <button type="button" data-guide-section="th-guide-fields">Entry fields</button>
+        <button type="button" data-guide-section="th-guide-publishing">Publishing</button>
+      </nav>
+      <p class="th-guide-status" role="status" aria-live="polite" id="th-guide-status"></p>
+
+      <details class="th-guide-section" id="th-guide-editor" open>
+        <summary>Editor basics</summary>
+        <div class="th-guide-section-body">
+          <dl>
+            <dt>Rich Text</dt><dd>Write normally and use the formatting toolbar. Select a passage before applying bold, emphasis, or a link. Use the <strong>+</strong> insert menu for images, code blocks, and the four TRYHARD blocks below.</dd>
+            <dt>Markdown</dt><dd>Edit the source directly. The examples in this guide belong in this mode; switching back to Rich Text lets you continue editing. Put each special block on its own lines, with a blank line before and after.</dd>
+            <dt>Headings</dt><dd>The Title field supplies the main heading. Start sections with <strong>Heading 2</strong> (<code>##</code>), then use <strong>Heading 3</strong> (<code>###</code>) for subsections.</dd>
+            <dt>Paragraphs</dt><dd>Use a blank line between paragraphs in Markdown. The site controls font sizes, reading width, frames, and ornaments.</dd>
+            <dt>Block previews</dt><dd>Custom blocks have simplified previews inside the editor. The published page supplies their complete styling.</dd>
+          </dl>
+        </div>
+      </details>
+
+      <details class="th-guide-section" id="th-guide-blocks" open>
+        <summary>TRYHARD’s four special blocks</summary>
+        <div class="th-guide-section-body">
+          <h2>Pull quote</h2>
+          <p><strong>+ → Pull quote.</strong> Sets a short line apart in the green-and-rose quotation panel. The design adds the opening quotation mark. Use the toolbar’s ordinary Quote tool for a passage quoted within the argument.</p>
+          <div class="th-guide-example"><div><span>Markdown example</span><button type="button" data-copy-example>Copy example</button></div><pre><code>{{&lt; pullquote &gt;}}
+A line worth setting apart.
+{{&lt; /pullquote &gt;}}</code></pre></div>
+
+          <h2>Aside / digression</h2>
+          <p><strong>+ → Aside (digression).</strong> A separate note for a qualification, digression, or source detail. Its optional Label defaults to “A small digression”. The Text field accepts Markdown links, emphasis, and paragraphs.</p>
+          <div class="th-guide-example"><div><span>Markdown example</span><button type="button" data-copy-example>Copy example</button></div><pre><code>{{&lt; aside label="A note on sources" &gt;}}
+Some useful context, with a [source](https://example.com).
+
+A second paragraph, if needed.
+{{&lt; /aside &gt;}}</code></pre></div>
+          <p>For the default label, start with <code>{{&lt; aside &gt;}}</code> instead.</p>
+
+          <h2>Ornament / sunburst divider</h2>
+          <p><strong>+ → Ornament (sunburst divider).</strong> Inserts the small Deco sunburst between passages. There are no fields to fill in. Continue in a new paragraph below it.</p>
+          <div class="th-guide-example"><div><span>Markdown example</span><button type="button" data-copy-example>Copy example</button></div><pre><code>{{&lt; ornament &gt;}}</code></pre></div>
+
+          <h2>Figure / framed image</h2>
+          <p><strong>+ → Figure (framed image).</strong> Adds an image within the writing, with a gold frame. Choose an Image, describe it in Alt text, and optionally add a Caption or turn on Duotone for the green-toned treatment.</p>
+          <div class="th-guide-example"><div><span>Markdown example</span><button type="button" data-copy-example>Copy example</button></div><pre><code>{{&lt; figure src="photo.jpg" alt="A description of the photograph" caption="Photo credit or context" duotone="true" &gt;}}</code></pre></div>
+          <p>Upload your actual image first and replace <code>photo.jpg</code> with its filename. Omit <code>duotone="true"</code> for original colors. Caption is optional; the Figure is separate from the entry’s Cover image.</p>
+        </div>
+      </details>
+
+      <details class="th-guide-section" id="th-guide-formatting">
+        <summary>Formatting, links, code, tables, and footnotes</summary>
+        <div class="th-guide-section-body">
+          <table><thead><tr><th>Tool</th><th>Markdown</th><th>When to use it</th></tr></thead><tbody>
+            <tr><td>Section heading</td><td><code>## A section heading</code></td><td>A major section, including the site’s heading ornament.</td></tr>
+            <tr><td>Subheading</td><td><code>### A smaller thought</code></td><td>A section within that section. Add another <code>#</code> for lower levels if needed.</td></tr>
+            <tr><td>Bold</td><td><code>**Important words**</code></td><td>Strong emphasis.</td></tr>
+            <tr><td>Emphasis / Italic</td><td><code>*Emphasized words*</code></td><td>The site styles emphasis with an underline rather than an italic face.</td></tr>
+            <tr><td>Strikethrough</td><td><code>~~Removed words~~</code></td><td>Text displayed with a line through it.</td></tr>
+            <tr><td>Link</td><td><code>[Source title](https://example.com)</code></td><td>Use descriptive link text. For another page here, use a path such as <code>/about/</code>.</td></tr>
+            <tr><td>Bulleted list</td><td><code>- An item</code></td><td>One item per line; indent nested items.</td></tr>
+            <tr><td>Numbered list</td><td><code>1. A first step</code></td><td>One step per line.</td></tr>
+            <tr><td>Ordinary quote</td><td><code>&gt; A quoted passage.</code></td><td>A quotation with a left rule. Prefix each quoted paragraph with <code>&gt;</code>.</td></tr>
+            <tr><td>Inline code</td><td><code>`a short code fragment`</code></td><td>Code or a literal filename within a sentence.</td></tr>
+            <tr><td>Horizontal rule</td><td><code>---</code></td><td>A simple break between passages. The Ornament block gives you the Deco sunburst instead.</td></tr>
+          </tbody></table>
+          <h2>Code block</h2>
+          <p>Use <strong>+ → Code block</strong>, or paste a fenced block in Markdown. A language after the opening fence enables syntax highlighting.</p>
+          <div class="th-guide-example"><div><span>Markdown example</span><button type="button" data-copy-example>Copy example</button></div><pre><code>```javascript
+const idea = "Start here";
+```</code></pre></div>
+          <h2>Table</h2>
+          <p>Use Markdown mode for a table. The second line separates its headings from the rows.</p>
+          <div class="th-guide-example"><div><span>Markdown example</span><button type="button" data-copy-example>Copy example</button></div><pre><code>| Idea | Observation |
+| --- | --- |
+| First idea | What you noticed |
+| Second idea | More detail |</code></pre></div>
+          <h2>Footnote</h2>
+          <p>Add the reference where the note belongs, then put its definition at the end of the body. Each note needs its own matching label. Use Markdown mode to keep the source easy to edit.</p>
+          <div class="th-guide-example"><div><span>Markdown example</span><button type="button" data-copy-example>Copy example</button></div><pre><code>A thought with a source.[^source]
+
+[^source]: The source or a longer explanation, with a [link](https://example.com).</code></pre></div>
+        </div>
+      </details>
+
+      <details class="th-guide-section" id="th-guide-images">
+        <summary>Images, captions, and uploads</summary>
+        <div class="th-guide-section-body">
+          <p>Upload a <strong>JPG, PNG, or WebP</strong> through the image picker for the entry you are editing. Its files live beside its Markdown file so the site can resize them. Keep the filename provided by the picker when inserting the image.</p>
+          <dl>
+            <dt>Image</dt><dd>The standard + menu Image tool. Ordinary Markdown images automatically receive the site’s gold frame. An optional image title becomes the visible caption.</dd>
+            <dt>Figure</dt><dd>The custom + menu Figure tool adds explicit Caption and Duotone controls.</dd>
+            <dt>Cover → Image</dt><dd>A featured photo above a column and on its homepage lead. It does not insert an image into the Body.</dd>
+            <dt>Alt text</dt><dd>Describe what the image communicates for readers who cannot see it. A useful description is better than a filename or “image of”.</dd>
+            <dt>Caption</dt><dd>Visible context or credit below the picture. The Figure and Cover captions accept Markdown links and emphasis.</dd>
+            <dt>Duotone</dt><dd>Applies the site’s green-toned treatment where the Figure or featured image is rendered on the column page. Leave off to keep the photo’s original colors.</dd>
+          </dl>
+          <div class="th-guide-example"><div><span>Standard image with a caption</span><button type="button" data-copy-example>Copy example</button></div><pre><code>![A description of the photograph](photo.jpg "A visible caption or photo credit")</code></pre></div>
+          <p>The filename above is an example: replace it with a file you actually uploaded. Avoid renaming a file after it has been inserted without also updating its references.</p>
+        </div>
+      </details>
+
+      <details class="th-guide-section" id="th-guide-fields">
+        <summary>Title, date, topics, cover, and About fields</summary>
+        <div class="th-guide-section-body">
+          <p>The fields above Body fill in the Markdown file’s metadata for you. Keep that metadata out of Body.</p>
+          <dl>
+            <dt>Title</dt><dd>The main headline, already displayed in the masthead. Body headings begin at Heading 2.</dd>
+            <dt>Date</dt><dd>Controls archive order and the weekly lineup. The picker uses your device’s local time; the public site displays dates in Los Angeles time.</dd>
+            <dt>Description</dt><dd>An optional plain-text standfirst and description for search and link previews. If a column’s Description is blank, the homepage draws an excerpt from its first prose paragraph.</dd>
+            <dt>Categories</dt><dd>Broad subjects such as Culture or Technology. Separate names with commas, for example <code>Culture, Technology</code>, and reuse names consistently.</dd>
+            <dt>Tags</dt><dd>Specific recurring ideas such as attention or Los Angeles. Separate names with commas, for example <code>attention, Los Angeles</code>. Matching tags connect columns in Explore.</dd>
+            <dt>Cover → Pattern</dt><dd><strong>lines</strong>: vertical stripes; <strong>waves</strong>: flowing curves; <strong>steps</strong>: stepped buildings; <strong>rays</strong>: sun rays; <strong>arches</strong>: repeating arches; <strong>scallops</strong>: overlapping semicircles. Leave blank for an automatic choice.</dd>
+            <dt>Cover → Accent</dt><dd>Choose sage, rose, jade, brown, or olive. Leave blank for an automatic palette. Generated artwork remains available for the archive cards even when the entry has a featured photo.</dd>
+            <dt>About → Portrait</dt><dd>An optional image above the About text. Upload it through this page’s Portrait field, and describe it in Portrait alt text.</dd>
+            <dt>About → Body</dt><dd>The same formatting, special blocks, figures, and footnotes work here. Its Title and optional Description are separate fields.</dd>
+          </dl>
+        </div>
+      </details>
+
+      <details class="th-guide-section" id="th-guide-publishing">
+        <summary>Drafts, saving, and publishing</summary>
+        <div class="th-guide-section-body">
+          <ol>
+            <li>Keep <strong>Draft</strong> on while preparing a column. It stays out of the public site’s normal build.</li>
+            <li>Use the CMS save/publish controls to save your entry. The <strong>Publish</strong> action saves the Markdown file to the connected repository; the Draft setting still determines whether it appears publicly.</li>
+            <li>When ready, check Title, Date, image descriptions, and the Body. Switch <strong>Draft</strong> off, then publish the entry.</li>
+            <li>The public site updates after its deployment finishes. A future Date keeps the column out until that date and a subsequent site update; it does not schedule a deployment by itself.</li>
+          </ol>
+          <p>Opening this guide keeps your current editor open. Close it to resume writing.</p>
+        </div>
+      </details>
+      <p class="th-guide-footer">More detail: <a href="https://decapcms.org/docs/widgets/" target="_blank" rel="noopener noreferrer">Decap editor documentation</a>.</p>
+    </div>
+  </dialog>
 </body>
 </html>
