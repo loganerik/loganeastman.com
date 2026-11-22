@@ -14,7 +14,7 @@
 {{- end -}}
 <header style="view-transition-name: th-header" class="th-header th-header--interior{{ if $isColumn }} th-header--post{{ end }}" role="banner">
   <div class="th-masthead">
-    <div class="th-cat-arch th-cat-arch--left">{{- $a := resources.Get "tryhard/ares-realistic.png" -}}{{- $a1 := $a.Resize "480x webp q80" -}}{{- $a2 := $a.Resize "960x webp q80" -}}<img src="{{ $a1.RelPermalink }}" srcset="{{ $a1.RelPermalink }} 480w, {{ $a2.RelPermalink }} 960w" sizes="(max-width: 700px) 25vw, 22vw" alt="Ares, a tabby cat, reclining" width="{{ $a1.Width }}" height="{{ $a1.Height }}" loading="eager" fetchpriority="high" decoding="async"></div>
+    <div class="th-cat-arch th-cat-arch--left">{{- $a := resources.Get "tryhard/ares-resting-photo-v5.png" -}}{{- $a1 := $a.Resize "480x webp q80" -}}{{- $a2 := $a.Resize "960x webp q80" -}}<img src="{{ $a1.RelPermalink }}" srcset="{{ $a1.RelPermalink }} 480w, {{ $a2.RelPermalink }} 960w" sizes="(max-width: 700px) 25vw, 22vw" alt="Ares, a tabby cat, reclining" width="{{ $a1.Width }}" height="{{ $a1.Height }}" loading="eager" fetchpriority="high" decoding="async"></div>
     <div class="th-brand">
       <span class="th-brand-crown" aria-hidden="true"><img src="/tryhard/ornaments/crown.svg" alt="" width="94" height="52"></span>
       <a class="th-brand-sig" href="/" aria-label="TRYHARD in a whytry world, home"><span>{{ site.Title }}</span><span>{{ site.Params.tagline }}</span></a>
