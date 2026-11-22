@@ -1,5 +1,9 @@
 {{ define "main" }}
 <article class="th-article th-page">
+  {{- with .Params.portrait -}}{{- with $.Resources.GetMatch . -}}
+    {{- $w := .Resize "1200x webp q88" -}}{{- $s := .Resize "720x webp q88" -}}
+  <figure class="th-portrait"><img src="{{ $w.RelPermalink }}" srcset="{{ $s.RelPermalink }} 720w, {{ $w.RelPermalink }} 1200w" sizes="(max-width: 700px) 92vw, 640px" width="{{ $w.Width }}" height="{{ $w.Height }}" alt="{{ $.Params.portraitAlt | default $.Title }}" loading="eager" decoding="async"></figure>
+  {{- end -}}{{- end }}
   {{ with .Description }}<div class="th-explore-head th-post-head"><p>{{ . }}</p></div>{{ end }}
   <div class="th-article-body th-prose th-prose--plain">{{ .Content }}</div>
 </article>

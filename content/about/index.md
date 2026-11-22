@@ -1,6 +1,8 @@
 ---
 title: "About"
 description: ""
+portrait: "portrait.webp"
+portraitAlt: "Engraved Art Deco portrait of Logan Eastman in front of a lit Open sign"
 ---
 
 I’m Logan, a writer, strategist and technologist. I’ve worked in branding, thought leadership, and entertainment.

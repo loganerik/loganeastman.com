@@ -455,3 +455,10 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 @media (max-width: 700px) { .th-header--post .th-brand-author { font-size: .82rem; } }
 .th-footer-name a { display: inline-block; color: inherit; text-decoration: none; }
 .th-footer-name a:hover { color: #3e7960; }
+
+/* About portrait: a cut-out engraving centered above the text, no frame. */
+.th-portrait { max-width: 640px; margin: 0 auto 8px; padding: 0; }
+.th-portrait img { width: 100%; height: auto; filter: drop-shadow(0 6px 10px rgba(34,75,55,.14)); }
+.th-page:has(.th-portrait) { padding-top: 48px; }
+.th-page:has(.th-portrait) .th-article-body::before { margin-top: 8px; margin-bottom: 36px; }
+@media (max-width: 700px) { .th-portrait { max-width: 92vw; } }
