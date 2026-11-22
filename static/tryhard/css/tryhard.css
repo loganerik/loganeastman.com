@@ -463,7 +463,7 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 .th-portrait--framed { position: relative; }
 .th-portrait-mask { position: absolute; }
 .th-portrait-photo { position: absolute; inset: 0; clip-path: url(#portrait-window); }
-.th-portrait-photo img { position: absolute; left: 14.5%; top: 20.5%; width: 69%; height: 70%; object-fit: cover; object-position: 50% 75%; filter: none; }
+.th-portrait-photo img { position: absolute; left: 14.5%; top: 20.5%; width: 69%; height: 70%; object-fit: cover; object-position: 50% 42%; filter: none; }
 .th-portrait-frame { position: relative; display: block; pointer-events: none; }
 .th-page:has(.th-portrait) { padding-top: 28px; }
 .th-page:has(.th-portrait) .th-article-body::before { margin-top: 8px; margin-bottom: 36px; }
