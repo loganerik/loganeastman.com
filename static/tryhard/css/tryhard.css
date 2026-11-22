@@ -462,3 +462,15 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 .th-page:has(.th-portrait) { padding-top: 48px; }
 .th-page:has(.th-portrait) .th-article-body::before { margin-top: 8px; margin-bottom: 36px; }
 @media (max-width: 700px) { .th-portrait { max-width: 92vw; } }
+
+/* Mobile interior masthead: smaller cat arches, lower start, more room for the title. */
+@media (max-width: 700px) {
+  :root { --th-rail: 20%; --th-head-h: clamp(230px, 60vw, 270px); }
+  .th-masthead::before, .th-masthead::after { top: 46%; border-width: 2px; }
+  .th-cat-arch { top: 30%; }
+  .th-cat-arch img { filter: drop-shadow(0 2px 2px #224b3715); }
+}
+@media (max-width: 430px) {
+  :root { --th-rail: 19%; }
+  .th-masthead::before, .th-masthead::after { top: 50%; }
+}
