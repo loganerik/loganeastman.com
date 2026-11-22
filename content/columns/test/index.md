@@ -5,6 +5,19 @@ draft: false
 cover:
   duotone: false
 ---
-Test
+## A major section
 
-# Test
+### A smaller thought
+
+{{< pullquote >}}A line worth setting apart.{{< /pullquote >}}
+
+{{< aside >}}A minor exception I can't resist.{{< /aside >}}
+
+{{< aside label="A note on sources" >}}Text here.{{< /aside >}}
+
+{{< ornament >}}
+
+---
+![Alt text](photo.jpg "A caption, optional")
+
+{{< figure src="photo.jpg" alt="Alt text" caption="A caption" duotone="true" >}}
