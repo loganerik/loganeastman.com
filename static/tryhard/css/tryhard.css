@@ -163,7 +163,8 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 .th-header--post .th-brand-sep { color: #b8975f; }
 
 /* ---------- 6. Main frame, toplines, buttons ---------- */
-.th-main { position: relative; width: calc(100% - 44px); max-width: 1246px; min-height: 540px; margin: 0 auto; padding: 0 var(--th-frame-pad) 66px; background: var(--th-paper); border-left: 1px solid var(--th-gold); border-right: 1px solid var(--th-gold); }
+/* Keep first-child margins inside the paper frame, connected to the nav. */
+.th-main { display: flow-root; position: relative; width: calc(100% - 44px); max-width: 1246px; min-height: 540px; margin: 0 auto; padding: 0 var(--th-frame-pad) 66px; background: var(--th-paper); border-left: 1px solid var(--th-gold); border-right: 1px solid var(--th-gold); }
 .th-main::before, .th-main::after { content: ""; position: absolute; top: 0; bottom: 0; width: 25px; z-index: 0; pointer-events: none; opacity: .85; background: linear-gradient(90deg, var(--th-forest) 0 5px, var(--th-gold) 5px 7px, var(--th-cream) 7px 13px, var(--th-rose) 13px 16px, var(--th-cream) 16px 20px, var(--th-sage) 20px 25px); }
 .th-main::before { left: 0; }
 .th-main::after { right: 0; transform: scaleX(-1); }
@@ -448,7 +449,7 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 .th-page .th-prose--plain > p:first-of-type { font-size: 1.22em; line-height: 1.6; color: var(--th-title-ink); }
 .th-page .th-prose--plain > p:last-of-type::after { content: "✦"; display: block; margin-top: 2.2em; color: var(--th-gold); font-size: .9rem; text-align: center; }
 @media (max-width: 700px) { .th-page { padding-top: 44px; } .th-page .th-article-body::before { margin-bottom: 30px; } }
-.th-main > .th-explore-block:first-child { margin-top: 48px; }
+.th-main > .th-explore-block:first-child { margin-top: 28px; }
 
 /* Column pages: the date and byline under the title are set in Fenix. */
 .th-header--post .th-brand-author { font: 400 clamp(.8rem, 1.05vw, 1rem)/1.5 var(--th-body); letter-spacing: .02em; color: #3f5245; }
@@ -459,7 +460,7 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 /* About portrait: a cut-out engraving centered above the text, no frame. */
 .th-portrait { max-width: 640px; margin: 0 auto 8px; padding: 0; }
 .th-portrait img { width: 100%; height: auto; filter: drop-shadow(0 6px 10px rgba(34,75,55,.14)); }
-.th-page:has(.th-portrait) { padding-top: 48px; }
+.th-page:has(.th-portrait) { padding-top: 28px; }
 .th-page:has(.th-portrait) .th-article-body::before { margin-top: 8px; margin-bottom: 36px; }
 @media (max-width: 700px) { .th-portrait { max-width: 92vw; } }
 
