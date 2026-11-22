@@ -18,8 +18,10 @@
     <div class="th-brand">
       <span class="th-brand-crown" aria-hidden="true"><img src="/tryhard/ornaments/crown.svg" alt="" width="94" height="52"></span>
       <a class="th-brand-sig" href="/" aria-label="TRYHARD in a whytry world, home"><span>{{ site.Title }}</span><span>{{ site.Params.tagline }}</span></a>
-      <h1 class="th-brand-title"{{ if $isColumn }} itemprop="headline"{{ end }}>{{ .Title }}</h1>
-      {{ with $sub }}<span class="th-brand-author"><span aria-hidden="true"></span>{{ . | safeHTML }}<span aria-hidden="true"></span></span>{{ end }}
+      <div class="th-brand-plate">
+        <h1 class="th-brand-title"{{ if $isColumn }} itemprop="headline"{{ end }}>{{ .Title }}</h1>
+        {{ with $sub }}<span class="th-brand-author"><span aria-hidden="true"></span>{{ . | safeHTML }}<span aria-hidden="true"></span></span>{{ end }}
+      </div>
     </div>
     <div class="th-cat-arch th-cat-arch--right"><img src="/tryhard/img/artemis.webp" alt="Artemis, a tabby cat with white paws, reclining" width="800" height="554" loading="eager" fetchpriority="high" decoding="async"></div>
     {{ partial "tryhard/nav.html" . }}
