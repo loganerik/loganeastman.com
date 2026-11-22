@@ -4,6 +4,8 @@ title = "TRYHARD"
 enableRobotsTXT = true
 timeZone = "America/Los_Angeles"
 
+summaryLength = 35
+
 [params]
   tagline = "in a whytry world"
   author = "Logan Eastman"

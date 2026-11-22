@@ -9,5 +9,48 @@
 </head>
 <body>
   <script src="https://unpkg.com/decap-cms@3.4.0/dist/decap-cms.js"></script>
+  <script>
+    // Decorative sections as one-click blocks in the editor's "+" menu.
+    CMS.registerEditorComponent({
+      id: "pullquote", label: "Pull quote",
+      fields: [{ name: "text", label: "Quote", widget: "string" }],
+      pattern: /^{{< pullquote >}}([\s\S]*?){{< \/pullquote >}}$/,
+      fromBlock: m => ({ text: m[1].trim() }),
+      toBlock: d => `{{< pullquote >}}${d.text || ""}{{< /pullquote >}}`,
+      toPreview: d => `<blockquote style="text-align:center;font-size:1.3em;border:1px solid #c5d5c6;padding:1em">${d.text || ""}</blockquote>`,
+    });
+    CMS.registerEditorComponent({
+      id: "aside", label: "Aside (digression)",
+      fields: [
+        { name: "label", label: "Label", widget: "string", required: false, hint: "Defaults to “A small digression”." },
+        { name: "text", label: "Text", widget: "text" },
+      ],
+      pattern: /^{{< aside(?: label="([^"]*)")? >}}([\s\S]*?){{< \/aside >}}$/,
+      fromBlock: m => ({ label: m[1] || "", text: m[2].trim() }),
+      toBlock: d => `{{< aside${d.label ? ` label="${d.label}"` : ""} >}}${d.text || ""}{{< /aside >}}`,
+      toPreview: d => `<aside style="border-top:1px solid #b99c67;border-bottom:1px solid #b99c67;padding:1em"><small>${d.label || "A small digression"}</small><p>${d.text || ""}</p></aside>`,
+    });
+    CMS.registerEditorComponent({
+      id: "ornament", label: "Ornament (sunburst divider)",
+      fields: [],
+      pattern: /^{{< ornament >}}$/,
+      fromBlock: () => ({}),
+      toBlock: () => `{{< ornament >}}`,
+      toPreview: () => `<p style="text-align:center;color:#b99c67">— ✦ —</p>`,
+    });
+    CMS.registerEditorComponent({
+      id: "figure", label: "Figure (framed image)",
+      fields: [
+        { name: "src", label: "Image", widget: "image", media_folder: "", public_folder: "" },
+        { name: "alt", label: "Alt text", widget: "string" },
+        { name: "caption", label: "Caption", widget: "string", required: false },
+        { name: "duotone", label: "Duotone", widget: "boolean", default: false, required: false },
+      ],
+      pattern: /^{{< figure src="([^"]*)"(?: alt="([^"]*)")?(?: caption="([^"]*)")?(?: duotone="(true|false)")? >}}$/,
+      fromBlock: m => ({ src: m[1], alt: m[2] || "", caption: m[3] || "", duotone: m[4] === "true" }),
+      toBlock: d => `{{< figure src="${d.src || ""}" alt="${d.alt || ""}"${d.caption ? ` caption="${d.caption}"` : ""}${d.duotone ? ` duotone="true"` : ""} >}}`,
+      toPreview: d => `<figure style="border:1px solid #b99c67;padding:4px"><img src="${d.src || ""}" alt="${d.alt || ""}" style="max-width:100%"><figcaption>${d.caption || ""}</figcaption></figure>`,
+    });
+  </script>
 </body>
 </html>

@@ -1,19 +1,20 @@
 {{ define "main" }}
 {{ $posts := (where site.RegularPages "Section" "columns").ByDate.Reverse }}
 {{ with $posts }}
-  {{ $latest := index . 0 }}
   {{ partial "tryhard/week-strip.html" (dict "Posts" $posts) }}
-  <section class="th-explore-callout" aria-labelledby="th-explore-callout-title">
-    <div><h2 id="th-explore-callout-title">The archive.</h2><p>Explore by categories, tags or dates.</p></div>
-    <a href="/archive/" class="th-outline-btn">Read more.</a>
-  </section>
-  {{ $monday := partial "tryhard/week-anchor.html" $posts }}
-  {{ with where $posts "Date" "lt" $monday }}
+  {{ $tags := site.Taxonomies.tags }}
+  {{ $older := after 5 $posts }}
+  {{ if or (gt (len $tags) 0) (gt (len $older) 0) }}
   <section class="th-archive" aria-labelledby="th-archive-heading">
-    <div class="th-section-topline"><h2 id="th-archive-heading">Previously</h2><a href="/archive/">Browse all covers ↗</a></div>
+    <div class="th-section-topline"><h2 id="th-archive-heading">From the archive</h2><a href="/archive/">Every edition ↗</a></div>
+    {{ with $tags }}
+    <p class="th-tagline"><span class="th-topic-label">Explore</span>{{ range first 12 .ByCount }}<a class="th-topic-pill th-topic-pill--small" href="{{ .Page.RelPermalink }}">{{ .Page.LinkTitle }}</a>{{ end }}</p>
+    {{ end }}
+    {{ with $older }}
     <div class="th-archive-list">
       {{ range first 20 . }}{{ partial "tryhard/archive-row.html" . }}{{ end }}
     </div>
+    {{ end }}
   </section>
   {{ end }}
 {{ else }}

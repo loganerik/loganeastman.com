@@ -1,32 +1,12 @@
-{{- /* The weekly lineup. Anchored to the current week if anything was
-       published this week; otherwise to the week of the latest column.
-       Mon–Fri always render (empty days as quiet placeholders); Sat/Sun
-       appear only when a column exists on them. Newest wins on a day. */ -}}
+{{- /* "This week": the five most recent columns, oldest on the left,
+       newest on the right. No calendar slots, no placeholders. */ -}}
 {{- $posts := .Posts -}}
-{{- $monday := partial "tryhard/week-anchor.html" $posts -}}
-{{- $wd := int now.Weekday -}}{{- if eq $wd 0 }}{{ $wd = 7 }}{{ end -}}
-{{- $thisMonday := (now.AddDate 0 0 (sub 1 $wd)) -}}
-{{- $isCurrent := eq ($monday.Format "2006-01-02") ($thisMonday.Format "2006-01-02") -}}
+{{- $recent := first 5 $posts -}}
+{{- $show := $recent.Reverse -}}
+{{- $from := (index $show 0).Date -}}{{- $to := (index $recent 0).Date -}}
 <section class="th-week" id="this-week" aria-labelledby="th-week-heading">
-  <div class="th-section-topline"><h2 id="th-week-heading">{{ if $isCurrent }}This week{{ else }}The latest week{{ end }}</h2><span>{{ $monday.Format "Jan 02" }} – {{ ($monday.AddDate 0 0 4).Format "Jan 02, 2006" }}</span></div>
-  <div class="th-week-grid">
-  {{- range seq 0 6 -}}
-    {{- $day := $monday.AddDate 0 0 . -}}
-    {{- $key := $day.Format "2006-01-02" -}}
-    {{- $match := false -}}
-    {{- range $posts -}}
-      {{- if and (not $match) (eq (.Date.Format "2006-01-02") $key) }}{{ $match = . }}{{ end -}}
-    {{- end -}}
-    {{- with $match -}}
-      {{ partial "tryhard/edition-card.html" . }}
-    {{- else -}}{{- if lt . 5 -}}
-      {{- $future := $day.After now -}}
-      <div class="th-edition th-edition--empty" aria-label="{{ if $future }}Nothing yet for{{ else }}No column on{{ end }} {{ $day.Format "Monday January 2" }}">
-        <div class="th-edition-art"><div class="th-empty-cover" aria-hidden="true"><span>✳</span></div></div>
-        <div class="th-edition-copy"><span class="th-edition-day">{{ $day.Format "Mon" }} <span>{{ $day.Format "02" }}</span></span><span class="th-edition-title">{{ if $future }}Not yet{{ else }}No edition{{ end }}</span></div>
-      </div>
-    {{- end -}}
-    {{- end -}}
-  {{- end -}}
+  <div class="th-section-topline"><h2 id="th-week-heading">This week</h2><span>{{ if eq ($from.Format "2006-01-02") ($to.Format "2006-01-02") }}{{ $to.Format "Jan 02, 2006" }}{{ else }}{{ $from.Format "Jan 02" }} – {{ $to.Format "Jan 02, 2006" }}{{ end }}</span></div>
+  <div class="th-week-grid th-week-grid--{{ len $show }}">
+  {{- range $show }}{{ partial "tryhard/edition-card.html" . }}{{ end -}}
   </div>
 </section>

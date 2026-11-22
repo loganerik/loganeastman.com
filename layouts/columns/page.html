@@ -10,8 +10,6 @@
       <img class="{{ if $.Params.cover.duotone }}th-duotone{{ end }}" src="{{ $large.RelPermalink }}" srcset="{{ $small.RelPermalink }} 800w, {{ $large.RelPermalink }} {{ $large.Width }}w" sizes="(max-width: 900px) 100vw, 850px" alt="{{ $.Params.cover.alt | default $.Title }}" width="{{ $large.Width }}" height="{{ $large.Height }}" itemprop="image">
       {{ with $.Params.cover.caption }}<figcaption>{{ . | markdownify }}</figcaption>{{ end }}
     </figure>
-  {{- else -}}
-    <div class="th-article-cover">{{ partialCached "tryhard/edition-cover.html" . .RelPermalink }}</div>
   {{- end -}}
   <div class="th-article-body th-prose" itemprop="articleBody">{{ .Content }}</div>
   {{ $cats := .GetTerms "categories" }}{{ $tags := .GetTerms "tags" }}
@@ -22,6 +20,7 @@
   </div>
   {{ end }}
   <div class="th-article-end" aria-hidden="true"><span></span><img src="/tryhard/ornaments/sunburst.svg" alt="" width="85" height="38"><span></span></div>
+  {{ with $tags }}{{ with index . 0 }}<p class="th-more-on">More on <a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a> ↗</p>{{ end }}{{ end }}
   {{ if or .PrevInSection .NextInSection }}
   <nav class="th-post-nav" aria-label="Adjacent columns">
     <div>{{ with .NextInSection }}<a href="{{ .RelPermalink }}"><span>← Earlier</span><strong>{{ .Title }}</strong></a>{{ end }}</div>

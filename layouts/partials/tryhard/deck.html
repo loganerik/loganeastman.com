@@ -1,0 +1,14 @@
+{{- /* Standfirst for a column: the description if set, otherwise the first
+       real paragraph of the body (skipping headings, shortcodes, images,
+       rules and blank lines), as plain text. */ -}}
+{{- $p := . -}}
+{{- $deck := $p.Description -}}
+{{- if not $deck -}}
+  {{- range split $p.RawContent "\n\n" -}}
+    {{- $b := trim . " \n\r\t" -}}
+    {{- if and (not $deck) (ne $b "") (not (hasPrefix $b "#")) (not (hasPrefix $b "{{")) (not (hasPrefix $b "!")) (not (hasPrefix $b "---")) (not (hasPrefix $b ">")) (not (hasPrefix $b "<")) -}}
+      {{- $deck = $b | markdownify | plainify | truncate 200 "…" -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $deck -}}
