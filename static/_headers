@@ -1,0 +1,3 @@
+# Editor files must always revalidate so a new deploy is picked up immediately.
+/admin/*
+  Cache-Control: no-cache
