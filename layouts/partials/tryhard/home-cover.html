@@ -32,7 +32,7 @@
           <p class="th-eyebrow">{{ $latest.Date.Format "Monday, January 2, 2006" }}</p>
           <h1 id="th-home-feature-title"><a href="{{ $latest.RelPermalink }}">{{ $latest.Title }}</a></h1>
           {{ with $latest.Description }}<p class="th-deck">{{ . }}</p>{{ end }}
-          <a class="th-pill" href="{{ $latest.RelPermalink }}">Read the column <span aria-hidden="true">→</span></a>
+          <a class="th-pill" href="{{ $latest.RelPermalink }}">Read <span aria-hidden="true">→</span></a>
         </div>
         {{- $img := false -}}{{- with $latest.Params.cover -}}{{- with .image -}}{{- $img = $latest.Resources.GetMatch . -}}{{- end -}}{{- end -}}
         <a class="th-home-editorial-image" href="{{ $latest.RelPermalink }}" aria-label="Read {{ $latest.Title }}">

@@ -427,3 +427,15 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 .th-edition-copy { background: linear-gradient(90deg, rgba(255,253,247,1) 0%, rgba(255,253,247,.99) 68%, rgba(255,253,247,.82) 88%, rgba(255,253,247,.45) 100%); }
 @media (max-width: 1100px) { .th-edition-title { font-size: 1.45rem; } }
 @media (max-width: 700px) { .th-edition { width: 210px; min-width: 210px; } .th-edition-title { font-size: 1.5rem; } .th-wall-grid .th-edition-title { font-size: 1.25rem; } }
+
+/* Interior arch: signature at a fixed distance from the arch top on every page,
+   always with clear air before the title. */
+.th-brand { padding-top: 30px; padding-bottom: 4%; }
+.th-brand-sig { margin: 0 0 1.6em; }
+.th-brand-plate { justify-content: center; padding-bottom: .4em; }
+.th-header--post .th-brand-title { font-size: clamp(1rem, 5.6cqw, 2.2rem); }
+.th-header--post .th-brand-plate .th-brand-author { margin-top: .9em; }
+@media (max-width: 700px) {
+  .th-brand { padding-top: 22px; }
+  .th-brand-sig { margin-bottom: 1em; }
+}
