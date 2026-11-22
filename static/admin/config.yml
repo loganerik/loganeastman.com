@@ -1,0 +1,77 @@
+# Decap CMS for TRYHARD. Sign-in is GitHub OAuth, brokered by the Cloudflare
+# Pages functions in /functions/api (needs GITHUB_CLIENT_ID and
+# GITHUB_CLIENT_SECRET set in the Pages project's environment variables).
+backend:
+  name: github
+  repo: loganerik/loganeastman.com
+  branch: main
+  base_url: https://loganeastman.com
+  auth_endpoint: api/auth
+  commit_messages:
+    create: "Column: {{slug}}"
+    update: "Column: update {{slug}}"
+    delete: "Column: remove {{slug}}"
+    uploadMedia: "Media: {{path}}"
+    deleteMedia: "Media: remove {{path}}"
+
+site_url: https://loganeastman.com
+display_url: https://loganeastman.com
+logo_url: https://loganeastman.com/tryhard/og.jpg
+locale: en
+
+# Images live next to each column (page bundle), so Hugo can resize them.
+media_folder: content/columns
+public_folder: ""
+
+collections:
+  - name: columns
+    label: Columns
+    label_singular: Column
+    folder: content/columns
+    path: "{{slug}}/index"
+    media_folder: ""
+    public_folder: ""
+    create: true
+    slug: "{{slug}}"
+    preview_path: "columns/{{slug}}/"
+    summary: "{{title}} — {{date | date('ddd, MMM D, YYYY')}}"
+    sortable_fields: [date, title]
+    editor:
+      preview: false
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Date, name: date, widget: datetime, format: "YYYY-MM-DDTHH:mm:ssZ", date_format: "YYYY-MM-DD", time_format: "HH:mm", picker_utc: false }
+      - { label: Description, name: description, widget: string, required: false, hint: "One line under the title. Optional." }
+      - { label: Draft, name: draft, widget: boolean, default: true, hint: "Drafts never publish. Switch off to go live." }
+      - { label: Categories, name: categories, widget: list, required: false, hint: "Broad subjects, e.g. Observations, Culture, Technology" }
+      - { label: Tags, name: tags, widget: list, required: false, hint: "Recurring ideas, e.g. coincidence, attention, Los Angeles" }
+      - label: Cover
+        name: cover
+        widget: object
+        required: false
+        collapsed: true
+        hint: "All optional. With no image, a patterned cover is generated from the date."
+        fields:
+          - { label: Pattern, name: style, widget: select, required: false, options: [lines, waves, steps, rays, arches, scallops] }
+          - { label: Accent, name: accent, widget: select, required: false, options: [sage, rose, jade, brown, olive] }
+          - { label: Image, name: image, widget: image, required: false, hint: "Featured photo, shown in a gold frame." }
+          - { label: Alt text, name: alt, widget: string, required: false }
+          - { label: Caption, name: caption, widget: string, required: false }
+          - { label: Duotone, name: duotone, widget: boolean, required: false, default: false, hint: "Green and cream treatment for the featured image." }
+      - label: Body
+        name: body
+        widget: markdown
+        hint: "## for a major section, ### for a smaller one. Pull quotes, asides and ornaments: see the archetype."
+
+  - name: pages
+    label: Pages
+    files:
+      - label: About
+        name: about
+        file: content/about/index.md
+        fields:
+          - { label: Title, name: title, widget: string }
+          - { label: Description, name: description, widget: string, required: false }
+          - { label: Portrait, name: portrait, widget: image, required: false, media_folder: "", public_folder: "" }
+          - { label: Portrait alt text, name: portraitAlt, widget: string, required: false }
+          - { label: Body, name: body, widget: markdown }
