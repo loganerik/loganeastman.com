@@ -565,3 +565,54 @@ body.th-site { font-family: var(--th-body); font-weight: 400; color: var(--th-te
 .th-brand-title--post { margin-top: .3em; }
 .th-post-head { padding: 30px 0 4px; }
 .th-article .th-post-head { padding-top: 34px; }
+
+/* =====================================================================
+   Julius Sans One for wordmark, headlines, nav and labels (replacing
+   Major Mono Display and Buda). Fenix remains the reading face.
+   Julius has true capitals and small-cap lowercase, so headlines keep
+   their natural Title Case and the wordmark is set in capitals.
+   ===================================================================== */
+:root { --th-display: 'Julius Sans One', 'Josefin Sans', 'Futura', sans-serif; --th-label: 'Julius Sans One', 'Josefin Sans', 'Futura', sans-serif; }
+.th-brand-title, .th-footer-name, .th-home-wordmark, .th-post-signature > span { text-transform: uppercase; letter-spacing: .18em; padding-left: .18em; }
+.th-brand-subtitle, .th-home-subline, .th-footer-name span, .th-brand-sig { text-transform: none; letter-spacing: .12em; }
+.th-brand-sig span:first-child { text-transform: uppercase; letter-spacing: .2em; }
+.th-feature h1, .th-article-header h1, .th-prose h2, .th-prose h3, .th-edition-title, .th-archive-title,
+.th-explore-head h1, .th-explore-callout h2, .th-term-name, .th-topic-result h3, .th-post-nav strong,
+.th-empty-state h1, .th-pullquote, .th-home-editorial h1, .th-home-editorial--empty h1, .th-brand-title--post,
+.th-home-story h1 { text-transform: none; letter-spacing: .04em; }
+.th-brand-title--post { letter-spacing: .06em; padding-left: 0; line-height: 1.25; }
+.th-prose h2 { letter-spacing: .06em; }
+.th-prose h3 { letter-spacing: .05em; }
+.th-prose .th-pullquote { letter-spacing: .03em; line-height: 1.45; }
+.th-edition-title { font-size: clamp(.82rem, 1.05vw, 1.05rem); line-height: 1.4; letter-spacing: .05em; }
+.th-prose > p:first-of-type::first-letter, .th-article:not(.th-page) .th-prose > p:first-of-type::first-letter { font-family: var(--th-display); font-weight: 400; }
+.th-eyebrow, .th-section-topline span, .th-section-topline a, .th-section-topline h2, .th-edition-day,
+.th-archive-date, .th-topic-label, .th-term-count, .th-aside-label, .th-week-label,
+.th-post-nav a span, .th-small, .th-pill, .th-outline-btn, .th-nav a, .th-prose h4, .th-prose th,
+.th-brand-author, .th-topic-pill, .th-skip, .th-home-byline { font-family: var(--th-label); font-weight: 400; letter-spacing: .09em; }
+.th-eyebrow { font-size: .82rem; }
+.th-nav a { font-size: .86rem; letter-spacing: .14em; }
+.th-section-topline h2 { font-size: 1rem; letter-spacing: .14em; }
+.th-section-topline span, .th-section-topline a { font-size: .74rem; }
+.th-edition-day, .th-archive-date, .th-week-label { font-size: .72rem; }
+.th-topic-label, .th-aside-label, .th-post-nav a span, .th-term-count { font-size: .74rem; }
+.th-topic-pill { font-size: .76rem; letter-spacing: .06em; }
+.th-pill, .th-outline-btn { font-size: .8rem; letter-spacing: .12em; }
+.th-brand-author { font-size: clamp(.56rem, 2.9cqw, .86rem); letter-spacing: .16em; }
+.th-home-byline { font-size: .8rem; letter-spacing: .18em; }
+.th-footer .th-small { font-size: .76rem; }
+.th-brand-sig { font-size: clamp(.58rem, 2.2cqw, .78rem); }
+.th-brand--post .th-brand-author { font-size: clamp(.52rem, 2.4cqw, .8rem); letter-spacing: .1em; }
+
+/* Nav bar: dark green on every page, consistent with the home poster. */
+.th-nav, .th-header--interior .th-nav, .th-home-center .th-nav { background: #1c4d38; border: 1px solid var(--th-gold); border-top: 2px solid #ccae77; border-bottom: 3px solid #d5b57b; }
+.th-nav a, .th-header--interior .th-nav a { color: #fffdf5; }
+.th-nav a:hover, .th-nav a[aria-current], .th-header--interior .th-nav a:hover, .th-header--interior .th-nav a[aria-current] { color: #ffcfbf; font-weight: 400; }
+.th-nav .th-nav-rss, .th-header--interior .th-nav .th-nav-rss { color: #f2d4a6; }
+.th-home-center .th-nav { border-left: 0; border-right: 0; }
+@media (max-width: 700px) {
+  .th-nav a { font-size: .78rem; letter-spacing: .1em; }
+  .th-brand-sig { font-size: .5rem; }
+  .th-brand--post .th-brand-author { font-size: .56rem; }
+  .th-home-byline { font-size: .62rem; }
+}
