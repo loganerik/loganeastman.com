@@ -1,8 +1,9 @@
 ---
 title: "About"
 description: ""
-portrait: "portrait.webp"
-portraitAlt: "Art Deco portrait of Logan Eastman with a rose and a lit Open sign"
+portrait: "portrait-photo.jpg"
+portraitFrame: "portrait-frame-v2.png"
+portraitAlt: "Logan Eastman looking to the side beside a glowing Open sign"
 ---
 
 I’m Logan, a writer, strategist and technologist. I’ve worked in branding, thought leadership, and entertainment.

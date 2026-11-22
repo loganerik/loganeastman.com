@@ -2,7 +2,20 @@
 <article class="th-article th-page">
   {{- with .Params.portrait -}}{{- with $.Resources.GetMatch . -}}
     {{- $w := .Resize "1200x webp q88" -}}{{- $s := .Resize "720x webp q88" -}}
-  <figure class="th-portrait"><img src="{{ $w.RelPermalink }}" srcset="{{ $s.RelPermalink }} 720w, {{ $w.RelPermalink }} 1200w" sizes="(max-width: 700px) 92vw, 640px" width="{{ $w.Width }}" height="{{ $w.Height }}" alt="{{ $.Params.portraitAlt | default $.Title }}" loading="eager" decoding="async"></figure>
+    {{- $frame := false -}}
+    {{- with $.Params.portraitFrame -}}{{- $frame = $.Resources.GetMatch . -}}{{- end -}}
+  <figure class="th-portrait{{ if $frame }} th-portrait--framed{{ end }}">
+    {{- if $frame }}
+    <svg class="th-portrait-mask" width="0" height="0" aria-hidden="true" focusable="false"><defs><clipPath id="portrait-window" clipPathUnits="objectBoundingBox"><path d="M .148 .9 V .535 C .148 .439 .184 .365 .249 .326 C .312 .203 .404 .19 .48 .288 Q .501 .28 .524 .289 C .59 .178 .69 .177 .761 .247 C .807 .291 .831 .369 .831 .48 V .9 Z"/></clipPath></defs></svg>
+    <div class="th-portrait-photo">
+    {{- end }}
+    <img src="{{ $w.RelPermalink }}" srcset="{{ $s.RelPermalink }} 720w, {{ $w.RelPermalink }} 1200w" sizes="(max-width: 700px) 92vw, 640px" width="{{ $w.Width }}" height="{{ $w.Height }}" alt="{{ $.Params.portraitAlt | default $.Title }}" loading="eager" decoding="async">
+    {{- if $frame }}
+    </div>
+    {{- $fw := $frame.Resize "1200x webp q88" -}}{{- $fs := $frame.Resize "720x webp q88" }}
+    <img class="th-portrait-frame" src="{{ $fw.RelPermalink }}" srcset="{{ $fs.RelPermalink }} 720w, {{ $fw.RelPermalink }} 1200w" sizes="(max-width: 700px) 92vw, 640px" width="{{ $fw.Width }}" height="{{ $fw.Height }}" alt="" aria-hidden="true" decoding="async">
+    {{- end }}
+  </figure>
   {{- end -}}{{- end }}
   {{ with .Description }}<div class="th-explore-head th-post-head"><p>{{ . }}</p></div>{{ end }}
   <div class="th-article-body th-prose th-prose--plain">{{ .Content }}</div>
