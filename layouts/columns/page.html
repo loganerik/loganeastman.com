@@ -1,11 +1,7 @@
 {{ define "main" }}
 {{- $m := partial "tryhard/cover-meta.html" . -}}
 <article class="th-article th-accent--{{ $m.accent }}" itemscope itemtype="https://schema.org/Article">
-  <header class="th-article-header">
-    <p class="th-eyebrow">{{ .Date.Format "Monday, January 02, 2006" }} <span aria-hidden="true">✦</span> By {{ site.Params.author }}</p>
-    <h1 itemprop="headline">{{ .Title }}</h1>
-    {{ with .Description }}<p class="th-article-deck" itemprop="description">{{ . }}</p>{{ end }}
-  </header>
+  <meta itemprop="headline" content="{{ .Title }}">
   {{- $img := false -}}{{- with .Params.cover -}}{{- with .image -}}{{- $img = $.Resources.GetMatch . -}}{{- end -}}{{- end -}}
   {{- with $img -}}
     {{- $large := .Resize "1400x webp q85" -}}

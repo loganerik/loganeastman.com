@@ -1,0 +1,10 @@
+<nav class="th-nav" aria-label="Site navigation">
+  {{- $cur := . -}}
+  {{- range site.Menus.main }}
+  {{- $active := or (and .URL (eq $cur.RelPermalink .URL)) (and (eq .URL "/") $cur.IsHome) -}}
+  {{- if and (ne .URL "/") (hasPrefix $cur.RelPermalink .URL) }}{{ $active = true }}{{ end }}
+  {{- if and (eq .URL "/") (eq $cur.Section "columns") (not $cur.IsHome) }}{{ $active = true }}{{ end }}
+  <a href="{{ .URL }}"{{ if $active }} aria-current="page"{{ end }}>{{ .Name }}</a>
+  {{- end }}
+  <a class="th-nav-rss" href="/columns/index.xml" aria-label="TRYHARD RSS feed">RSS <span aria-hidden="true">↗</span></a>
+</nav>

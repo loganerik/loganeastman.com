@@ -1,22 +1,21 @@
-<header class="th-header{{ if .IsHome }} th-header--home{{ end }}" role="banner">
-  <div class="th-masthead{{ if .IsHome }} th-masthead--home{{ end }}">
-    {{ if not .IsHome }}<div class="th-cat-arch th-cat-arch--left"><img src="/tryhard/img/ares.webp" alt="Ares, a tabby cat, reclining" width="764" height="480" loading="eager" fetchpriority="high" decoding="async"></div>{{ end }}
+{{- /* Header router: one poster on the home page, a composed title header on
+       columns, and the reclining-cats masthead everywhere else. */ -}}
+{{- if .IsHome -}}
+  {{ partial "tryhard/home-cover.html" . }}
+{{- else if and .IsPage (eq .Section "columns") -}}
+  {{ partial "tryhard/post-cover.html" . }}
+{{- else -}}
+<header class="th-header th-header--interior" role="banner">
+  <div class="th-masthead th-masthead--interior">
+    <div class="th-cat-arch th-cat-arch--left"><img src="/tryhard/img/ares.webp" alt="Ares, a tabby cat, reclining" width="764" height="480" loading="eager" fetchpriority="high" decoding="async"></div>
     <a class="th-brand" href="/" aria-label="TRYHARD in a whytry world, home">
       <span class="th-brand-crown" aria-hidden="true"><img src="/tryhard/ornaments/crown.svg" alt="" width="94" height="52"></span>
       <span class="th-brand-title">{{ site.Title }}</span>
       <span class="th-brand-subtitle">{{ site.Params.tagline }}</span>
       <span class="th-brand-author"><span aria-hidden="true"></span>By {{ site.Params.author }}<span aria-hidden="true"></span></span>
     </a>
-    {{ if not .IsHome }}<div class="th-cat-arch th-cat-arch--right"><img src="/tryhard/img/artemis.webp" alt="Artemis, a tabby cat with white paws, reclining" width="800" height="554" loading="eager" fetchpriority="high" decoding="async"></div>{{ end }}
+    <div class="th-cat-arch th-cat-arch--right"><img src="/tryhard/img/artemis.webp" alt="Artemis, a tabby cat with white paws, reclining" width="800" height="554" loading="eager" fetchpriority="high" decoding="async"></div>
   </div>
-  <nav class="th-nav" aria-label="Site navigation">
-    {{- $cur := . -}}
-    {{- range site.Menus.main }}
-    {{- $active := or (and .URL (eq $cur.RelPermalink .URL)) (and (eq .URL "/") $cur.IsHome) -}}
-    {{- if and (ne .URL "/") (hasPrefix $cur.RelPermalink .URL) }}{{ $active = true }}{{ end }}
-    {{- if and (eq .URL "/") (eq $cur.Section "columns") (not $cur.IsHome) }}{{ $active = true }}{{ end }}
-    <a href="{{ .URL }}"{{ if $active }} aria-current="page"{{ end }}>{{ .Name }}</a>
-    {{- end }}
-    <a class="th-nav-rss" href="/columns/index.xml" aria-label="TRYHARD RSS feed">RSS <span aria-hidden="true">↗</span></a>
-  </nav>
+  {{ partial "tryhard/nav.html" . }}
 </header>
+{{- end -}}

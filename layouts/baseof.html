@@ -6,7 +6,7 @@
 <body class="th-site{{ with .Params.bodyClass }} {{ . }}{{ end }}">
   <a class="th-skip" href="#main">Skip to the writing</a>
   {{ partial "tryhard/masthead.html" . }}
-  <main class="th-main" id="main">{{ block "main" . }}{{ end }}</main>
+  <main class="th-main{{ if .IsHome }} th-main--home{{ end }}" id="main">{{ block "main" . }}{{ end }}</main>
   {{ partial "tryhard/footer.html" . }}
 </body>
 </html>

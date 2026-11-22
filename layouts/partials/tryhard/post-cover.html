@@ -1,0 +1,21 @@
+{{- /* Column pages: a small publication signature, then the column's own
+       title and deck, set between reclining Ares and Artemis. */ -}}
+<header class="th-header th-header--post" role="banner">
+  <div class="th-post-composition">
+    <div class="th-post-cats th-post-cats--left" aria-hidden="true"><div class="th-post-arch"></div><img src="/tryhard/img/ares.webp" width="764" height="480" alt="" loading="eager" fetchpriority="high" decoding="async"></div>
+    <div class="th-post-cats th-post-cats--right" aria-hidden="true"><div class="th-post-arch"></div><img src="/tryhard/img/artemis.webp" width="800" height="554" alt="" loading="eager" fetchpriority="high" decoding="async"></div>
+    <div class="th-post-center">
+      <a class="th-post-signature" href="/" aria-label="TRYHARD in a whytry world, home">
+        <img src="/tryhard/ornaments/crown.svg" alt="" aria-hidden="true" width="92" height="57">
+        <span>{{ site.Title }}</span>
+        <small>{{ site.Params.tagline }}</small>
+      </a>
+      <div class="th-post-title-plate">
+        <p class="th-eyebrow">{{ .Date.Format "Monday, January 02, 2006" }} <span aria-hidden="true">✦</span> By {{ site.Params.author }}</p>
+        <h1 itemprop="headline">{{ .Title }}</h1>
+        {{ with .Description }}<p class="th-post-deck">{{ . }}</p>{{ end }}
+      </div>
+    </div>
+  </div>
+  {{ partial "tryhard/nav.html" . }}
+</header>

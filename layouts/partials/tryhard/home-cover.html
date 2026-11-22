@@ -1,0 +1,52 @@
+{{- /* Home page: masthead, nav and today's column share one poster frame,
+       between the upright cats and the Eastern Columbia clocktower. */ -}}
+{{- $posts := (where site.RegularPages "Section" "columns").ByDate.Reverse -}}
+<header class="th-header th-header--home" role="banner">
+  <div class="th-cover-composition">
+    <div class="th-cover-rail th-cover-rail--cats" aria-hidden="true">
+      <div class="th-arched-field"><span class="th-star">✳</span></div>
+      <img class="th-home-cats-img" src="/tryhard/img/cats-upright-home.webp" width="677" height="960" alt="" loading="eager" fetchpriority="high" decoding="async">
+      <span class="th-deco-flower th-deco-flower--one">✿</span>
+      <span class="th-deco-flower th-deco-flower--two">✿</span>
+    </div>
+    <div class="th-cover-rail th-cover-rail--tower" aria-hidden="true">
+      <div class="th-tower-halo"></div>
+      <img class="th-home-tower-img" src="/tryhard/ornaments/eastern-clocktower.svg" width="300" height="600" alt="" loading="eager" decoding="async">
+      <div class="th-clouds"><span></span><span></span><span></span></div>
+    </div>
+    <div class="th-home-center">
+      <div class="th-home-masthead">
+        <a class="th-home-logo" href="/" aria-label="TRYHARD in a whytry world, home">
+          <img src="/tryhard/ornaments/crown.svg" class="th-home-crown" alt="" aria-hidden="true" width="106" height="68">
+          <span class="th-home-wordmark">{{ site.Title }}</span>
+          <span class="th-home-subline">{{ site.Params.tagline }}</span>
+          <span class="th-home-byline">By {{ site.Params.author }}</span>
+        </a>
+      </div>
+      {{ partial "tryhard/nav.html" . }}
+      {{ with $posts }}
+      {{- $latest := index . 0 -}}
+      {{- $m := partial "tryhard/cover-meta.html" $latest -}}
+      <article class="th-home-editorial th-accent--{{ $m.accent }}" aria-labelledby="th-home-feature-title">
+        <div class="th-home-editorial-copy">
+          <p class="th-eyebrow">{{ if eq ($latest.Date.Format "2006-01-02") (now.Format "2006-01-02") }}Today{{ else }}Latest edition{{ end }} <span aria-hidden="true">·</span> {{ $latest.Date.Format "Mon, Jan 02, 2006" }}</p>
+          <h1 id="th-home-feature-title"><a href="{{ $latest.RelPermalink }}">{{ $latest.Title }}</a></h1>
+          {{ with $latest.Description }}<p class="th-deck">{{ . }}</p>{{ end }}
+          <a class="th-pill" href="{{ $latest.RelPermalink }}">Read the column <span aria-hidden="true">→</span></a>
+        </div>
+        {{- $img := false -}}{{- with $latest.Params.cover -}}{{- with .image -}}{{- $img = $latest.Resources.GetMatch . -}}{{- end -}}{{- end -}}
+        <a class="th-home-editorial-image" href="{{ $latest.RelPermalink }}" aria-label="Read {{ $latest.Title }}">
+        {{- with $img -}}
+          {{- $r := .Resize "900x webp q82" -}}
+          <img class="{{ if $latest.Params.cover.duotone }}th-duotone{{ end }}" src="{{ $r.RelPermalink }}" alt="{{ $latest.Params.cover.alt | default $latest.Title }}" loading="eager" width="{{ $r.Width }}" height="{{ $r.Height }}">
+        {{- else -}}
+          <div class="th-home-pattern" aria-hidden="true">{{ partialCached "tryhard/edition-cover.html" $latest $latest.RelPermalink }}</div>
+        {{- end -}}
+        </a>
+      </article>
+      {{ else }}
+      <div class="th-home-editorial th-home-editorial--empty"><div class="th-home-editorial-copy"><p class="th-eyebrow">The First Edition</p><h1>Something is about to begin.</h1><p class="th-deck">New writing will appear here as it is published.</p></div></div>
+      {{ end }}
+    </div>
+  </div>
+</header>
