@@ -30,6 +30,8 @@
   --th-nav-h: 58px;
   --th-head-h: clamp(290px, 27vw, 390px);     /* masthead height incl. nav */
   --th-frame-pad: clamp(36px, 6vw, 86px);
+  --th-arch-inset-top: calc(var(--th-head-h) * .07);   /* arch top, same on every page */
+  --th-stripes: repeating-linear-gradient(90deg, #fdfbf4 0 17px, #bdd2b6 17px 31px, #234b3a 31px 35px, #fdfbf4 35px 43px, #eab6b0 43px 48px, #fdfbf4 48px 69px, #6f9a88 69px 80px, #fdfbf4 80px 90px);
 
   --th-accent: #39745b;
 }
@@ -74,7 +76,7 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 /* ---------- 4. Home poster ---------- */
 .th-header--home { width: calc(100% - 44px); max-width: 1246px; padding: 0; }
 .th-cover-composition { position: relative; isolation: isolate; overflow: hidden; min-height: calc(var(--th-head-h) + 318px); background: #ebf1e7; border: 1px solid var(--th-gold); border-bottom: 0; }
-.th-cover-composition::before { content: ""; position: absolute; inset: 0; z-index: 0; background: repeating-linear-gradient(90deg, #fbfaf2 0 18px, #7ca995 18px 31px, #24543e 31px 36px, #f7eee3 36px 52px, #efb4a9 52px 58px, #faf9f2 58px 82px); }
+.th-cover-composition::before { content: ""; position: absolute; inset: 0; z-index: 0; background: var(--th-stripes); }
 .th-cover-rail { position: absolute; top: 0; bottom: 0; z-index: 1; width: var(--th-rail); overflow: hidden; }
 .th-cover-rail--cats { left: 0; }
 .th-cover-rail--tower { right: 0; }
@@ -94,11 +96,11 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 
 .th-home-center { position: relative; z-index: 4; display: flex; flex-direction: column; width: calc(100% - 2 * var(--th-rail)); margin: 0 var(--th-rail); min-height: calc(var(--th-head-h) + 318px); }
 .th-home-masthead { position: relative; display: flex; align-items: stretch; justify-content: center; height: calc(var(--th-head-h) - var(--th-nav-h)); }
-.th-home-logo { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: .2em; width: 100%; margin: 9% 3% 0; padding: 40px 15px 18px; text-align: center; text-decoration: none; color: #fffef5 !important; background: linear-gradient(125deg, #286349, #164831); border: 2px solid #d8b67b; border-bottom: 0; border-radius: 50% 50% 0 0 / 46% 46% 0 0; box-shadow: 0 0 0 5px #fffdf8ad; container-type: inline-size; }
-.th-home-crown { position: absolute; top: -42px; left: calc(50% - 53px); width: 106px; height: 68px; }
-.th-home-wordmark { font: 400 clamp(2.4rem, 11cqw, 4.6rem)/1.1 var(--th-display); letter-spacing: .18em; padding-left: .18em; text-transform: uppercase; white-space: nowrap; }
+.th-home-logo { position: absolute; left: 0; right: 0; top: var(--th-arch-inset-top); bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: .35em; padding: 8% 4% 4%; text-align: center; text-decoration: none; color: #fffef5 !important; background: linear-gradient(135deg, #286349, #164831 70%); border: 2px solid var(--th-gold-deep); border-bottom: 0; border-radius: 50% 50% 0 0 / 46% 46% 0 0; box-shadow: 0 0 0 5px rgba(255,253,248,.72); container-type: inline-size; }
+.th-home-crown { position: absolute; top: -34px; left: calc(50% - 47px); width: 94px; height: 52px; }
+.th-home-wordmark { font: 400 clamp(2.2rem, 10cqw, 4.2rem)/1.1 var(--th-display); letter-spacing: .18em; padding-left: .18em; text-transform: uppercase; white-space: nowrap; }
 .th-home-subline { margin-top: .1em; font: 400 clamp(1rem, 4.4cqw, 1.6rem)/1.2 var(--th-display); letter-spacing: .12em; }
-.th-home-byline { margin-top: .7em; padding-top: 8px; border-top: 1px solid #caac78; font: 400 clamp(.62rem, 2.6cqw, .82rem)/1.5 var(--th-display); letter-spacing: .18em; white-space: nowrap; }
+.th-home-byline { margin-top: .9em; padding-top: 8px; border-top: 1px solid #caac78; font: 400 clamp(.62rem, 2.6cqw, .82rem)/1.5 var(--th-display); letter-spacing: .18em; white-space: nowrap; }
 .th-home-center .th-nav { position: relative; z-index: 8; border-left: 0; border-right: 0; }
 
 .th-home-editorial { position: relative; flex: 1; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .84fr); align-items: center; gap: clamp(12px, 1.8vw, 24px); min-height: 318px; padding: 24px clamp(14px, 1.6vw, 27px); background: #fffcf5; border-left: 2px solid #ccae77; border-right: 2px solid #ccae77; border-bottom: 3px solid #d6b67a; box-shadow: 0 0 0 5px #fffcf544; }
@@ -119,7 +121,7 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 .th-empty-state--home { padding: 40px 0; }
 
 /* ---------- 5. Interior masthead: cats, pink arches, parchment arch with the page title, nav inside ---------- */
-.th-masthead { position: relative; height: var(--th-head-h); overflow: hidden; border: 1px solid var(--th-gold); border-top: 0; background: repeating-linear-gradient(90deg, #fdfbf4 0 17px, #bdd2b6 17px 31px, #234b3a 31px 35px, #fdfbf4 35px 43px, #eab6b0 43px 48px, #fdfbf4 48px 69px, #6f9a88 69px 80px, #fdfbf4 80px 90px); }
+.th-masthead { position: relative; height: var(--th-head-h); overflow: hidden; border: 1px solid var(--th-gold); border-top: 0; background: var(--th-stripes); }
 .th-masthead::before, .th-masthead::after { content: ""; position: absolute; z-index: 0; top: var(--th-arch-top); bottom: 0; width: var(--th-rail); border: 3px solid #d4b371; border-radius: 51% 51% 0 0; background: var(--th-blush); }
 .th-masthead::before { left: 0; }
 .th-masthead::after { right: 0; }
@@ -127,7 +129,7 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 .th-cat-arch--left { left: 0; }
 .th-cat-arch--right { right: 0; }
 .th-cat-arch img { width: 100%; height: 100%; object-fit: contain; object-position: center bottom; margin: 0; filter: drop-shadow(0 3px 2px #224b3715); }
-.th-brand { position: absolute; z-index: 2; left: var(--th-rail); right: var(--th-rail); top: 7%; bottom: var(--th-nav-h); display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: .35em; padding: 8% 4% 4%; text-decoration: none; color: var(--th-dark); background: linear-gradient(135deg, var(--th-parch-a), var(--th-parch-b) 70%); border: 2px solid var(--th-gold-deep); border-bottom: 0; border-radius: 50% 50% 0 0 / 46% 46% 0 0; box-shadow: 0 0 0 5px rgba(255,253,248,.72); container-type: inline-size; }
+.th-brand { position: absolute; z-index: 2; left: var(--th-rail); right: var(--th-rail); top: var(--th-arch-inset-top); bottom: var(--th-nav-h); display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: .35em; padding: 8% 4% 4%; text-decoration: none; color: var(--th-dark); background: linear-gradient(135deg, var(--th-parch-a), var(--th-parch-b) 70%); border: 2px solid var(--th-gold-deep); border-bottom: 0; border-radius: 50% 50% 0 0 / 46% 46% 0 0; box-shadow: 0 0 0 5px rgba(255,253,248,.72); container-type: inline-size; }
 .th-brand-crown { position: absolute; top: -34px; width: 94px; height: 52px; }
 .th-brand-crown img { width: 100%; height: 100%; }
 .th-brand-sig { display: flex; flex-direction: column; align-items: center; gap: .1em; font: 400 clamp(.58rem, 2.2cqw, .78rem)/1.2 var(--th-display); color: #4d5f50 !important; text-decoration: none; }
@@ -319,8 +321,8 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
   .th-deco-flower { font-size: 2rem; }
   .th-home-center { width: 100%; margin: 0; }
   .th-home-masthead { height: 180px; }
-  .th-home-logo { width: 60%; margin: 34px 0 0; padding: 20px 4px 10px; }
-  .th-home-crown { top: -24px; left: calc(50% - 27.5px); width: 55px; height: 42px; }
+  .th-home-logo { left: 20%; right: 20%; top: 6%; padding: 12% 3% 5%; }
+  .th-home-crown { top: -22px; left: calc(50% - 27.5px); width: 55px; height: 36px; }
   .th-home-byline { white-space: normal; }
   .th-home-editorial { grid-template-columns: minmax(0, 1fr); gap: 16px; min-height: 0; padding: 28px 24px 25px; border-left: 0; border-right: 0; }
   .th-home-editorial-image { height: 135px; }
@@ -328,6 +330,7 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
   .th-masthead .th-nav { left: 0; right: 0; }
   .th-masthead::before, .th-masthead::after, .th-cat-arch { bottom: var(--th-nav-h); }
   .th-brand { top: 6%; padding: 12% 3% 5%; }
+  .th-home-logo { top: 6%; }
   .th-brand-crown { top: -22px; width: 55px; height: 36px; }
   .th-brand-title { font-size: clamp(.82rem, 5.4cqw, 1.3rem); }
   .th-brand-sig { font-size: .5rem; }
