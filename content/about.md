@@ -1,20 +1,12 @@
 ---
 title: "About"
-description: "What TRYHARD is, and who writes it."
+description: ""
 ---
 
-TRYHARD in a whytry world is a column by Logan Eastman: observations, connections, digressions, and other things that seemed worth writing down.
+I’m Logan, a writer, strategist and technologist. I’ve worked in branding, thought leadership, and entertainment.
 
-It is published on weekdays, more or less, from Los Angeles. Some weeks have five editions. Some have one. The archive keeps all of them, and the [Explore](/explore/) page lets you read by subject instead of by date.
+Living in Los Angeles since 2008, where I’ve always wanted to be a noir detective.
 
-## The name
+John Le Carré, Tina Fey, and Matt Weiner taught me to trust my audience. Jane Jacobs inspired my sidewalk philosophizing. Hayek made me a believer in chaos theory.
 
-Trying hard is unfashionable. This is a place to do it anyway.
-
-## The cats
-
-Ares (left) and Artemis (right) keep watch over the masthead. Artemis is the one with the white paws.
-
-## Elsewhere
-
-Columns arrive here first. There is an [RSS feed](/columns/index.xml) if you would like them delivered.
+I’m an amateur runner, photographer, and music producer.
