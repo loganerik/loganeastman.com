@@ -146,6 +146,22 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 .th-post-head > p { max-width: 640px; margin: 0 auto; font: 400 clamp(1.1rem, 1.5vw, 1.3rem)/1.5 var(--th-body); color: var(--th-text); text-align: center; }
 .th-explore-head { max-width: 810px; margin: 0 auto; text-align: center; }
 
+/* Interior arch is green like home; only column pages switch to parchment. */
+.th-brand { background: linear-gradient(135deg, #286349, #164831 70%); color: #fffef5; }
+.th-brand .th-brand-sig { color: #d9e6d4 !important; }
+.th-brand .th-brand-sig:hover { color: #fff !important; }
+.th-brand .th-brand-title { color: #fffef5; }
+.th-brand .th-brand-author { color: #d9e6d4; }
+.th-brand .th-brand-author > span:first-child, .th-brand .th-brand-author > span:last-child { background: #caac78; }
+.th-brand .th-brand-sep { color: #caac78; }
+.th-header--post .th-brand { background: linear-gradient(135deg, var(--th-parch-a), var(--th-parch-b) 70%); color: var(--th-dark); }
+.th-header--post .th-brand-sig { color: #4d5f50 !important; }
+.th-header--post .th-brand-sig:hover { color: var(--th-dark) !important; }
+.th-header--post .th-brand-title { color: var(--th-title-ink); }
+.th-header--post .th-brand-author { color: #4d5f50; }
+.th-header--post .th-brand-author > span:first-child, .th-header--post .th-brand-author > span:last-child { background: #b8975f; }
+.th-header--post .th-brand-sep { color: #b8975f; }
+
 /* ---------- 6. Main frame, toplines, buttons ---------- */
 .th-main { position: relative; width: calc(100% - 44px); max-width: 1246px; min-height: 540px; margin: 0 auto; padding: 0 var(--th-frame-pad) 66px; background: var(--th-paper); border-left: 1px solid var(--th-gold); border-right: 1px solid var(--th-gold); }
 .th-main::before, .th-main::after { content: ""; position: absolute; top: 0; bottom: 0; width: 25px; z-index: 0; pointer-events: none; opacity: .85; background: linear-gradient(90deg, var(--th-forest) 0 5px, var(--th-gold) 5px 7px, var(--th-cream) 7px 13px, var(--th-rose) 13px 16px, var(--th-cream) 16px 20px, var(--th-sage) 20px 25px); }

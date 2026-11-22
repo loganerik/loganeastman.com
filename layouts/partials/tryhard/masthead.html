@@ -12,7 +12,7 @@
 {{- else if eq .Kind "term" -}}
   {{- $sub = cond (eq .Data.Plural "categories") "Filed under" "Also on" -}}
 {{- end -}}
-<header class="th-header th-header--interior" role="banner">
+<header class="th-header th-header--interior{{ if $isColumn }} th-header--post{{ end }}" role="banner">
   <div class="th-masthead">
     <div class="th-cat-arch th-cat-arch--left"><img src="/tryhard/img/ares.webp" alt="Ares, a tabby cat, reclining" width="764" height="480" loading="eager" fetchpriority="high" decoding="async"></div>
     <div class="th-brand">
