@@ -31,7 +31,7 @@
     toPreview: data => `<aside style="border-top:1px solid #b99c67;border-bottom:1px solid #b99c67;padding:1em"><small>${escapeHTML(data.label || 'A small digression')}</small><p>${escapeHTML(data.text)}</p></aside>`,
   });
   CMS.registerEditorComponent({
-    id: 'ornament', label: 'Ornament (sunburst divider)',
+    id: 'ornament', label: 'Sunburst divider',
     hint: 'Inserts the small Art Deco sunburst between passages. There are no settings; continue writing in the next paragraph.',
     fields: [],
     pattern: /^{{< ornament >}}$/m,
