@@ -1,8 +1,10 @@
-{{- /* {{< figure src="photo.jpg" alt="..." caption="..." duotone="true" >}} */ -}}
+{{- /* {{< figure src="photo.jpg" alt="..." caption="..." duotone="true" frame="false" >}}
+       frame defaults to true (gold frame); frame="false" shows the image plain. */ -}}
 {{- $src := .Get "src" -}}
 {{- $r := .Page.Resources.GetMatch $src -}}
 {{- $duo := eq (.Get "duotone" | default "false") "true" -}}
-<figure class="th-figure{{ if .Get "class" }} {{ .Get "class" }}{{ end }}">
+{{- $plain := eq (.Get "frame" | default "true") "false" -}}
+<figure class="th-figure{{ if $plain }} th-figure--plain{{ end }}{{ if .Get "class" }} {{ .Get "class" }}{{ end }}">
   {{- with $r -}}
     {{- $large := .Resize "1400x webp q85" -}}{{- $small := .Resize "800x webp q85" -}}
     <img class="{{ if $duo }}th-duotone{{ end }}" src="{{ $large.RelPermalink }}" srcset="{{ $small.RelPermalink }} 800w, {{ $large.RelPermalink }} {{ $large.Width }}w" sizes="(max-width: 900px) 100vw, 760px" alt="{{ $.Get "alt" }}" width="{{ $large.Width }}" height="{{ $large.Height }}" loading="lazy">

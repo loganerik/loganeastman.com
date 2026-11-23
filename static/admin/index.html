@@ -6,11 +6,11 @@
   <meta name="robots" content="noindex">
   <title>TRYHARD editor</title>
   <link rel="icon" href="/tryhard/favicon.svg">
-  <link rel="stylesheet" href="./writing-guide.css?v=202611221505">
-  <script src="./writing-guide.js?v=202611221505" defer></script>
+  <link rel="stylesheet" href="./writing-guide.css?v=202611221610">
+  <script src="./writing-guide.js?v=202611221610" defer></script>
   <script>window.CMS_MANUAL_INIT = true;</script>
   <script src="https://unpkg.com/decap-cms@3.4.0/dist/decap-cms.js" defer></script>
-  <script src="./editor-components.js?v=202611221505" defer></script>
+  <script src="./editor-components.js?v=202611221610" defer></script>
 </head>
 <body>
   <button class="th-guide-launcher" id="th-guide-launcher" type="button" aria-haspopup="dialog" aria-controls="th-writing-guide">Writing guide</button>
@@ -66,10 +66,12 @@ A second paragraph, if needed.
           <p><strong>+ → Sunburst divider.</strong> Inserts the gold sunburst on a green rule between passages, the same mark that sits above every <code>##</code> section heading and closes each column. There are no fields to fill in. Continue in a new paragraph below it.</p>
           <div class="th-guide-example"><div><span>Markdown example</span><button type="button" data-copy-example>Copy example</button></div><pre><code>{{&lt; ornament &gt;}}</code></pre></div>
 
-          <h2>Figure / framed image</h2>
-          <p><strong>+ → Figure (framed image).</strong> Adds an image within the writing, with a gold frame. Choose an Image, describe it in Alt text, and optionally add a Caption or turn on Duotone for the green-toned treatment.</p>
-          <div class="th-guide-example"><div><span>Markdown example</span><button type="button" data-copy-example>Copy example</button></div><pre><code>{{&lt; figure src="photo.jpg" alt="A description of the photograph" caption="Photo credit or context" duotone="true" &gt;}}</code></pre></div>
-          <p>Upload your actual image first and replace <code>photo.jpg</code> with its filename. Omit <code>duotone="true"</code> for original colors. Caption is optional; the Figure is separate from the entry’s Cover image.</p>
+          <h2>Figure (image)</h2>
+          <p><strong>+ → Figure (image).</strong> Adds an image within the writing. Choose an Image, describe it in Alt text, and optionally add a Caption. <strong>Gold frame</strong> is on by default; switch it off for a plain image. <strong>Duotone</strong> applies the green-toned treatment, with or without the frame.</p>
+          <div class="th-guide-example"><div><span>Markdown example</span><button type="button" data-copy-example>Copy example</button></div><pre><code>{{&lt; figure src="photo.jpg" alt="A description of the photograph" caption="Photo credit or context" duotone="true" &gt;}}
+
+{{&lt; figure src="photo.jpg" alt="A description" frame="false" duotone="true" &gt;}}</code></pre></div>
+          <p>Upload your actual image first and replace <code>photo.jpg</code> with its filename. Omit <code>duotone="true"</code> for original colors; add <code>frame="false"</code> for a plain, unframed image. Caption is optional; the Figure is separate from the entry’s Cover image.</p>
         </div>
       </details>
 
@@ -114,7 +116,7 @@ const idea = "Start here";
           <p>Upload a <strong>JPG, PNG, or WebP</strong> through the image picker for the entry you are editing. Its files live beside its Markdown file so the site can resize them. Keep the filename provided by the picker when inserting the image.</p>
           <dl>
             <dt>Image</dt><dd>The standard + menu Image tool. Ordinary Markdown images automatically receive the site’s gold frame. An optional image title becomes the visible caption.</dd>
-            <dt>Figure</dt><dd>The custom + menu Figure tool adds explicit Caption and Duotone controls.</dd>
+            <dt>Figure</dt><dd>The + menu Figure tool adds Caption, Gold frame, and Duotone controls.</dd>
             <dt>Cover → Image</dt><dd>A featured photo above a column and on its homepage lead. It does not insert an image into the Body.</dd>
             <dt>Alt text</dt><dd>Describe what the image communicates for readers who cannot see it. A useful description is better than a filename or “image of”.</dd>
             <dt>Caption</dt><dd>Visible context or credit below the picture. The Figure and Cover captions accept Markdown links and emphasis.</dd>

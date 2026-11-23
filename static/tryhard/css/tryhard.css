@@ -517,3 +517,7 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
   .th-home-cats-img { object-position: top; height: 96%; bottom: -6px; }
   .th-week-grid--1, .th-week-grid--2 { max-width: none; }
 }
+
+/* Unframed figure: no gold frame, image sits plain; duotone still applies. */
+.th-figure--plain { padding: 0; background: transparent; border: 0; box-shadow: none; }
+.th-figure--plain figcaption { padding-top: 12px; }

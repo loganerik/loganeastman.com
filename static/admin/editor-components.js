@@ -40,18 +40,25 @@
     toPreview: () => '<p style="text-align:center;color:#b99c67">— ✦ —</p>',
   });
   CMS.registerEditorComponent({
-    id: 'figure', label: 'Figure (framed image)',
-    hint: 'An image within the article, with the site’s gold frame, optional caption, and optional green duotone treatment. The Cover image is set separately above Body.',
+    id: 'figure', label: 'Figure (image)',
+    hint: 'An image within the article: framed in gold or plain, with optional caption and optional green duotone. The Cover image is set separately above Body.',
     fields: [
       { name: 'src', label: 'Image', widget: 'image', media_folder: '', public_folder: '', hint: 'Upload or choose a JPG, PNG, or WebP for this passage. Keep the image beside this entry so the site can resize it.' },
       { name: 'alt', label: 'Alt text', widget: 'string', hint: 'Describe what the image conveys. Screen readers use this text; the caption is a separate visible note.' },
       { name: 'caption', label: 'Caption', widget: 'string', required: false, hint: 'Optional context or photo credit, displayed below the image. Markdown links and emphasis are supported.' },
-      { name: 'duotone', label: 'Duotone', widget: 'boolean', default: false, required: false, hint: 'Turn on for the site’s green-toned image treatment. Leave off for the original colors.' },
+      { name: 'frame', label: 'Gold frame', widget: 'boolean', default: true, required: false, hint: 'On: the site’s thin gold frame. Off: the image sits plain on the page.' },
+      { name: 'duotone', label: 'Duotone', widget: 'boolean', default: false, required: false, hint: 'Turn on for the site’s green-toned image treatment. Works with or without the frame.' },
     ],
-    pattern: /^{{< figure src="((?:\\.|[^"\\])*)"(?: alt="((?:\\.|[^"\\])*)")?(?: caption="((?:\\.|[^"\\])*)")?(?: duotone="(true|false)")? >}}$/m,
-    fromBlock: match => ({ src: readAttribute(match[1]), alt: readAttribute(match[2]), caption: readAttribute(match[3]), duotone: match[4] === 'true' }),
-    toBlock: data => `{{< figure src=${quoteAttribute(data.src)} alt=${quoteAttribute(data.alt)}${data.caption ? ` caption=${quoteAttribute(data.caption)}` : ''}${data.duotone ? ' duotone="true"' : ''} >}}`,
-    toPreview: data => `<figure style="border:1px solid #b99c67;padding:4px"><img src="${escapeHTML(data.src)}" alt="${escapeHTML(data.alt)}" style="max-width:100%"><figcaption>${escapeHTML(data.caption)}</figcaption></figure>`,
+    pattern: /^{{< figure src="((?:\\.|[^"\\])*)"(?: alt="((?:\\.|[^"\\])*)")?(?: caption="((?:\\.|[^"\\])*)")?(?: duotone="(true|false)")?(?: frame="(true|false)")? >}}$/m,
+    fromBlock: match => ({ src: readAttribute(match[1]), alt: readAttribute(match[2]), caption: readAttribute(match[3]), duotone: match[4] === 'true', frame: match[5] !== 'false' }),
+    toBlock: data => `{{< figure src=${quoteAttribute(data.src)} alt=${quoteAttribute(data.alt)}${data.caption ? ` caption=${quoteAttribute(data.caption)}` : ''}${data.duotone ? ' duotone="true"' : ''}${data.frame === false ? ' frame="false"' : ''} >}}`,
+    toPreview: (data, getAsset) => {
+      const asset = data.src ? getAsset(data.src) : null;
+      const src = asset ? asset.toString() : '';
+      const plain = data.frame === false ? ' th-figure--plain' : '';
+      const duo = data.duotone ? 'th-duotone' : '';
+      return `<figure class="th-figure${plain}"><img class="${duo}" src="${escapeHTML(src)}" alt="${escapeHTML(data.alt)}">${data.caption ? `<figcaption>${escapeHTML(data.caption)}</figcaption>` : ''}</figure>`;
+    },
   });
   // Live preview pane: the site's own stylesheet plus a column-shaped template.
   CMS.registerPreviewStyle('/tryhard/css/tryhard.css');
