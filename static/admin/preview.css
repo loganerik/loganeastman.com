@@ -9,4 +9,4 @@ body { margin: 0; background: #fffdf9; font: 400 19px/1.6 'Fenix', Georgia, seri
 .th-preview .th-article { padding-top: 10px; }
 .th-preview .th-post-head { padding-top: 18px; }
 /* Drop cap in the preview: the body is nested one level deeper than on the site. */
-.th-preview .th-article:not(.th-page) .th-prose p:first-of-type::first-letter { float: left; padding: .1em .14em 0 0; color: #214e3b; font: 400 4rem/.85 'Fenix', Georgia, serif; }
+.th-preview .th-article:not(.th-page) .th-prose > div > p:first-of-type::first-letter { float: left; padding: .1em .14em 0 0; color: #214e3b; font: 400 4rem/.85 'Fenix', Georgia, serif; }

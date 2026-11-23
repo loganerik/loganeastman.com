@@ -41,7 +41,7 @@
     pattern: /^{{< ornament >}}$/m,
     fromBlock: () => ({}),
     toBlock: () => '{{< ornament >}}',
-    toPreview: () => '<p style="text-align:center;color:#b99c67">— ✦ —</p>',
+    toPreview: () => '<div class="th-inline-ornament" role="separator"><span></span><img src="/tryhard/ornaments/sunburst.svg" alt="" width="65" height="28"><span></span></div>',
   });
   CMS.registerEditorComponent({
     id: 'figure', label: 'Figure (image)',
