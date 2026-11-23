@@ -35,6 +35,7 @@
           {{ with partial "tryhard/deck.html" $latest }}<p class="th-deck">{{ . }}</p>{{ end }}
           <a class="th-pill" href="{{ $latest.RelPermalink }}">Read <span aria-hidden="true">→</span></a>
         </div>
+        <a class="th-home-editorial-image" href="{{ $latest.RelPermalink }}" aria-label="Read {{ $latest.Title }}">
         {{ partialCached "tryhard/edition-cover.html" $latest $latest.RelPermalink }}
         </a>
       </article>
