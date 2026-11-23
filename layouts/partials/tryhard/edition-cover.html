@@ -15,7 +15,7 @@
   {{- end -}}
 <svg class="th-cover-svg th-cover-svg--photo" viewBox="0 0 360 280" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="{{ $page.Params.cover.alt | default (printf "Cover for %s" $page.Title) }}">
   <defs>
-    {{- if $duo }}<filter id="{{ $fid }}" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="0.13 1"/><feFuncG type="table" tableValues="0.31 0.99"/><feFuncB type="table" tableValues="0.23 0.97"/></feComponentTransfer></filter>{{ end }}
+    {{- if $duo }}<filter id="{{ $fid }}" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="{{ $m.duo.r }}"/><feFuncG type="table" tableValues="{{ $m.duo.g }}"/><feFuncB type="table" tableValues="{{ $m.duo.b }}"/></feComponentTransfer></filter>{{ end }}
     <linearGradient id="{{ $fid }}-band" x1="0" y1="0" x2="0" y2="1"><stop offset=".38" stop-color="{{ $m.deep }}" stop-opacity="0"/><stop offset=".66" stop-color="{{ $m.deep }}" stop-opacity=".72"/><stop offset="1" stop-color="{{ $m.deep }}" stop-opacity=".96"/></linearGradient>
     <linearGradient id="{{ $fid }}-fade" x1="0" y1="0" x2="0" y2="1"><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset=".75" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity=".8"/></linearGradient>
     <mask id="{{ $fid }}-mask"><rect width="360" height="280" fill="url(#{{ $fid }}-fade)"/></mask>

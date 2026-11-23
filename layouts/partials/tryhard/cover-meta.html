@@ -22,4 +22,6 @@
 {{- $inks := dict "sage" "#39745b" "rose" "#bc7f82" "jade" "#39847a" "brown" "#8d6e58" "olive" "#768b60" -}}
 {{- $tints := dict "sage" "#edf3e8" "rose" "#f6ede9" "jade" "#e9f2ee" "brown" "#f3efe6" "olive" "#eff2e6" -}}
 {{- $deeps := dict "sage" "#214634" "rose" "#7e4a50" "jade" "#1f4f48" "brown" "#52392c" "olive" "#445335" -}}
-{{- return (dict "style" $style "accent" $accent "variant" $variant "motif" $motif "ink" (index $inks $accent) "tint" (index $tints $accent) "deep" (index $deeps $accent)) -}}
+{{- /* Duotone shadow→highlight tables per accent (feComponentTransfer tableValues for R, G, B). */ -}}
+{{- $duos := dict "sage" (dict "r" "0.13 1" "g" "0.29 0.99" "b" "0.21 0.97") "rose" (dict "r" "0.36 1" "g" "0.18 0.96" "b" "0.21 0.95") "jade" (dict "r" "0.11 0.96" "g" "0.30 1" "b" "0.28 0.98") "brown" (dict "r" "0.29 1" "g" "0.20 0.97" "b" "0.14 0.92") "olive" (dict "r" "0.22 0.98" "g" "0.29 1" "b" "0.16 0.94") -}}
+{{- return (dict "duo" (index $duos $accent) "style" $style "accent" $accent "variant" $variant "motif" $motif "ink" (index $inks $accent) "tint" (index $tints $accent) "deep" (index $deeps $accent)) -}}

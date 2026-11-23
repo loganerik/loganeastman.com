@@ -90,7 +90,7 @@ collections:
             widget: select
             required: false
             options: [sage, rose, jade, brown, olive]
-            hint: "Color palette for the generated cover. Leave blank for an automatic choice."
+            hint: "Color palette: sage, rose, jade, brown or olive. It colours the generated cover, the band at the foot of a photo cover, and the tone of any duotone picture in this column. Leave blank for an automatic choice."
           - label: Image
             name: image
             widget: image
@@ -111,7 +111,7 @@ collections:
             widget: boolean
             required: false
             default: false
-            hint: "Applies the site's green-toned treatment to the cover on the homepage, weekly strip and archive, and to the featured photo at the top of the column. A cover taken automatically from a duotone Figure stays duotone."
+            hint: "Tones the cover on the homepage, weekly strip and archive, and the featured photo at the top of the column, in the column's Accent colour (green by default; rose, jade, brown or olive when Accent is set). A cover taken automatically from a duotone Figure stays duotone."
           - label: Show at top of column
             name: hero
             widget: boolean
