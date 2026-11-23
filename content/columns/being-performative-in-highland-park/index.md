@@ -14,6 +14,7 @@ tags:
 cover:
   duotone: false
 ---
+
 ## Reading a newspaper
 
 They don't know I have cervical myofascial pain due to tech neck and/or health OCD. Or that I'm recommitting myself to intentional content consumption. That holding up *FT Weekend* at eye level lessens looking down toward my phone and passively reading clickbait, thus reducing the pain and regulating my nervous system. In theory.  
