@@ -60,6 +60,48 @@
       return `<figure class="th-figure${plain}"><img class="${duo}" src="${escapeHTML(src)}" alt="${escapeHTML(data.alt)}">${data.caption ? `<figcaption>${escapeHTML(data.caption)}</figcaption>` : ''}</figure>`;
     },
   });
+  // "taglist": one comma-separated box for tags/categories that keeps the spaces you type.
+  // The stock list widget re-parses on every keystroke and trims a trailing space, which
+  // makes two-word tags impossible to type; this one only tidies the text when you leave it.
+  const toArray = value => {
+    if (!value) return [];
+    if (typeof value.toJS === 'function') return value.toJS();
+    if (Array.isArray(value)) return value;
+    return String(value).split(',');
+  };
+  const parse = text => text.split(',').map(t => t.trim()).filter(Boolean);
+  const TagListControl = createClass({
+    getInitialState() { return { text: toArray(this.props.value).join(', ') }; },
+    componentDidUpdate(prev) {
+      // Adopt outside changes (loading an entry) but never fight the user's typing.
+      if (prev.value !== this.props.value && document.activeElement !== this.input) {
+        const text = toArray(this.props.value).join(', ');
+        if (parse(text).join('|') !== parse(this.state.text).join('|')) this.setState({ text });
+      }
+    },
+    handleChange(e) {
+      const text = e.target.value;
+      this.setState({ text });
+      this.props.onChange(parse(text));
+    },
+    handleBlur() {
+      this.setState({ text: parse(this.state.text).join(', ') });
+      this.props.setInactiveStyle();
+    },
+    render() {
+      return h('input', {
+        type: 'text', id: this.props.forID, className: this.props.classNameWrapper,
+        value: this.state.text, ref: el => { this.input = el; },
+        onChange: this.handleChange, onFocus: this.props.setActiveStyle, onBlur: this.handleBlur,
+        placeholder: 'one, two words, three', autoComplete: 'off',
+      });
+    },
+  });
+  const TagListPreview = createClass({
+    render() { return h('span', {}, toArray(this.props.value).join(', ')); },
+  });
+  CMS.registerWidget('taglist', TagListControl, TagListPreview);
+
   // Live preview pane: the site's own stylesheet plus a column-shaped template.
   CMS.registerPreviewStyle('/tryhard/css/tryhard.css');
   CMS.registerPreviewStyle('/admin/preview.css');

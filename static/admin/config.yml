@@ -64,24 +64,14 @@ collections:
         hint: "Keep on while writing. To make the column public, switch off and use Publish. The public site updates after its build finishes."
       - label: Categories
         name: categories
-        widget: list
+        widget: taglist
         required: false
-        allow_add: true
-        collapsed: false
-        label_singular: category
-        summary: "{{fields.category}}"
-        field: { label: Category, name: category, widget: string }
-        hint: "Broad subjects, such as Culture or Urban Life. Click Add category for each one; spaces are fine. Reuse the same spelling to group columns together in Explore."
+        hint: "Broad subjects, such as Culture or Urban Life. Separate with commas; spaces inside a name are fine. Reuse the same spelling to group columns together in Explore."
       - label: Tags
         name: tags
-        widget: list
+        widget: taglist
         required: false
-        allow_add: true
-        collapsed: false
-        label_singular: tag
-        summary: "{{fields.tag}}"
-        field: { label: Tag, name: tag, widget: string }
-        hint: "More specific recurring ideas, such as attention or Highland Park. Click Add tag for each one; spaces are fine. Matching tags link columns together."
+        hint: "More specific recurring ideas, such as attention or Highland Park. Separate with commas; spaces inside a tag are fine. Matching tags link columns together."
       - label: Cover
         name: cover
         widget: object
