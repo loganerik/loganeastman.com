@@ -3,7 +3,14 @@ title: Being performative in Highland Park
 date: 2026-11-23T09:00:00-08:00
 description: ""
 draft: true
-tags: []
+categories:
+  - City Life
+tags:
+  - coffee
+  - newspapers
+  - OCD
+  - Highland Park
+  - economics
 cover:
   duotone: false
 ---
