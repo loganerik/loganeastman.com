@@ -9,6 +9,10 @@
     try { return JSON.parse(`"${value || ''}"`); } catch { return value || ''; }
   };
 
+  const field = (data, key) => {
+    if (!data) return undefined;
+    return typeof data.get === 'function' ? data.get(key) : data[key];
+  };
   CMS.registerEditorComponent({
     id: 'pullquote', label: 'Pull quote',
     hint: 'Sets a short line apart in the site’s green-and-rose quotation panel. For an ordinary quotation, use the toolbar’s Quote tool.',
@@ -16,7 +20,7 @@
     pattern: /^{{< pullquote >}}([\s\S]*?){{< \/pullquote >}}$/m,
     fromBlock: match => ({ text: match[1].trim() }),
     toBlock: data => `{{< pullquote >}}\n${data.text || ''}\n{{< /pullquote >}}`,
-    toPreview: data => `<blockquote style="text-align:center;font-size:1.3em;border:1px solid #c5d5c6;padding:1em">${escapeHTML(data.text)}</blockquote>`,
+    toPreview: data => `<blockquote style="text-align:center;font-size:1.3em;border:1px solid #c5d5c6;padding:1em">${escapeHTML(field(data, 'text'))}</blockquote>`,
   });
   CMS.registerEditorComponent({
     id: 'aside', label: 'Aside (digression)',
@@ -28,7 +32,7 @@
     pattern: /^{{< aside(?: label="((?:\\.|[^"\\])*)")? >}}([\s\S]*?){{< \/aside >}}$/m,
     fromBlock: match => ({ label: readAttribute(match[1]), text: match[2].trim() }),
     toBlock: data => `{{< aside${data.label ? ` label=${quoteAttribute(data.label)}` : ''} >}}\n${data.text || ''}\n{{< /aside >}}`,
-    toPreview: data => `<aside style="border-top:1px solid #b99c67;border-bottom:1px solid #b99c67;padding:1em"><small>${escapeHTML(data.label || 'A small digression')}</small><p>${escapeHTML(data.text)}</p></aside>`,
+    toPreview: data => `<aside style="border-top:1px solid #b99c67;border-bottom:1px solid #b99c67;padding:1em"><small>${escapeHTML(field(data, 'label') || 'A small digression')}</small><p>${escapeHTML(field(data, 'text'))}</p></aside>`,
   });
   CMS.registerEditorComponent({
     id: 'ornament', label: 'Sunburst divider',
@@ -53,11 +57,13 @@
     fromBlock: match => ({ src: readAttribute(match[1]), alt: readAttribute(match[2]), caption: readAttribute(match[3]), duotone: match[4] === 'true', frame: match[5] !== 'false' }),
     toBlock: data => `{{< figure src=${quoteAttribute(data.src)} alt=${quoteAttribute(data.alt)}${data.caption ? ` caption=${quoteAttribute(data.caption)}` : ''}${data.duotone ? ' duotone="true"' : ''}${data.frame === false ? ' frame="false"' : ''} >}}`,
     toPreview: (data, getAsset) => {
-      const asset = data.src ? getAsset(data.src) : null;
-      const src = asset ? asset.toString() : '';
-      const plain = data.frame === false ? ' th-figure--plain' : '';
-      const duo = data.duotone ? 'th-duotone' : '';
-      return `<figure class="th-figure${plain}"><img class="${duo}" src="${escapeHTML(src)}" alt="${escapeHTML(data.alt)}">${data.caption ? `<figcaption>${escapeHTML(data.caption)}</figcaption>` : ''}</figure>`;
+      const src0 = field(data, 'src');
+      let src = src0 ? String(src0) : '';
+      if (src && typeof getAsset === 'function') { try { const a = getAsset(src); if (a) src = a.toString(); } catch (e) {} }
+      const plain = field(data, 'frame') === false ? ' th-figure--plain' : '';
+      const duo = field(data, 'duotone') ? 'th-duotone' : '';
+      const caption = field(data, 'caption');
+      return `<figure class="th-figure${plain}">${src ? `<img class="${duo}" src="${escapeHTML(src)}" alt="${escapeHTML(field(data, 'alt'))}">` : '<div style="padding:2em;text-align:center;color:#6a5346">Choose an image</div>'}${caption ? `<figcaption>${escapeHTML(caption)}</figcaption>` : ''}</figure>`;
     },
   });
   // "taglist": one comma-separated box for tags/categories that keeps the spaces you type.
