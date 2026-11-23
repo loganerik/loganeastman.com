@@ -22,7 +22,7 @@ They don't know I have cervical myofascial pain due to tech neck and/or health O
 
 So, I look like one of those "performative men" waving around a newspaper on a spindle for all of Comet over Delphi to see. As if their trays of cortado, biscotti, sugar cube, stir stick and soda water are any less obnoxious. That's also what I ordered.
 
-Even worse, grabbing the paper off the wall by the doorway made it seem like an insincere impulse to the long line of patrons. In fact, I had first walked to North Figueroa Bookshop looking for any sort of daily. I had searched for a nearby newsstand, using some of my few precious allotted moments of phone viewing, but the only functioning ones in the city are outside Vroman's in Pasadena or Kosher News on Fairfax. I probably would've had better luck looking inside El Super grocery store, but I didn't think of that until later. 
+Even worse, grabbing the paper off the wall by the doorway made it seem like an insincere impulse to the long line of patrons. In fact, I had first walked to North Figueroa Bookshop looking for any sort of daily. I had searched for a nearby newsstand, using some of my few precious allotted moments of phone viewing, but the only functioning ones in the city are outside Vroman's in Pasadena or Kosher News on Fairfax. I probably would've had better luck searching the El Super grocery store, but I didn't think of that until later. 
 
 ---
 
@@ -34,7 +34,7 @@ What's the world coming to when you can't find a newspaper to read? Or that, soc
 
 ## Managed decline
 
-Highland Park has specialty stores galore with a synergistic, bustling little economy of its own. I spot Flamingo Estate's distinctive green boxes in the windows of countless other gift stores on my way to its own corner pop-up location. Comet over Delphi had one of their candles burning near its newspaper rack. Jane Jacobs *did say* import replacement is the primary engine of local growth & diversification.
+Highland Park has a synergistic, bustling little economy of its own. I spot Flamingo Estate's distinctive green boxes in the windows of countless other speciality stores on my way to its own corner pop-up location. Comet over Delphi had one of their candles burning near its newspaper rack. Jane Jacobs *did say* import replacement is the primary engine of local growth & diversification.
 
 Flamingo Estate's gift boxes resemble the mosaic tiles on the sidewalks marking Highland Park's avenues. Indeed, many of the storefronts have adopted somewhat of a Highland Park house style, which I'd characterize as NY Subway Beaux-Arts Remnants. It's less planning and coordination, and more everyone getting in on the fun. 
 
