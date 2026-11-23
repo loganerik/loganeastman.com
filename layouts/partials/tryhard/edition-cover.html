@@ -13,7 +13,7 @@
   {{- if not $duo -}}{{- $isSet := false -}}{{- with $page.Params.cover -}}{{- with .image -}}{{- $isSet = true -}}{{- end -}}{{- end -}}
     {{- if not $isSet -}}{{- range findRE (printf `\{\{<\s*figure[^>]*src="(?:\./)?%s"[^>]*>` $img.Name) $page.RawContent 1 -}}{{- if findRE `duotone="true"` . -}}{{- $duo = true -}}{{- end -}}{{- end -}}{{- end -}}
   {{- end -}}
-<svg class="th-cover-svg th-cover-svg--photo" viewBox="0 0 360 280" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="{{ $page.Params.cover.alt | default (printf "Cover for %s" $page.Title) }}">
+<svg class="th-cover-svg th-cover-svg--photo" viewBox="0 0 360 280" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="{{ $page.Params.cover.alt | default (printf "Cover for %s" $page.Title) }}">
   {{- if $duo }}
   <defs><filter id="{{ $fid }}" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="0.13 1"/><feFuncG type="table" tableValues="0.31 0.99"/><feFuncB type="table" tableValues="0.23 0.97"/></feComponentTransfer></filter></defs>
   {{- end }}
