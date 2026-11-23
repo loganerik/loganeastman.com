@@ -338,7 +338,7 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
   .th-cover-rail--cats { width: 29%; }
   .th-cover-rail--tower { width: 25%; }
   .th-arched-field { top: 34px; bottom: -25px; }
-  .th-home-cats-img { left: -31%; bottom: -14px; width: 145%; height: 93%; }
+  .th-home-cats-img { left: 0; bottom: -4px; width: 100%; height: 100%; object-position: bottom; }
   .th-home-tower-img { right: -31%; bottom: -8px; width: 170%; height: 105%; }
   .th-tower-halo { top: 25px; }
   .th-clouds { display: none; }
@@ -521,7 +521,8 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
   .th-brand-title { font-size: clamp(1.1rem, 6.4cqw, 1.7rem); }
   :root { --th-head-h: clamp(250px, 64vw, 290px); }
   .th-cover-rail { height: 252px; }
-  .th-home-cats-img { object-position: top; height: 96%; bottom: -6px; }
+  .th-cover-rail--cats { width: 31%; }
+  .th-home-cats-img { left: 0; bottom: -3px; width: 100%; height: 100%; object-position: bottom; }
   .th-week-grid--1, .th-week-grid--2 { max-width: none; }
 }
 
