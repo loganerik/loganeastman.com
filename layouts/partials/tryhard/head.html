@@ -3,11 +3,9 @@
 {{- $desc := .Description | default site.Params.description -}}
 {{- $og := site.Params.ogImage | absURL -}}
 {{- $ogW := 1200 -}}{{- $ogH := 630 -}}
-{{- with .Params.cover -}}{{- with .image -}}
-  {{- with $.Resources.GetMatch . -}}
-    {{- $r := .Resize "1200x jpg q85" -}}
-    {{- $og = $r.Permalink -}}{{- $ogW = $r.Width -}}{{- $ogH = $r.Height -}}
-  {{- end -}}
+{{- if eq .Section "columns" -}}{{- with partial "tryhard/cover-image.html" . -}}
+  {{- $r := .Resize "1200x jpg q85" -}}
+  {{- $og = $r.Permalink -}}{{- $ogW = $r.Width -}}{{- $ogH = $r.Height -}}
 {{- end -}}{{- end -}}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

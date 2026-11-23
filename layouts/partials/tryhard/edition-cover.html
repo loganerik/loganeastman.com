@@ -3,7 +3,7 @@
 {{- $style := $m.style -}}{{- $ink := $m.ink -}}{{- $v := $m.variant -}}{{- $motif := $m.motif -}}
 {{- $gold := "#b69b64" -}}{{- $cream := "#fffdf9" -}}
 {{- /* A photo cover: the image cropped to the cover shape, behind the same frame and skyline notch. */ -}}
-{{- $img := false -}}{{- with $page.Params.cover -}}{{- with .image -}}{{- $img = $page.Resources.GetMatch . -}}{{- end -}}{{- end -}}
+{{- $img := partial "tryhard/cover-image.html" $page -}}
 {{- if $img -}}
   {{- $focus := index (dict "smart" "Smart" "center" "Center" "top" "Top" "bottom" "Bottom" "left" "Left" "right" "Right") (lower ($page.Params.cover.focus | default "smart")) | default "Smart" -}}
   {{- $fill := $img.Fill (printf "720x560 webp q82 %s" $focus) -}}

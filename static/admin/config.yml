@@ -95,7 +95,7 @@ collections:
             name: image
             widget: image
             required: false
-            hint: "Any JPG, PNG, or WebP beside this column, including one you also place in the body as a Figure. It is cropped into the Deco cover shape automatically for the homepage, the weekly strip, the archive and sharing."
+            hint: "Optional. Leave blank and the first picture in the Body, wherever it sits, becomes the cover automatically. Or pick any JPG, PNG, or WebP beside this column to choose a different one. Either way it is cropped into the Deco cover shape for the homepage, weekly strip, archive and sharing."
           - label: Alt text
             name: alt
             widget: string

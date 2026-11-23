@@ -1,0 +1,24 @@
+{{- /* Resolves a column's cover photo as a page resource, or false.
+       1. cover.image from front matter, if it names a file beside index.md.
+       2. Otherwise the first picture used in the body (a Figure shortcode,
+          a Markdown image, or an <img>), wherever it sits in the column.
+       Only JPG, PNG and WebP qualify; HEIC and other formats are skipped. */ -}}
+{{- $p := . -}}
+{{- $img := false -}}
+{{- with $p.Params.cover -}}{{- with .image -}}{{- $img = $p.Resources.GetMatch . -}}{{- end -}}{{- end -}}
+{{- if not $img -}}
+  {{- $raw := $p.RawContent -}}
+  {{- $names := slice -}}
+  {{- range findRE `\{\{<\s*figure[^>]*src="([^"]+)"` $raw -}}{{- $names = $names | append (replaceRE `^.*src="([^"]+)".*$` "$1" .) -}}{{- end -}}
+  {{- range findRE `!\[[^\]]*\]\(([^)\s]+)` $raw -}}{{- $names = $names | append (replaceRE `^!\[[^\]]*\]\(([^)\s]+).*$` "$1" .) -}}{{- end -}}
+  {{- range findRE `<img[^>]+src="([^"]+)"` $raw -}}{{- $names = $names | append (replaceRE `^.*src="([^"]+)".*$` "$1" .) -}}{{- end -}}
+  {{- range $names -}}
+    {{- if not $img -}}
+      {{- $n := . | replaceRE `^\./` "" -}}
+      {{- if findRE `(?i)\.(jpe?g|png|webp)$` $n -}}
+        {{- with $p.Resources.GetMatch $n -}}{{- $img = . -}}{{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $img -}}
