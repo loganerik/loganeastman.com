@@ -145,8 +145,17 @@
             caption ? h('figcaption', {}, caption) : null) : null,
           h('div', { className: 'th-article-body th-prose' }, widgetFor('body')))));
   };
-  CMS.registerPreviewTemplate('columns', previewColumn);
-  CMS.registerPreviewTemplate('about', ({ entry, widgetFor, getAsset }) => {
+  // Show the real failure inside the pane instead of a generic message.
+  const guarded = (name, template) => props => {
+    try { return template(props); }
+    catch (err) {
+      console.error('TRYHARD preview (' + name + ') failed:', err);
+      return h('pre', { style: 'white-space:pre-wrap;padding:16px;color:#7a2e2e;font:13px/1.5 ui-monospace,monospace' },
+        'Preview template "' + name + '" failed:\n' + (err && err.stack ? err.stack : String(err)));
+    }
+  };
+  CMS.registerPreviewTemplate('columns', guarded('columns', previewColumn));
+  CMS.registerPreviewTemplate('about', guarded('about', ({ entry, widgetFor, getAsset }) => {
     const get = reader(entry);
     const portrait = get('portrait');
     return h('div', { className: 'th-site th-preview' },
@@ -157,7 +166,7 @@
         h('article', { className: 'th-article th-page' },
           portrait ? h('figure', { className: 'th-portrait' }, h('img', { src: assetURL(getAsset, portrait), alt: get('portraitAlt') || '' })) : null,
           h('div', { className: 'th-article-body th-prose th-prose--plain' }, widgetFor('body')))));
-  });
+  }));
 
   // Register the blocks before entries or recovered drafts are parsed.
   window.initCMS();
