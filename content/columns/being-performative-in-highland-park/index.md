@@ -1,6 +1,6 @@
 ---
 title: Being performative in Highland Park
-date: 2026-11-23T09:00:00-08:00
+date: 2026-11-22T17:00:00-08:00
 description: ""
 draft: false
 categories:
