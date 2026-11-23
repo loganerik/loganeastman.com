@@ -44,6 +44,15 @@
     toPreview: () => '<div class="th-inline-ornament" role="separator"><span></span><img src="/tryhard/ornaments/sunburst.svg" alt="" width="65" height="28"><span></span></div>',
   });
   CMS.registerEditorComponent({
+    id: 'rule', label: 'Diamond divider',
+    hint: 'A short gold hairline with a small diamond, for a quiet break between passages. In Markdown this is three dashes on their own line.',
+    fields: [],
+    pattern: /^(?:-{3,}|\*{3,})$/m,
+    fromBlock: () => ({}),
+    toBlock: () => '---',
+    toPreview: () => '<hr>',
+  });
+  CMS.registerEditorComponent({
     id: 'figure', label: 'Figure (image)',
     hint: 'An image within the article: framed in gold or plain, with optional caption and optional green duotone. The Cover image is set separately above Body.',
     fields: [
