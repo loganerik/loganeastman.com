@@ -63,17 +63,33 @@
   // Live preview pane: the site's own stylesheet plus a column-shaped template.
   CMS.registerPreviewStyle('/tryhard/css/tryhard.css');
   CMS.registerPreviewStyle('/admin/preview.css');
+  // Reads a value from the entry whether it arrives as an Immutable map, a plain object, or nothing yet.
+  const reader = entry => {
+    const data = entry && typeof entry.get === 'function' ? entry.get('data') : (entry && entry.data);
+    return (...path) => {
+      let node = data;
+      for (const key of path) {
+        if (node == null) return undefined;
+        node = typeof node.get === 'function' ? node.get(key) : node[key];
+      }
+      return node;
+    };
+  };
+  const assetURL = (getAsset, value) => {
+    if (!value) return '';
+    try { const a = getAsset(value); return a ? a.toString() : String(value); } catch (e) { return String(value); }
+  };
   const previewColumn = ({ entry, widgetFor, getAsset }) => {
-    const data = entry.get('data');
-    const title = data.get('title') || 'Untitled';
-    const description = data.get('description') || '';
-    const date = data.get('date') ? new Date(data.get('date')) : new Date();
-    const dateText = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    const cover = data.get('cover');
-    const image = cover && cover.get ? cover.get('image') : null;
-    const alt = cover && cover.get ? cover.get('alt') || title : title;
-    const duotone = cover && cover.get ? !!cover.get('duotone') : false;
-    const caption = cover && cover.get ? cover.get('caption') || '' : '';
+    const get = reader(entry);
+    const title = get('title') || 'Untitled';
+    const description = get('description') || '';
+    const raw = get('date');
+    const date = raw ? new Date(raw) : new Date();
+    const dateText = isNaN(date) ? '' : date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const image = get('cover', 'image');
+    const alt = get('cover', 'alt') || title;
+    const duotone = !!get('cover', 'duotone');
+    const caption = get('cover', 'caption') || '';
     return h('div', { className: 'th-site th-preview' },
       h('header', { className: 'th-preview-head' },
         h('p', { className: 'th-preview-sig' }, 'TRYHARD · in a whytry world'),
@@ -83,21 +99,21 @@
         h('article', { className: 'th-article' },
           description ? h('div', { className: 'th-explore-head th-post-head' }, h('p', {}, description)) : null,
           image ? h('figure', { className: 'th-figure th-hero-image' },
-            h('img', { src: getAsset(image).toString(), alt, className: duotone ? 'th-duotone' : '' }),
+            h('img', { src: assetURL(getAsset, image), alt, className: duotone ? 'th-duotone' : '' }),
             caption ? h('figcaption', {}, caption) : null) : null,
           h('div', { className: 'th-article-body th-prose' }, widgetFor('body')))));
   };
   CMS.registerPreviewTemplate('columns', previewColumn);
   CMS.registerPreviewTemplate('about', ({ entry, widgetFor, getAsset }) => {
-    const data = entry.get('data');
-    const portrait = data.get('portrait');
+    const get = reader(entry);
+    const portrait = get('portrait');
     return h('div', { className: 'th-site th-preview' },
       h('header', { className: 'th-preview-head' },
         h('p', { className: 'th-preview-sig' }, 'TRYHARD · in a whytry world'),
-        h('h1', { className: 'th-preview-title' }, data.get('title') || 'About')),
+        h('h1', { className: 'th-preview-title' }, get('title') || 'About')),
       h('main', { className: 'th-main th-preview-main' },
         h('article', { className: 'th-article th-page' },
-          portrait ? h('figure', { className: 'th-portrait' }, h('img', { src: getAsset(portrait).toString(), alt: data.get('portraitAlt') || '' })) : null,
+          portrait ? h('figure', { className: 'th-portrait' }, h('img', { src: assetURL(getAsset, portrait), alt: get('portraitAlt') || '' })) : null,
           h('div', { className: 'th-article-body th-prose th-prose--plain' }, widgetFor('body')))));
   });
 
