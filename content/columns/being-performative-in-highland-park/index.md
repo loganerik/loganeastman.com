@@ -1,6 +1,7 @@
 ---
 title: Being performative in Highland Park
 date: 2026-11-23T09:00:00-08:00
+description: ""
 draft: true
 tags: []
 cover:
@@ -24,7 +25,7 @@ What's the world coming to when you can't find a newspaper to read? Or that, soc
 
 ## Managed decline
 
-Highland Park has specialty stores galore with a synergistic, bustling little economy of its own. The [Gallop](https://galloplocal.com/) economy. Walking to the little corner pop-up for Flamingo Estate, I spot their recognizable green boxes in the windows of countless other gift stores. Comet over Delphi had one of their candles burning near its newspaper rack. Jane Jacobs did say import replacement is the primary engine of local growth & diversification.
+Highland Park has specialty stores galore with a synergistic, bustling little economy of its own. Walking to the little corner pop-up for Flamingo Estate, I spot their recognizable green boxes in the windows of countless other gift stores. Comet over Delphi had one of their candles burning near its newspaper rack. Jane Jacobs did say import replacement is the primary engine of local growth & diversification.
 
 Flamingo Estate's gift boxes resemble the mosaic tiles on the sidewalk marking Highland Park's avenues. Indeed, many of the storefronts have adopted somewhat of a Highland Park house style, which I'd characterize as NY Subway Beaux-Arts Remnants. 
 
