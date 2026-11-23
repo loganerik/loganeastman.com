@@ -116,8 +116,8 @@ collections:
         name: body
         widget: markdown
         modes: [rich_text, raw]
-        editor_components: [image, code-block, pullquote, aside, ornament, figure]
-        hint: "Rich Text: select text to format it; use + for images, code, Pull quote, Aside, Ornament, and Figure. Markdown: use ## / ### for sections and paste the examples in Writing guide. Put special blocks on their own lines with a blank line on each side."
+        editor_components: [image, code-block, pullquote, aside, ornament, diamond, figure]
+        hint: "Rich Text: select text to format it; use + for images, code, Pull quote, Aside, Sunburst divider, Diamond divider, and Figure. Markdown: use ## / ### for sections and paste the examples in Writing guide. Put special blocks on their own lines with a blank line on each side."
 
   - name: pages
     label: Pages
@@ -158,5 +158,5 @@ collections:
             name: body
             widget: markdown
             modes: [rich_text, raw]
-            editor_components: [image, code-block, pullquote, aside, ornament, figure]
+            editor_components: [image, code-block, pullquote, aside, ornament, diamond, figure]
             hint: "Write the About text here. The same Markdown, + menu blocks, framed images, and footnotes work here as in columns. Open Writing guide for copyable examples."
