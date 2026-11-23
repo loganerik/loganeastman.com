@@ -4,7 +4,7 @@
 
    Type:  Julius Sans One  — masthead only (wordmark, arch title, nav)
           Fenix            — everything below the nav, body and headings
-   No italics anywhere. Flat ivory surfaces, thin gold lines.
+   Emphasis is italic (synthesized from Fenix). Flat ivory surfaces, thin gold lines.
 
    Geometry shared by the home poster and every interior masthead is set
    once in :root (rails, arch start, nav height, header height) so the
@@ -48,8 +48,9 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 .th-site a { color: inherit; }
 .th-site img { display: block; max-width: 100%; height: auto; }
 .th-site a:focus-visible { outline: 3px solid var(--th-rose); outline-offset: 4px; }
-.th-site em, .th-site i, .th-site cite, .th-site q, .th-site dfn, .th-site var, .th-site address { font-style: normal; }
-.th-site em { text-decoration: underline; text-decoration-color: var(--th-gold-soft); text-decoration-thickness: 1px; text-underline-offset: 4px; }
+/* Emphasis is a true italic. Fenix ships no italic cut, so the browser slants it (font-synthesis). */
+.th-site em, .th-site i, .th-site cite, .th-site dfn, .th-site var { font-style: italic; font-synthesis: style; }
+.th-site address { font-style: normal; }
 .th-site strong { font-weight: 700; }
 .th-skip { position: absolute; top: -120px; left: 1rem; z-index: 50; padding: .7rem 1rem; background: #fff; font: 400 .95rem var(--th-heading); }
 .th-skip:focus { top: 1rem; }
