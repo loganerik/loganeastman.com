@@ -13,6 +13,8 @@ tags:
   - economics
 cover:
   duotone: false
+  style: waves
+  accent: rose
 ---
 ## Reading a newspaper
 
