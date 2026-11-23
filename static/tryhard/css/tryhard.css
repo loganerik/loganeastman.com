@@ -258,8 +258,9 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 .th-prose ul, .th-prose ol { margin: 1.5rem 0; padding-left: 1.7rem; }
 .th-prose li { margin-bottom: .5rem; }
 .th-prose li::marker { color: var(--th-gold); }
-.th-prose hr { position: relative; max-width: 340px; margin: 3rem auto; border: 0; border-top: 1px solid var(--th-gold); }
-.th-prose hr::after { content: "✦"; position: absolute; top: -.7em; left: 50%; transform: translateX(-50%); padding: 0 .6em; color: var(--th-gold); background: var(--th-paper); font-size: .8rem; }
+/* Diamond divider: a short gold hairline with a four-point star drawn as a background (hr pseudo-elements are unreliable). */
+.th-prose hr { max-width: 340px; height: 20px; margin: 3rem auto; border: 0; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 20'%3E%3Crect width='24' height='20' fill='%23fffdf9'/%3E%3Cpath d='M12 3 L13.8 8.2 L19 10 L13.8 11.8 L12 17 L10.2 11.8 L5 10 L10.2 8.2 Z' fill='%23b99c67'/%3E%3C/svg%3E") center / 24px 20px no-repeat, linear-gradient(var(--th-gold), var(--th-gold)) center / 100% 1px no-repeat; }
+.th-prose hr::after { content: none; }
 .th-prose code { padding: 0 .25em; color: #8c5460; background: #f5efe9; font-size: .9em; }
 .th-prose pre { overflow-x: auto; padding: 1rem; background: #e8efe8; font-size: .85em; line-height: 1.5; }
 .th-prose pre code { padding: 0; color: inherit; background: none; }
