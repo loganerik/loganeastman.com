@@ -21,4 +21,5 @@
 {{- if not (in $accents $accent) }}{{ $accent = index $accents $accentSeed }}{{ end -}}
 {{- $inks := dict "sage" "#39745b" "rose" "#bc7f82" "jade" "#39847a" "brown" "#8d6e58" "olive" "#768b60" -}}
 {{- $tints := dict "sage" "#edf3e8" "rose" "#f6ede9" "jade" "#e9f2ee" "brown" "#f3efe6" "olive" "#eff2e6" -}}
-{{- return (dict "style" $style "accent" $accent "variant" $variant "motif" $motif "ink" (index $inks $accent) "tint" (index $tints $accent)) -}}
+{{- $deeps := dict "sage" "#214634" "rose" "#7e4a50" "jade" "#1f4f48" "brown" "#52392c" "olive" "#445335" -}}
+{{- return (dict "style" $style "accent" $accent "variant" $variant "motif" $motif "ink" (index $inks $accent) "tint" (index $tints $accent) "deep" (index $deeps $accent)) -}}

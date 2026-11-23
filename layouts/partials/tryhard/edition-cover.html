@@ -14,11 +14,17 @@
     {{- if not $isSet -}}{{- range findRE (printf `\{\{<\s*figure[^>]*src="(?:\./)?%s"[^>]*>` $img.Name) $page.RawContent 1 -}}{{- if findRE `duotone="true"` . -}}{{- $duo = true -}}{{- end -}}{{- end -}}{{- end -}}
   {{- end -}}
 <svg class="th-cover-svg th-cover-svg--photo" viewBox="0 0 360 280" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="{{ $page.Params.cover.alt | default (printf "Cover for %s" $page.Title) }}">
-  {{- if $duo }}
-  <defs><filter id="{{ $fid }}" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="0.13 1"/><feFuncG type="table" tableValues="0.31 0.99"/><feFuncB type="table" tableValues="0.23 0.97"/></feComponentTransfer></filter></defs>
-  {{- end }}
+  <defs>
+    {{- if $duo }}<filter id="{{ $fid }}" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="0.13 1"/><feFuncG type="table" tableValues="0.31 0.99"/><feFuncB type="table" tableValues="0.23 0.97"/></feComponentTransfer></filter>{{ end }}
+    <linearGradient id="{{ $fid }}-band" x1="0" y1="0" x2="0" y2="1"><stop offset=".38" stop-color="{{ $m.deep }}" stop-opacity="0"/><stop offset=".66" stop-color="{{ $m.deep }}" stop-opacity=".72"/><stop offset="1" stop-color="{{ $m.deep }}" stop-opacity=".96"/></linearGradient>
+    <linearGradient id="{{ $fid }}-fade" x1="0" y1="0" x2="0" y2="1"><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset=".75" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity=".8"/></linearGradient>
+    <mask id="{{ $fid }}-mask"><rect width="360" height="280" fill="url(#{{ $fid }}-fade)"/></mask>
+  </defs>
   <rect width="360" height="280" fill="{{ $m.tint }}"/>
   <image href="{{ $fill.RelPermalink }}" xlink:href="{{ $fill.RelPermalink }}" x="0" y="0" width="360" height="280" preserveAspectRatio="xMidYMid slice"{{ if $duo }} filter="url(#{{ $fid }})"{{ end }}/>
+  {{- /* The accent band at the foot, with the cover's pattern woven into it in cream and gold. */ -}}
+  <rect width="360" height="280" fill="url(#{{ $fid }}-band)"/>
+  <g mask="url(#{{ $fid }}-mask)" opacity=".42">{{ partial "tryhard/cover-pattern.html" (dict "style" $style "variant" $v "ink" $cream "cream" $gold "gold" $gold) }}</g>
   {{- /* A small gold Deco glyph in the corner instead of a window over the photo: the ornament family, scaled down. */ -}}
   {{- if eq $motif 0 -}}<path d="M292 46 v-12 h7 v-7 h6 v-6 h10 v6 h6 v7 h7 v12" fill="none" stroke="{{ $gold }}" stroke-width="1.8"/>
   {{- else if eq $motif 1 -}}<path d="M296 46 v-9 h5 v-8 h4 v-9 h3 v-9 h6 v9 h3 v9 h4 v8 h5 v9" fill="none" stroke="{{ $gold }}" stroke-width="1.8"/>
