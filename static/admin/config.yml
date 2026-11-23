@@ -95,7 +95,7 @@ collections:
             name: image
             widget: image
             required: false
-            hint: "Optional. Leave blank and the first picture in the Body, wherever it sits, becomes the cover automatically. Or pick any JPG, PNG, or WebP beside this column to choose a different one. Either way it is cropped into the Deco cover shape for the homepage, weekly strip, archive and sharing."
+            hint: "Optional. Leave blank and the first picture in the Body, wherever it sits, becomes the cover automatically. Or pick any JPG, PNG, or WebP beside this column to choose a different one. Either way it is cropped into the Deco cover shape for the homepage, weekly strip, archive and sharing, shown in black and white with the column's Accent band and pattern fading in at its foot."
           - label: Alt text
             name: alt
             widget: string
@@ -111,7 +111,7 @@ collections:
             widget: boolean
             required: false
             default: false
-            hint: "Tones the cover on the homepage, weekly strip and archive, and the featured photo at the top of the column, in the column's Accent colour (green by default; rose, jade, brown or olive when Accent is set). A cover taken automatically from a duotone Figure stays duotone."
+            hint: "Covers are black and white by default. Duotone tints the cover, and the featured photo at the top of the column, in the column's Accent colour instead (green by default; rose, jade, brown or olive when Accent is set)."
           - label: Show at top of column
             name: hero
             widget: boolean

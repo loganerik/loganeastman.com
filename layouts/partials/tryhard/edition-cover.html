@@ -8,23 +8,22 @@
   {{- $focus := index (dict "smart" "Smart" "center" "Center" "top" "Top" "bottom" "Bottom" "left" "Left" "right" "Right") (lower ($page.Params.cover.focus | default "smart")) | default "Smart" -}}
   {{- $fill := $img.Fill (printf "720x560 webp q82 %s" $focus) -}}
   {{- $fid := printf "duo-%s" (md5 $page.RelPermalink | truncate 8 "") -}}
-  {{- /* Duotone: the Cover toggle, or a cover taken from a Figure that is itself duotone. */ -}}
+  {{- /* Duotone only when the Cover toggle is on; otherwise covers are black and white. */ -}}
   {{- $duo := $page.Params.cover.duotone | default false -}}
-  {{- if not $duo -}}{{- $isSet := false -}}{{- with $page.Params.cover -}}{{- with .image -}}{{- $isSet = true -}}{{- end -}}{{- end -}}
-    {{- if not $isSet -}}{{- range findRE (printf `\{\{<\s*figure[^>]*src="(?:\./)?%s"[^>]*>` $img.Name) $page.RawContent 1 -}}{{- if findRE `duotone="true"` . -}}{{- $duo = true -}}{{- end -}}{{- end -}}{{- end -}}
-  {{- end -}}
 <svg class="th-cover-svg th-cover-svg--photo" viewBox="0 0 360 280" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="{{ $page.Params.cover.alt | default (printf "Cover for %s" $page.Title) }}">
   <defs>
-    {{- if $duo }}<filter id="{{ $fid }}" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="{{ $m.duo.r }}"/><feFuncG type="table" tableValues="{{ $m.duo.g }}"/><feFuncB type="table" tableValues="{{ $m.duo.b }}"/></feComponentTransfer></filter>{{ end }}
-    <linearGradient id="{{ $fid }}-band" x1="0" y1="0" x2="0" y2="1"><stop offset=".38" stop-color="{{ $m.deep }}" stop-opacity="0"/><stop offset=".66" stop-color="{{ $m.deep }}" stop-opacity=".72"/><stop offset="1" stop-color="{{ $m.deep }}" stop-opacity=".96"/></linearGradient>
-    <linearGradient id="{{ $fid }}-fade" x1="0" y1="0" x2="0" y2="1"><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset=".75" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity=".8"/></linearGradient>
+    {{- /* Covers are black and white by default (a touch warm); Duotone tints them in the accent instead. */ -}}
+    {{- if $duo }}<filter id="{{ $fid }}" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="{{ $m.duo.r }}"/><feFuncG type="table" tableValues="{{ $m.duo.g }}"/><feFuncB type="table" tableValues="{{ $m.duo.b }}"/></feComponentTransfer></filter>
+    {{- else }}<filter id="{{ $fid }}" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="0.06 1"/><feFuncG type="table" tableValues="0.06 0.99"/><feFuncB type="table" tableValues="0.07 0.96"/></feComponentTransfer></filter>{{ end }}
+    <linearGradient id="{{ $fid }}-band" x1="0" y1="0" x2="0" y2="1"><stop offset=".34" stop-color="{{ $m.deep }}" stop-opacity="0"/><stop offset=".64" stop-color="{{ $m.deep }}" stop-opacity=".76"/><stop offset="1" stop-color="{{ $m.deep }}" stop-opacity=".96"/></linearGradient>
+    <linearGradient id="{{ $fid }}-fade" x1="0" y1="0" x2="0" y2="1"><stop offset=".38" stop-color="#fff" stop-opacity="0"/><stop offset=".7" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity=".95"/></linearGradient>
     <mask id="{{ $fid }}-mask"><rect width="360" height="280" fill="url(#{{ $fid }}-fade)"/></mask>
   </defs>
   <rect width="360" height="280" fill="{{ $m.tint }}"/>
-  <image href="{{ $fill.RelPermalink }}" xlink:href="{{ $fill.RelPermalink }}" x="0" y="0" width="360" height="280" preserveAspectRatio="xMidYMid slice"{{ if $duo }} filter="url(#{{ $fid }})"{{ end }}/>
+  <image href="{{ $fill.RelPermalink }}" xlink:href="{{ $fill.RelPermalink }}" x="0" y="0" width="360" height="280" preserveAspectRatio="xMidYMid slice" filter="url(#{{ $fid }})"/>
   {{- /* The accent band at the foot, with the cover's pattern woven into it in cream and gold. */ -}}
   <rect width="360" height="280" fill="url(#{{ $fid }}-band)"/>
-  <g mask="url(#{{ $fid }}-mask)" opacity=".42">{{ partial "tryhard/cover-pattern.html" (dict "style" $style "variant" $v "ink" $cream "cream" $gold "gold" $gold) }}</g>
+  <g mask="url(#{{ $fid }}-mask)" opacity=".55">{{ partial "tryhard/cover-pattern.html" (dict "style" $style "variant" $v "ink" $cream "cream" $gold "gold" $gold) }}</g>
   {{- /* A small gold Deco glyph in the corner instead of a window over the photo: the ornament family, scaled down. */ -}}
   {{- if eq $motif 0 -}}<path d="M292 46 v-12 h7 v-7 h6 v-6 h10 v6 h6 v7 h7 v12" fill="none" stroke="{{ $gold }}" stroke-width="1.8"/>
   {{- else if eq $motif 1 -}}<path d="M296 46 v-9 h5 v-8 h4 v-9 h3 v-9 h6 v9 h3 v9 h4 v8 h5 v9" fill="none" stroke="{{ $gold }}" stroke-width="1.8"/>
