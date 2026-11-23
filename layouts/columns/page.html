@@ -2,7 +2,8 @@
 {{- $m := partial "tryhard/cover-meta.html" . -}}
 <article class="th-article th-accent--{{ $m.accent }}" itemscope itemtype="https://schema.org/Article">
   {{ with .Description }}<div class="th-explore-head th-post-head"><p itemprop="description">{{ . }}</p></div>{{ end }}
-  {{- $img := false -}}{{- with .Params.cover -}}{{- with .image -}}{{- $img = $.Resources.GetMatch . -}}{{- end -}}{{- end -}}
+  {{- $hero := true -}}{{- with .Params.cover -}}{{- if isset . "hero" -}}{{- $hero = .hero -}}{{- end -}}{{- end -}}
+  {{- $img := false -}}{{- if $hero -}}{{- with .Params.cover -}}{{- with .image -}}{{- $img = $.Resources.GetMatch . -}}{{- end -}}{{- end -}}{{- end -}}
   {{- with $img -}}
     {{- $large := .Resize "1400x webp q85" -}}
     {{- $small := .Resize "800x webp q85" -}}

@@ -145,7 +145,7 @@
     const raw = get('date');
     const date = raw ? new Date(raw) : new Date();
     const dateText = isNaN(date) ? '' : date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    const image = get('cover', 'image');
+    const image = get('cover', 'hero') === false ? null : get('cover', 'image');
     const alt = get('cover', 'alt') || title;
     const duotone = !!get('cover', 'duotone');
     const caption = get('cover', 'caption') || '';

@@ -522,3 +522,7 @@ body.th-site { min-width: 320px; margin: 0; background: var(--th-page); color: v
 /* Unframed figure: no gold frame, image sits plain; duotone still applies. */
 .th-figure--plain { padding: 0; background: transparent; border: 0; box-shadow: none; }
 .th-figure--plain figcaption { padding-top: 12px; }
+
+/* Photo covers on cards: a narrower text veil so more of the picture shows. */
+.th-edition:has(.th-cover-svg--photo) .th-edition-copy { background: linear-gradient(90deg, rgba(255,253,247,.97) 0%, rgba(255,253,247,.92) 38%, rgba(255,253,247,.55) 62%, rgba(255,253,247,.1) 100%); }
+.th-edition:has(.th-cover-svg--photo) .th-edition-title { max-width: 72%; }

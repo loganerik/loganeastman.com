@@ -95,7 +95,7 @@ collections:
             name: image
             widget: image
             required: false
-            hint: "Upload a JPG, PNG, or WebP beside this column. It appears as a framed featured image; the generated pattern remains available for archive cards."
+            hint: "Any JPG, PNG, or WebP beside this column, including one you also place in the body as a Figure. It is cropped into the Deco cover shape automatically for the homepage, the weekly strip, the archive and sharing."
           - label: Alt text
             name: alt
             widget: string
@@ -112,6 +112,19 @@ collections:
             required: false
             default: false
             hint: "Applies the site's green-toned treatment to the featured photo on the column page. Leave off to retain its original colors."
+          - label: Show at top of column
+            name: hero
+            widget: boolean
+            required: false
+            default: true
+            hint: "On: the image opens the column in a gold frame. Off: it is used only as the cover on listings and for sharing, so you can place it anywhere in the body as a Figure instead."
+          - label: Crop focus
+            name: focus
+            widget: select
+            required: false
+            default: smart
+            options: [smart, center, top, bottom, left, right]
+            hint: "Which part of the photo to keep when it is cropped to the cover shape. Smart finds the subject; choose top for faces near the top, and so on."
       - label: Body
         name: body
         widget: markdown

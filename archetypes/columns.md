@@ -12,6 +12,8 @@ cover:
   # alt: ""
   # caption: ""
   # duotone: false
+  # hero: true        # false = use the image for covers and sharing only, not at the top of the column
+  # focus: smart      # crop anchor for covers: smart | center | top | bottom | left | right
 ---
 
 The first paragraph.

@@ -2,6 +2,22 @@
 {{- $m := partial "tryhard/cover-meta.html" $page -}}
 {{- $style := $m.style -}}{{- $ink := $m.ink -}}{{- $v := $m.variant -}}{{- $motif := $m.motif -}}
 {{- $gold := "#b69b64" -}}{{- $cream := "#fffdf9" -}}
+{{- /* A photo cover: the image cropped to the cover shape, behind the same frame and skyline notch. */ -}}
+{{- $img := false -}}{{- with $page.Params.cover -}}{{- with .image -}}{{- $img = $page.Resources.GetMatch . -}}{{- end -}}{{- end -}}
+{{- if $img -}}
+  {{- $focus := index (dict "smart" "Smart" "center" "Center" "top" "Top" "bottom" "Bottom" "left" "Left" "right" "Right") (lower ($page.Params.cover.focus | default "smart")) | default "Smart" -}}
+  {{- $fill := $img.Fill (printf "720x560 webp q82 %s" $focus) -}}
+  {{- $fid := printf "duo-%s" (md5 $page.RelPermalink | truncate 8 "") -}}
+<svg class="th-cover-svg th-cover-svg--photo" viewBox="0 0 360 280" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="{{ $page.Params.cover.alt | default (printf "Cover for %s" $page.Title) }}">
+  {{- if $page.Params.cover.duotone }}
+  <defs><filter id="{{ $fid }}" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="0.13 1"/><feFuncG type="table" tableValues="0.31 0.99"/><feFuncB type="table" tableValues="0.23 0.97"/></feComponentTransfer></filter></defs>
+  {{- end }}
+  <rect width="360" height="280" fill="{{ $m.tint }}"/>
+  <image href="{{ $fill.RelPermalink }}" xlink:href="{{ $fill.RelPermalink }}" x="0" y="0" width="360" height="280" preserveAspectRatio="xMidYMid slice"{{ if $page.Params.cover.duotone }} filter="url(#{{ $fid }})"{{ end }}/>
+  <path d="M110 280 v-60 h28 v-25 h24 v-20 h36 v20 h24 v25 h28 v60" fill="{{ $cream }}" stroke="{{ $gold }}" stroke-width="2.5"/>
+  <rect x="7" y="7" width="346" height="266" fill="none" stroke="{{ $gold }}" stroke-width="1.2"/>
+</svg>
+{{- else -}}
 <svg class="th-cover-svg" viewBox="0 0 360 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cover for {{ $page.Title }}">
   <rect width="360" height="280" fill="{{ $m.tint }}"/>
   {{- if eq $style "lines" -}}
@@ -66,3 +82,4 @@
   {{- end -}}
   <rect x="7" y="7" width="346" height="266" fill="none" stroke="{{ $gold }}" stroke-width="1.2"/>
 </svg>
+{{- end -}}

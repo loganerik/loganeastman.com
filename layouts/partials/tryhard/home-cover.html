@@ -35,14 +35,7 @@
           {{ with partial "tryhard/deck.html" $latest }}<p class="th-deck">{{ . }}</p>{{ end }}
           <a class="th-pill" href="{{ $latest.RelPermalink }}">Read <span aria-hidden="true">→</span></a>
         </div>
-        {{- $img := false -}}{{- with $latest.Params.cover -}}{{- with .image -}}{{- $img = $latest.Resources.GetMatch . -}}{{- end -}}{{- end -}}
-        <a class="th-home-editorial-image" href="{{ $latest.RelPermalink }}" aria-label="Read {{ $latest.Title }}">
-        {{- with $img -}}
-          {{- $r := .Resize "900x webp q82" -}}
-          <img class="{{ if $latest.Params.cover.duotone }}th-duotone{{ end }}" src="{{ $r.RelPermalink }}" alt="{{ $latest.Params.cover.alt | default $latest.Title }}" loading="eager" width="{{ $r.Width }}" height="{{ $r.Height }}">
-        {{- else -}}
-          <div class="th-home-pattern" aria-hidden="true">{{ partialCached "tryhard/edition-cover.html" $latest $latest.RelPermalink }}</div>
-        {{- end -}}
+        {{ partialCached "tryhard/edition-cover.html" $latest $latest.RelPermalink }}
         </a>
       </article>
       {{ else }}
