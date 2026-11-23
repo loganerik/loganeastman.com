@@ -19,9 +19,10 @@
   {{- end }}
   <rect width="360" height="280" fill="{{ $m.tint }}"/>
   <image href="{{ $fill.RelPermalink }}" xlink:href="{{ $fill.RelPermalink }}" x="0" y="0" width="360" height="280" preserveAspectRatio="xMidYMid slice"{{ if $duo }} filter="url(#{{ $fid }})"{{ end }}/>
-  {{- /* The cover's Deco pattern, drawn faintly over the photo in cream and gold, then the ornament as a translucent window. */ -}}
-  <g opacity=".3">{{ partial "tryhard/cover-pattern.html" (dict "style" $style "variant" $v "ink" $cream "cream" $gold "gold" $gold) }}</g>
-  {{ partial "tryhard/cover-motif.html" (dict "motif" $motif "fill" $cream "fillOpacity" .26 "gold" $gold) }}
+  {{- /* A small gold Deco glyph in the corner instead of a window over the photo: the ornament family, scaled down. */ -}}
+  {{- if eq $motif 0 -}}<path d="M292 46 v-12 h7 v-7 h6 v-6 h10 v6 h6 v7 h7 v12" fill="none" stroke="{{ $gold }}" stroke-width="1.8"/>
+  {{- else if eq $motif 1 -}}<path d="M296 46 v-9 h5 v-8 h4 v-9 h3 v-9 h6 v9 h3 v9 h4 v8 h5 v9" fill="none" stroke="{{ $gold }}" stroke-width="1.8"/>
+  {{- else -}}<path d="M292 46 a18 18 0 0 1 36 0" fill="none" stroke="{{ $gold }}" stroke-width="1.8"/><path d="M310 46 V33 M310 46 L300 36 M310 46 L320 36" stroke="{{ $gold }}" stroke-width="1.2"/>{{- end }}
   <rect x="7" y="7" width="346" height="266" fill="none" stroke="{{ $gold }}" stroke-width="1.2"/>
 </svg>
 {{- else -}}
