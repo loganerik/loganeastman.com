@@ -109,8 +109,10 @@
   CMS.registerWidget('taglist', TagListControl, TagListPreview);
 
   // Live preview pane: the site's own stylesheet plus a column-shaped template.
-  CMS.registerPreviewStyle('/tryhard/css/tryhard.css');
-  CMS.registerPreviewStyle('/admin/preview.css');
+  // Version the preview stylesheets from this script's own ?v= so a deploy is never served stale.
+  const V = (document.currentScript && (document.currentScript.src.split('?v=')[1] || '')) || String(Date.now());
+  CMS.registerPreviewStyle('/tryhard/css/tryhard.css?v=' + V);
+  CMS.registerPreviewStyle('/admin/preview.css?v=' + V);
   // Reads a value from the entry whether it arrives as an Immutable map, a plain object, or nothing yet.
   const reader = entry => {
     const data = entry && typeof entry.get === 'function' ? entry.get('data') : (entry && entry.data);
