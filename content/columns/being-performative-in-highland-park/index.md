@@ -14,7 +14,6 @@ tags:
 cover:
   duotone: false
 ---
-
 ## Reading a newspaper
 
 They don't know I have cervical myofascial pain due to tech neck and/or health OCD. Or that I'm recommitting myself to intentional content consumption. That holding up *FT Weekend* at eye level lessens looking down toward my phone and passively reading clickbait, thus reducing the pain and regulating my nervous system. In theory.  
@@ -31,12 +30,10 @@ What's the world coming to when you can't find a newspaper to read? Or that, soc
 
 {{< figure src="ft-weekend.jpg" alt="" duotone="true" >}}
 
-
-
 ## Managed decline
 
 Highland Park has specialty stores galore with a synergistic, bustling little economy of its own. I spot Flamingo Estate's distinctive green boxes in the windows of countless other gift stores on the way its own corner pop-up location. Comet over Delphi had one of their candles burning near its newspaper rack. Jane Jacobs did say import replacement is the primary engine of local growth & diversification.
 
-Flamingo Estate's gift boxes resemble the mosaic tiles on the sidewalk marking Highland Park's avenues. Indeed, many of the storefronts have adopted somewhat of a Highland Park house style, which I'd characterize as NY Subway Beaux-Arts Remnants. 
+Flamingo Estate's gift boxes resemble the mosaic tiles on the sidewalks marking Highland Park's avenues. Indeed, many of the storefronts have adopted somewhat of a Highland Park house style, which I'd characterize as NY Subway Beaux-Arts Remnants. 
 
 This place makes me wonder if it's really true that people are struggling.
