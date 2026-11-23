@@ -1,0 +1,42 @@
+# Scheduled rebuild so columns with a future `date` go live on time.
+#
+# Hugo drops future-dated content at build time, and Cloudflare Pages only
+# builds on push. This workflow triggers a Cloudflare Pages build on a
+# schedule by POSTing to a Deploy Hook. It never commits anything.
+#
+# Requires the repo secret CF_PAGES_DEPLOY_HOOK (the Deploy Hook URL from
+# Cloudflare Pages → loganeastman-com → Settings → Builds & deployments).
+name: Scheduled rebuild
+
+on:
+  schedule:
+    # Hourly, at :05 past the hour (UTC).
+    - cron: "5 * * * *"
+    # Every 15 minutes between 6 AM and 12 PM Pacific. Cron runs in UTC, so
+    # this covers both PST (UTC-8 → 14:00–20:00) and PDT (UTC-7 → 13:00–19:00).
+    - cron: "*/15 13-20 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: scheduled-rebuild
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Cloudflare Pages deploy hook
+        env:
+          CF_PAGES_DEPLOY_HOOK: ${{ secrets.CF_PAGES_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$CF_PAGES_DEPLOY_HOOK" ]; then
+            echo "::error::Repo secret CF_PAGES_DEPLOY_HOOK is not set. Create a Deploy Hook in Cloudflare Pages (project loganeastman-com, branch main) and add its URL as that secret."
+            exit 1
+          fi
+          status=$(curl -sS -o /tmp/hook-response.txt -w '%{http_code}' -X POST "$CF_PAGES_DEPLOY_HOOK")
+          echo "Cloudflare responded with HTTP $status"
+          cat /tmp/hook-response.txt; echo
+          case "$status" in
+            2*) echo "Rebuild triggered." ;;
+            *) echo "::error::Deploy hook call failed with HTTP $status"; exit 1 ;;
+          esac
