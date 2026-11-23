@@ -66,12 +66,22 @@ collections:
         name: categories
         widget: list
         required: false
-        hint: "Broad subjects, such as Culture or Technology. Separate subjects with commas; reuse the same spelling to group columns together in Explore."
+        allow_add: true
+        collapsed: false
+        label_singular: category
+        summary: "{{fields.category}}"
+        field: { label: Category, name: category, widget: string }
+        hint: "Broad subjects, such as Culture or Urban Life. Click Add category for each one; spaces are fine. Reuse the same spelling to group columns together in Explore."
       - label: Tags
         name: tags
         widget: list
         required: false
-        hint: "More specific recurring ideas, such as attention or Los Angeles. Separate ideas with commas; matching tags link columns together."
+        allow_add: true
+        collapsed: false
+        label_singular: tag
+        summary: "{{fields.tag}}"
+        field: { label: Tag, name: tag, widget: string }
+        hint: "More specific recurring ideas, such as attention or Highland Park. Click Add tag for each one; spaces are fine. Matching tags link columns together."
       - label: Cover
         name: cover
         widget: object
