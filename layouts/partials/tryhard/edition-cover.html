@@ -8,78 +8,27 @@
   {{- $focus := index (dict "smart" "Smart" "center" "Center" "top" "Top" "bottom" "Bottom" "left" "Left" "right" "Right") (lower ($page.Params.cover.focus | default "smart")) | default "Smart" -}}
   {{- $fill := $img.Fill (printf "720x560 webp q82 %s" $focus) -}}
   {{- $fid := printf "duo-%s" (md5 $page.RelPermalink | truncate 8 "") -}}
+  {{- /* Duotone: the Cover toggle, or a cover taken from a Figure that is itself duotone. */ -}}
+  {{- $duo := $page.Params.cover.duotone | default false -}}
+  {{- if not $duo -}}{{- $isSet := false -}}{{- with $page.Params.cover -}}{{- with .image -}}{{- $isSet = true -}}{{- end -}}{{- end -}}
+    {{- if not $isSet -}}{{- range findRE (printf `\{\{<\s*figure[^>]*src="(?:\./)?%s"[^>]*>` $img.Name) $page.RawContent 1 -}}{{- if findRE `duotone="true"` . -}}{{- $duo = true -}}{{- end -}}{{- end -}}{{- end -}}
+  {{- end -}}
 <svg class="th-cover-svg th-cover-svg--photo" viewBox="0 0 360 280" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" role="img" aria-label="{{ $page.Params.cover.alt | default (printf "Cover for %s" $page.Title) }}">
-  {{- if $page.Params.cover.duotone }}
+  {{- if $duo }}
   <defs><filter id="{{ $fid }}" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="0.13 1"/><feFuncG type="table" tableValues="0.31 0.99"/><feFuncB type="table" tableValues="0.23 0.97"/></feComponentTransfer></filter></defs>
   {{- end }}
   <rect width="360" height="280" fill="{{ $m.tint }}"/>
-  <image href="{{ $fill.RelPermalink }}" xlink:href="{{ $fill.RelPermalink }}" x="0" y="0" width="360" height="280" preserveAspectRatio="xMidYMid slice"{{ if $page.Params.cover.duotone }} filter="url(#{{ $fid }})"{{ end }}/>
-  <path d="M110 280 v-60 h28 v-25 h24 v-20 h36 v20 h24 v25 h28 v60" fill="{{ $cream }}" stroke="{{ $gold }}" stroke-width="2.5"/>
+  <image href="{{ $fill.RelPermalink }}" xlink:href="{{ $fill.RelPermalink }}" x="0" y="0" width="360" height="280" preserveAspectRatio="xMidYMid slice"{{ if $duo }} filter="url(#{{ $fid }})"{{ end }}/>
+  {{- /* The cover's Deco pattern, drawn faintly over the photo in cream and gold, then the ornament as a translucent window. */ -}}
+  <g opacity=".3">{{ partial "tryhard/cover-pattern.html" (dict "style" $style "variant" $v "ink" $cream "cream" $gold "gold" $gold) }}</g>
+  {{ partial "tryhard/cover-motif.html" (dict "motif" $motif "fill" $cream "fillOpacity" .26 "gold" $gold) }}
   <rect x="7" y="7" width="346" height="266" fill="none" stroke="{{ $gold }}" stroke-width="1.2"/>
 </svg>
 {{- else -}}
 <svg class="th-cover-svg" viewBox="0 0 360 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cover for {{ $page.Title }}">
   <rect width="360" height="280" fill="{{ $m.tint }}"/>
-  {{- if eq $style "lines" -}}
-    {{- $pitch := index (slice 14 18 24) $v -}}
-    {{- $n := div 360 $pitch -}}
-    {{- range seq 0 $n -}}
-      {{- $x := mul . $pitch -}}
-      {{- $w := add 2 (mod (add . $v) (add 3 $v)) -}}
-      <rect x="{{ $x }}" y="0" width="{{ $w }}" height="280" fill="{{ $ink }}" opacity=".78"/>
-      {{- if eq (mod . 2) 0 }}<rect x="{{ add $x (div $pitch 2) }}" y="0" width="1" height="280" fill="{{ $gold }}"/>{{ end -}}
-    {{- end -}}
-  {{- else if eq $style "waves" -}}
-    {{- $pitch := index (slice 26 32 40) $v -}}
-    {{- $amp := index (slice 40 56 72) $v -}}
-    {{- range seq 0 (div 420 $pitch) -}}
-      {{- $x := sub (mul . $pitch) 40 -}}
-      <path d="M {{ $x }} -10 C {{ add $x $amp }} 70, {{ sub $x $amp }} 160, {{ add $x 14 }} 290" stroke="{{ $ink }}" stroke-width="{{ add 2 (mod (add . $v) 4) }}" fill="none" opacity=".8"/>
-    {{- end -}}
-  {{- else if eq $style "steps" -}}
-    {{- $pitch := index (slice 24 30 40) $v -}}
-    {{- range seq 0 (div 360 $pitch) -}}
-      {{- $x := mul . $pitch -}}
-      {{- $h := add 40 (mul (mod (add (mul . 3) $v) 6) 24) -}}
-      {{- $s := div $pitch 3 -}}
-      <path d="M {{ $x }} 280 V {{ sub 280 $h }} h {{ $s }} v -18 h {{ $s }} v -18 h {{ $s }} V 280" fill="{{ $ink }}" fill-opacity=".72" stroke="{{ $cream }}" stroke-width="1"/>
-    {{- end -}}
-  {{- else if eq $style "rays" -}}
-    {{- $n := index (slice 15 21 29) $v -}}
-    {{- $step := div 360 (sub $n 1) -}}
-    {{- range seq 0 (sub $n 1) -}}
-      <path d="M 180 278 L {{ mul . $step }} 0" stroke="{{ $ink }}" stroke-width="{{ add 1 (mod (add . $v) 4) }}" opacity=".7"/>
-    {{- end -}}
-    <circle cx="180" cy="282" r="{{ add 40 (mul $v 10) }}" fill="#f0d5d0" stroke="{{ $gold }}" stroke-width="1.5"/>
-  {{- else if eq $style "arches" -}}
-    {{- $pitch := index (slice 40 52 72) $v -}}
-    {{- $w := sub $pitch 6 -}}
-    {{- range seq 0 (div 400 $pitch) -}}
-      {{- $x := sub (mul . $pitch) 20 -}}
-      <path d="M {{ $x }} 280 V {{ add 80 (mul $v 15) }} C {{ $x }} {{ sub 10 (mul $v 8) }}, {{ add $x $w }} {{ sub 10 (mul $v 8) }}, {{ add $x $w }} {{ add 80 (mul $v 15) }} V 280" fill="none" stroke="{{ $ink }}" stroke-width="{{ add 2 (mod (add . $v) 3) }}" opacity=".8"/>
-    {{- end -}}
-  {{- else -}}
-    {{- /* scallops: overlapping rows of semicircles, fish-scale Deco */ -}}
-    {{- $r := index (slice 22 28 36) $v -}}
-    {{- $d := mul $r 2 -}}
-    {{- range $row := seq 0 (div 300 $r) -}}
-      {{- $off := cond (eq (mod $row 2) 0) 0 $r -}}
-      {{- range seq 0 (div 380 $d) -}}
-        {{- $cx := sub (add (mul . $d) $off) $r -}}
-        {{- $cy := mul $row $r -}}
-        <path d="M {{ sub $cx $r }} {{ $cy }} a {{ $r }} {{ $r }} 0 0 1 {{ $d }} 0" fill="{{ $cream }}" stroke="{{ $ink }}" stroke-width="{{ add 1 (mod $row 2) }}" opacity=".85"/>
-      {{- end -}}
-    {{- end -}}
-  {{- end -}}
-  {{- if eq $motif 0 -}}
-    <path d="M110 280 v-60 h28 v-25 h24 v-20 h36 v20 h24 v25 h28 v60" fill="{{ $cream }}" stroke="{{ $gold }}" stroke-width="2.5"/>
-  {{- else if eq $motif 1 -}}
-    <path d="M128 280 v-40 h18 v-30 h12 v-40 h10 v-50 h24 v50 h10 v40 h12 v30 h18 v40" fill="{{ $cream }}" stroke="{{ $gold }}" stroke-width="2.5"/>
-    <path d="M176 120 v-22 h8 v22" fill="{{ $gold }}"/>
-  {{- else -}}
-    <path d="M100 280 a80 80 0 0 1 160 0 z" fill="{{ $cream }}" stroke="{{ $gold }}" stroke-width="2.5"/>
-    <path d="M180 280 V214 M180 280 L140 224 M180 280 L220 224 M180 280 L116 250 M180 280 L244 250" stroke="{{ $gold }}" stroke-width="1.5"/>
-  {{- end -}}
+  {{ partial "tryhard/cover-pattern.html" (dict "style" $style "variant" $v "ink" $ink "cream" $cream "gold" $gold) }}
+  {{ partial "tryhard/cover-motif.html" (dict "motif" $motif "fill" $cream "fillOpacity" 1 "gold" $gold) }}
   <rect x="7" y="7" width="346" height="266" fill="none" stroke="{{ $gold }}" stroke-width="1.2"/>
 </svg>
 {{- end -}}

@@ -111,7 +111,7 @@ collections:
             widget: boolean
             required: false
             default: false
-            hint: "Applies the site's green-toned treatment to the featured photo on the column page. Leave off to retain its original colors."
+            hint: "Applies the site's green-toned treatment to the cover on the homepage, weekly strip and archive, and to the featured photo at the top of the column. A cover taken automatically from a duotone Figure stays duotone."
           - label: Show at top of column
             name: hero
             widget: boolean

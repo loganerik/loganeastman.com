@@ -1,0 +1,11 @@
+{{- /* The bottom ornament for a cover. Takes a dict: motif, fill, fillOpacity, gold. */ -}}
+{{- $motif := .motif -}}{{- $cream := .fill -}}{{- $gold := .gold -}}{{- $fo := .fillOpacity -}}
+  {{- if eq $motif 0 -}}
+    <path d="M110 280 v-60 h28 v-25 h24 v-20 h36 v20 h24 v25 h28 v60" fill="{{ $cream }}" fill-opacity="{{ $fo }}" stroke="{{ $gold }}" stroke-width="2.5"/>
+  {{- else if eq $motif 1 -}}
+    <path d="M128 280 v-40 h18 v-30 h12 v-40 h10 v-50 h24 v50 h10 v40 h12 v30 h18 v40" fill="{{ $cream }}" fill-opacity="{{ $fo }}" stroke="{{ $gold }}" stroke-width="2.5"/>
+    <path d="M176 120 v-22 h8 v22" fill="{{ $gold }}"/>
+  {{- else -}}
+    <path d="M100 280 a80 80 0 0 1 160 0 z" fill="{{ $cream }}" fill-opacity="{{ $fo }}" stroke="{{ $gold }}" stroke-width="2.5"/>
+    <path d="M180 280 V214 M180 280 L140 224 M180 280 L220 224 M180 280 L116 250 M180 280 L244 250" stroke="{{ $gold }}" stroke-width="1.5"/>
+  {{- end -}}
