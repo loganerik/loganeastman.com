@@ -21,5 +21,8 @@
       "Bash(dig:*)",
       "WebFetch(domain:medium.com)"
     ]
-  }
+  },
+  "disabledMcpjsonServers": [
+    "google"
+  ]
 }
