@@ -2,7 +2,7 @@
 title: Being performative in Highland Park
 date: 2026-11-23T09:00:00-08:00
 description: ""
-draft: true
+draft: false
 categories:
   - City Life
 tags:
