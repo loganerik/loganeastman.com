@@ -14,6 +14,7 @@ tags:
   - Grok
   - Claude
   - ChatGPT
+  - Jensen Huang
 cover:
   duotone: true
   hero: false
@@ -27,15 +28,20 @@ I'd read in Eastside Rag that [a scammer](https://eastsiderag.substack.com/p/zac
 
 Back in the day, I'd post jokes like a Photoshopped courtroom illustration of [Taylor Swift as a rolling suitcase](https://www.instagram.com/p/BXqrxh7Bo87/?img_index=1), if you remember at all why that might get a laugh. It was the effort put into something stupid that was funny. There was already diminishing returns with the format in 2018. Humans had gotten pretty good with that Magic Eraser.
 
-
-
 ![](e98f6ebf-8f3f-485a-aa40-bd21a917855c.png)
 
-## Cliff Booth is back!
+## Jensen Huang is back!
 
 Yeah, well so is measles. 
 
-## The theme of NYT DealBook 
+Also considered: 
+
+* Johnny Depp is back! 
+* Cliff Booth is back!
+* Dems in Congress!
+* The FOCKERS!
+
+## The theme of NYT DealBook
 
 > **SORKIN:** Here is a description of reality. Is that reality and do you mean what everyone knows you mean? 
 >
