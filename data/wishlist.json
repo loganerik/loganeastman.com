@@ -1,6 +1,32 @@
 {
   "items": [
     {
+      "id": "scott-fraser-fitted-sunday-tee",
+      "name": "Fitted Sunday Tee",
+      "brand": "Scott Fraser Collection",
+      "price": 51,
+      "note": "White preferred. Other colors welcome.",
+      "url": "https://scottfrasercollection.com/products/fitted-sunday-tee?variant=48776598716670",
+      "image": "https://scottfrasercollection.com/cdn/shop/files/Muscletee-ScottFraserCollection-1.jpg?v=1787651045&width=640",
+      "details": "Size Small",
+      "category": "Apparel",
+      "type": "T-shirts",
+      "dateAdded": "2026-11-24"
+    },
+    {
+      "id": "jungmaven-jung-tee",
+      "name": "Jung Tee",
+      "brand": "Jungmaven",
+      "price": 60,
+      "note": "Various colors welcome.",
+      "url": "https://jungmaven.com/products/hemp-shirt-jung-tee-short-sleeve",
+      "image": "https://www.bristolgeneralstore.com/cdn/shop/products/jungmaven-jung-tee-hemp-cotton-jungmaven-canvas-xs-168295.webp?v=1696112334&width=640",
+      "details": "Size Small",
+      "category": "Apparel",
+      "type": "T-shirts",
+      "dateAdded": "2026-11-24"
+    },
+    {
       "id": "forme-smart-tee",
       "name": "Smart Tee",
       "brand": "Forme",
