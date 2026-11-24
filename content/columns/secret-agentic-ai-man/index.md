@@ -1,6 +1,6 @@
 ---
 title: Secret Agentic Man
-date: 2026-11-23T09:00:00-08:00
+date: 2026-11-24T09:00:00-08:00
 draft: true
 categories:
   - AI
@@ -26,7 +26,11 @@ My partner scolded me for posting an AI-generated image to Story. "Everyone's go
 
 I'd read in Eastside Rag that [a scammer](https://eastsiderag.substack.com/p/zach-baron-is-all-in-on-los-angeles) had sent DoorDash a fake photo of a burnt deep dish from Masa of Echo Park in hopes of a refund. I had reposted the headline with a slop photo of my own pizza in flames.
 
-Back in the day, I'd post jokes like a Photoshopped courtroom illustration of [Taylor Swift as a rolling suitcase](https://www.instagram.com/p/BXqrxh7Bo87/?img_index=1), if you remember at all why that might get a laugh. It was the effort put into something stupid that was funny. There was already diminishing returns with the format in 2018. Humans had gotten pretty good with that Magic Eraser.
+Back in the day, I'd post jokes like a Photoshopped courtroom illustration of [Taylor Swift as a rolling suitcase](https://www.instagram.com/p/BXqrxh7Bo87/?img_index=1), if you remember at all why that might get a laugh. It was more *the effort* put into something stupid that was funny. There was already diminishing returns with the format in 2018. Humans had gotten pretty good with that Magic Eraser.
+
+---
+
+The more "context" I give to Claude Duet, Grok Bot, Muse, and a Dot I named Leo, the less I think any of my work has. They assign me many actionable tasks, none of which I need to do. The effort I put into things I thought were productive is *not funny.*  
 
 ![](e98f6ebf-8f3f-485a-aa40-bd21a917855c.png)
 
@@ -37,15 +41,14 @@ Yeah, well so is measles.
 Also considered: 
 
 * Johnny Depp
-* Cliff Booth
-* Dems in Congress!
+* Dems in Congress
 * The FOCKERS!
 
 ## The theme of NYT DealBook
 
-> **SORKIN:** Here is a description of reality. Is that reality and do you mean what everyone knows you mean? 
+> **SORKIN:** Here is a description of reality. Is that actually reality and do you mean what everyone knows you mean? 
 >
-> **GUEST:**  Beep borp beep. 
+> **GUEST:**  Bleep borp beep. 
 
 I only watched [Mamdani](https://www.nytimes.com/2026/11/22/business/dealbook/zohran-mamdani-dealbook-summit.html) & [Ellison](https://www.nytimes.com/2026/11/18/business/dealbook/david-ellison-skydance-elon-musk.html).
 
