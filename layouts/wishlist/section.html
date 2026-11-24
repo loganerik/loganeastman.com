@@ -32,7 +32,7 @@
 <section class="grid" aria-label="Gift ideas">
 {{ range $i, $item := sort $items "dateAdded" "desc" }}
 <article data-added="{{ .dateAdded }}" data-id="{{ .id }}" data-type="{{ .type }}" data-category="{{ .category }}" data-brand="{{ .brand }}" data-price="{{ with .price }}{{ . }}{{ end }}">
-<a class="photo" href="{{ .url }}" target="_blank" rel="noopener noreferrer" aria-label="Shop {{ .name }}"><img src="{{ .image }}" alt="{{ .name }}" {{ if gt $i 3 }}loading="lazy"{{ end }}></a>
+<a class="photo" href="{{ .url }}" target="_blank" rel="noopener noreferrer" aria-label="Shop {{ .name }}">{{ if .image }}<img src="{{ .image }}" alt="{{ .name }}" {{ if gt $i 3 }}loading="lazy"{{ end }}>{{ else }}<span>{{ .name }}</span>{{ end }}</a>
 <div class="info"><div class="meta"><span>{{ .brand }}</span><span>{{ with .price }}{{ lang.FormatCurrency 2 "USD" . | replaceRE "\\.00$" "" }}{{ else }}Varies{{ end }}</span></div>
 <h2>{{ .name }}</h2>{{ with .details }}<p class="item-details">{{ . }}</p>{{ end }}
 {{ with .note }}<p class="item-note"><strong>Note</strong> {{ . }}</p>{{ end }}<p class="added">Date added <time datetime="{{ .dateAdded }}">{{ time.Format "Jan 2, 2006" .dateAdded }}</time></p>

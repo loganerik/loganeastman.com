@@ -12,7 +12,7 @@
 <section class="picks" aria-label="{{ .Title }}">
 <h2>{{ .Title }}</h2><p class="picks-intro">{{ .Description }}</p>
 {{ range index site.Data.recommendations .Params.collection }}
-<article class="pick"><a class="pick-photo" href="{{ .url }}" aria-label="Explore {{ .name }}" target="_blank" rel="noopener noreferrer"><img src="{{ .image }}" alt="" loading="lazy"></a>
+<article class="pick"><a class="pick-photo" href="{{ .url }}" aria-label="Explore {{ .name }}" target="_blank" rel="noopener noreferrer">{{ if .image }}<img src="{{ .image }}" alt="" loading="lazy">{{ else }}<span>{{ .name }}</span>{{ end }}</a>
 <div><p class="pick-label">{{ .label }}</p><h3><a href="{{ .url }}" target="_blank" rel="noopener noreferrer">{{ .name }}</a></h3>
 <p class="pick-note">{{ .note }}</p>
 <div class="like" data-id="{{ .id }}">

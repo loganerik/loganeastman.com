@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>Add to Logan’s List</title><link rel="stylesheet" href="./editor.css"><script defer src="./editor.js"></script></head>
+<body><main><header><a href="/wishlist/">Logan’s List</a><button id="logout" hidden>Sign out</button></header>
+<h1>List editor</h1>
+<p id="message" role="status">Opening editor…</p>
+<a id="login" class="button" href="/api/list-editor?login" hidden>Sign in with GitHub</a>
+<section id="editor" hidden>
+<label>Saved items<select id="saved"><option value="">New entry</option></select></label>
+<form id="lookup"><label>Shop or product link<input type="url" name="url" required placeholder="https://"></label><button>Look up link</button></form>
+<form id="entry" hidden><label>List<select name="group"><option value="interested">Interested</option><option value="wishlist">Wishlist</option><option value="gifts">Gifts for You</option></select></label>
+<label>Title<input name="name" maxlength="300" required></label>
+<label>Note<textarea name="note" rows="2" maxlength="3000"></textarea></label>
+<label id="pickLabel">Label<input name="label" placeholder="Home · Design shop"></label>
+<div id="wishFields" hidden>
+<label>Brand<input name="brand" list="brands"></label><datalist id="brands"></datalist>
+<label>Category<input name="category" list="categories"></label><datalist id="categories"></datalist>
+<label>Item type<input name="type" list="types" placeholder="e.g. T-shirts"></label><datalist id="types"></datalist>
+<label>Price (USD)<input name="price" type="number" min="0" step=".01"></label>
+<label>Size, color or other details<input name="details"></label></div>
+<label>Image URL<input name="image" placeholder="https://"></label><img id="photo" alt="Entry preview" hidden>
+<button id="save">Add to list</button></form></section>
+<details><summary>Set up iPhone sharing</summary><ol><li>In Shortcuts, create a shortcut named <b>Add to Logan’s List</b>. In its Details, turn on <b>Show in Share Sheet</b> and set the accepted input to <b>URLs</b>.</li><li>Add the <b>URL</b> action. Enter <code>https://loganeastman.com/wishlist/add/#</code> and insert the <b>Shortcut Input</b> variable immediately after the #.</li><li>Add the <b>Open URLs</b> action and save. In Safari, share a shop or product page and choose your shortcut.</li></ol></details>
+</main></body></html>
