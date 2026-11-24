@@ -17,7 +17,7 @@ for (const pick of document.querySelectorAll('.like')) {
 
   function complete() {
     form.hidden = open.hidden = true;
-    status.textContent = 'Liked. Your name and gift choice were saved for Logan.';
+    status.textContent = 'Liked. Logan will know you liked this.';
   }
   if (saved(key) === 'sent') complete();
   else open.hidden = false;

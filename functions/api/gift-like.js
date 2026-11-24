@@ -1,6 +1,6 @@
 import picks from '../../data/recommendations.json';
 
-const gifts = new Map(picks.gifts.map(gift => [gift.id, gift.name]));
+const items = new Map([...picks.gifts, ...picks.interested].map(item => [item.id, item.name]));
 const endpoint = 'https://docs.google.com/forms/d/e/1FAIpQLSdqz1irj4v6FM2viVrh75pBYX9-dht3jB1E9LdMPhcrTbxvOA/formResponse?hl=en';
 const reply = (status, sent = false) => Response.json({ sent }, {
   status, headers: { 'Cache-Control': 'no-store' }
@@ -11,7 +11,7 @@ export async function onRequest({ request, env }) {
   if (request.headers.get('Origin') !== new URL(request.url).origin) return reply(403);
   const input = await request.json().catch(() => null);
   const name = typeof input?.name === 'string' ? input.name.trim() : '';
-  const title = gifts.get(input?.id);
+  const title = items.get(input?.id);
   if (!title || !name || name.length > 80 || /[\u0000-\u001f]/u.test(name) ||
       !/^[\da-f]{8}(-[\da-f]{4}){3}-[\da-f]{12}$/i.test(input?.requestId)) return reply(400);
 

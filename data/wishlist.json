@@ -1,6 +1,19 @@
 {
   "items": [
     {
+      "id": "autumn-sonata-karin-bath-towel",
+      "name": "Karin Bath Towel",
+      "brand": "Autumn Sonata",
+      "category": "Home",
+      "type": "Bath towels",
+      "price": null,
+      "details": "Brown and cream",
+      "note": "The Karin towel caught my eye. Its brown-and-cream pattern looks a little different on each side.",
+      "image": "https://thefinestore.com/cdn/shop/products/autumn_sonata_karin_bath_towel_walnut_cream-1.png?v=1661262883&width=540",
+      "url": "https://autumnsonata.co/products/karin-bath-towel",
+      "dateAdded": "2026-11-24"
+    },
+    {
       "id": "scott-fraser-fitted-sunday-tee",
       "name": "Fitted Sunday Tee",
       "brand": "Scott Fraser Collection",
