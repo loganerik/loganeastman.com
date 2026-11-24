@@ -37,8 +37,8 @@
 {{ with .note }}<p class="item-note"><strong>Note</strong> {{ . }}</p>{{ end }}<p class="added">Date added <time datetime="{{ .dateAdded }}">{{ time.Format "Jan 2, 2006" .dateAdded }}</time></p>
 <div class="item-actions">
   <a href="{{ .url }}" target="_blank" rel="noopener noreferrer">BUY</a>
-  <button type="button" data-gift="claim" hidden>MARK AS GOT</button>
-  <button type="button" data-gift="check" hidden>ANYONE GOT</button>
+  <button type="button" data-gift="claim" hidden>MARK GOT</button>
+  <button type="button" data-gift="check" hidden>ANYONE GOT?</button>
 </div></div>
 </article>
 {{ end }}
