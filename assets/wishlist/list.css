@@ -24,8 +24,6 @@ header h1 {font-size:clamp(2.25rem,4.6vw,4.75rem)}
 .compact article h2 {grid-row:1;grid-column:1;font-size:1.1rem;letter-spacing:-.025em;margin:0;line-height:1.2}
 .compact .meta {grid-column:1/-1;grid-row:2}
 .compact .item-details {grid-column:1/-1;margin:0;font-size:.85rem}
-.compact .actions {grid-column:2;grid-row:1;border:0;padding:0;margin:0}
-.compact .actions a {min-height:auto}
 @media(max-width:480px){header {flex-wrap:wrap}.tools {margin-left:auto}.compact article {gap:8px}.compact .photo {width:42px}.compact .info {column-gap:8px}}
 
 .item-note {margin:0 0 14px;color:#30312f;font-size:.92rem;line-height:1.45}
@@ -33,9 +31,8 @@ header h1 {font-size:clamp(2.25rem,4.6vw,4.75rem)}
 .compact .item-note {grid-column:1/-1;margin:3px 0 0}
 
 .added {font-size:.8rem;color:#555;margin:0 0 .65rem}
-.gift-buttons,.gift-controls {display:flex;flex-wrap:wrap;gap:.45rem 1rem}
-.gift-buttons button {font-size:.88rem;text-align:left;text-decoration:underline;text-underline-offset:3px;padding:.4rem 0}
-.compact .gift-buttons,.compact .added {grid-column:1/-1}
+.gift-controls {display:flex;flex-wrap:wrap;gap:.45rem 1rem}
+.compact .added {grid-column:1/-1}
 .compact .added {margin:0}
 #gift-dialog {width:min(26rem,90vw);border:1px solid var(--ink);padding:1.5rem;color:var(--ink);background:#fbfbf9}
 #gift-dialog::backdrop {background:#1117}
@@ -44,3 +41,29 @@ header h1 {font-size:clamp(2.25rem,4.6vw,4.75rem)}
 .gift-controls {justify-content:flex-end}
 .gift-controls button {border:1px solid var(--ink);padding:.5rem .8rem}
 #gift-confirm {background:var(--ink);color:white}
+
+.item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: auto;
+}
+.item-actions > * {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: .5rem .65rem;
+  background: #000;
+  color: #fff;
+  border: 0;
+  border-radius: 0;
+  font: 700 .8rem/1.2 Arial, Helvetica, sans-serif;
+  letter-spacing: .025em;
+  text-decoration: none;
+}
+.item-actions > :hover { background: #303030; }
+.compact .item-actions { grid-column: 1/-1; margin-top: .35rem; }
+@media (max-width: 720px) {
+  .item-actions > * { min-height: 44px; }
+}

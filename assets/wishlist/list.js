@@ -114,7 +114,7 @@ function hideGift() {
 dialog.addEventListener('close', hideGift);
 el('gift-close').onclick = () => dialog.close();
 window.addEventListener('pagehide', () => { if (dialog.open) dialog.close(); });
-for (const controls of grid.querySelectorAll('.gift-buttons')) controls.hidden = false;
+for (const controls of grid.querySelectorAll('button[data-gift]')) controls.hidden = false;
 
 grid.addEventListener('click', event => {
   const button = event.target.closest('[data-gift]');
