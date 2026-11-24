@@ -44,8 +44,8 @@ header h1 {font-size:clamp(2.25rem,4.6vw,4.75rem)}
 
 .item-actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 3px;
+  flex-wrap: nowrap;
+  gap: 2px;
   margin-top: auto;
 }
 .item-actions > * {
@@ -53,17 +53,25 @@ header h1 {font-size:clamp(2.25rem,4.6vw,4.75rem)}
   align-items: center;
   justify-content: center;
   min-height: 40px;
-  padding: .5rem .65rem;
+  padding: .45rem .4rem;
+  white-space: nowrap;
   background: #000;
   color: #fff;
   border: 0;
   border-radius: 0;
   font: 700 .8rem/1.2 Arial, Helvetica, sans-serif;
-  letter-spacing: .025em;
+  letter-spacing: 0;
   text-decoration: none;
 }
 .item-actions > :hover { background: #303030; }
 .compact .item-actions { grid-column: 1/-1; margin-top: .35rem; }
 @media (max-width: 720px) {
   .item-actions > * { min-height: 44px; }
+}
+
+body:not(.compact) .grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, max(15rem, calc((100% - 45px) / 4))), 1fr));
+}
+@media (max-width: 380px) {
+  .compact .item-actions > * { padding-inline: .25rem; font-size: .75rem; }
 }
