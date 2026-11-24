@@ -37,15 +37,14 @@ Yeah, well so is measles.
 Also considered: 
 
 * Johnny Depp
-* Cliff Booth
-* Dems in Congress!
+* Dems in Congress
 * The FOCKERS!
 
 ## The theme of NYT DealBook
 
 > **SORKIN:** Here is a description of reality. Is that reality and do you mean what everyone knows you mean? 
 >
-> **GUEST:**  Beep borp beep. 
+> **GUEST:**  Bleep borp beep. 
 
 I only watched [Mamdani](https://www.nytimes.com/2026/11/22/business/dealbook/zohran-mamdani-dealbook-summit.html) & [Ellison](https://www.nytimes.com/2026/11/18/business/dealbook/david-ellison-skydance-elon-musk.html).
 
