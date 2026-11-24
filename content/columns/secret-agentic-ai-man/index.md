@@ -18,7 +18,7 @@ tags:
 cover:
   duotone: true
   hero: false
-  focus: top
+  focus: center
   style: arches
   accent: olive
 ---
