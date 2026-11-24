@@ -19,6 +19,8 @@ cover:
   duotone: true
   hero: false
   focus: top
+  style: arches
+  accent: olive
 ---
 ## Just showing up is half the disappointment
 
