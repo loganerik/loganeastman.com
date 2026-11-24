@@ -42,7 +42,7 @@ Also considered:
 
 ## The theme of NYT DealBook
 
-> **SORKIN:** Here is a description of reality. Is that reality and do you mean what everyone knows you mean? 
+> **SORKIN:** Here is a description of reality. Is that actually reality and do you mean what everyone knows you mean? 
 >
 > **GUEST:**  Bleep borp beep. 
 
