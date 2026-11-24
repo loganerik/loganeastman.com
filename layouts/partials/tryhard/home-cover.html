@@ -4,7 +4,7 @@
 <header style="view-transition-name: th-header" class="th-header th-header--home" role="banner">
   <div class="th-cover-composition">
     <div class="th-cover-rail th-cover-rail--cats" aria-hidden="true">
-      <div class="th-arched-field"><span class="th-star">✳</span></div>
+      <div class="th-arched-field"><svg class="th-star" viewBox="0 0 24 24" width="36" height="36" aria-hidden="true" focusable="false"><g stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9 4.9 19.1"/></g></svg></div>
       {{- $cats := resources.Get "tryhard/cats-upright-photo-v4.png" -}}{{- $c1 := $cats.Resize "480x webp q80" -}}{{- $c2 := $cats.Resize "960x webp q80" -}}
       <img class="th-home-cats-img" src="{{ $c1.RelPermalink }}" srcset="{{ $c1.RelPermalink }} 480w, {{ $c2.RelPermalink }} 960w" sizes="(max-width: 700px) 45vw, 22vw" width="{{ $c1.Width }}" height="{{ $c1.Height }}" alt="" loading="eager" fetchpriority="high" decoding="async">
       <span class="th-deco-flower th-deco-flower--one">✿</span>
