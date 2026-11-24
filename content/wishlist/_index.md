@@ -1,6 +1,5 @@
 ---
-title: "Logan’s Wishlist"
-description: "Christmas 2026 gift ideas for friends and family."
+title: "Logan's List"
 outputs: ["HTML"]
 build:
   list: never

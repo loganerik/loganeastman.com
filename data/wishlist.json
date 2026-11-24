@@ -53,16 +53,24 @@
       "type": "T-shirts"
     },
     {
-      "id": "newspaper-subscription",
-      "name": "Newspaper subscription",
-      "brand": "Financial Times / The Wall Street Journal",
+      "id": "financial-times",
+      "name": "Financial Times subscription",
+      "brand": "Financial Times",
       "category": "Books & Magazines",
       "price": null,
-      "note": "Either paper. Choose one subscription.",
+      "note": "Choice of subscription plans",
       "url": "https://subs.ft.com/products",
-      "altUrl": "https://www.wsj.com/subscribe",
-      "altLabel": "The Wall Street Journal",
-      "image": "/columns/being-performative-in-highland-park/ft-weekend.jpg"
+      "image": "https://i.guim.co.uk/img/static/sys-images/Guardian/Pix/pictures/2015/7/23/1437645723685/291fe6bf-9389-457c-ba29-b7f2470fdd76-2060x1236.jpeg?auto=format&fit=max&quality=85&s=a720da47fb584d08c2e4aefca1834356&width=700"
+    },
+    {
+      "id": "wall-street-journal",
+      "name": "The Wall Street Journal subscription",
+      "brand": "The Wall Street Journal",
+      "category": "Books & Magazines",
+      "price": null,
+      "note": "Choice of subscription plans",
+      "url": "https://www.wsj.com/subscribe",
+      "image": "https://www.instacart.com/image-server/1200x1200/www.instacart.com/assets/domains/product-image/file/large_dbdf36ba-857a-4c2a-a4d1-a0eed136708e.jpeg"
     },
     {
       "id": "eufy-omni-e25",
