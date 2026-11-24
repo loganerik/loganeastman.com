@@ -21,6 +21,7 @@
   </div>
 </header>
 <main>
+{{ partial "wishlist/collections.html" . }}
 <nav class="views" aria-label="List format"><a id="gallery" href="?">Gallery</a><a id="list" href="?view=list">Christmas List</a><label id="pictures-control" hidden><input id="pictures" type="checkbox" checked> Show pictures</label></nav>
 {{ $items := site.Data.wishlist.items }}
 <form id="filters" hidden><label>Category<select id="category"><option value="">All categories</option>{{ range sort (uniq (apply $items "index" "." "category")) }}<option>{{ . }}</option>{{ end }}</select></label>

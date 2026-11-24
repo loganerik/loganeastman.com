@@ -75,3 +75,25 @@ body:not(.compact) .grid {
 @media (max-width: 380px) {
   .compact .item-actions > * { padding-inline: .25rem; font-size: .75rem; }
 }
+
+.collections {display:flex;gap:clamp(.8rem,3vw,2.5rem);flex-wrap:wrap;border-bottom:1px solid var(--ink)}
+.collections a {padding:1rem 0 .8rem;text-decoration:none;font-weight:700;font-size:clamp(.8rem,2vw,1rem)}
+.collections a[aria-current] {box-shadow:inset 0 -3px currentColor}
+header .list-home {font:inherit;letter-spacing:inherit}
+.picks {max-width:54rem;margin:2.5rem auto 5rem}
+.picks > h2 {font-size:clamp(2rem,5vw,3.5rem);letter-spacing:-.055em;line-height:1}
+.picks-intro {margin:.65rem 0 1.75rem;line-height:1.45}
+.pick {display:grid;grid-template-columns:minmax(80px,23%) 1fr;gap:clamp(15px,3vw,36px);border-top:1px solid var(--line);padding:1.4rem 0;align-items:start}
+.pick-photo {display:block;aspect-ratio:1;background:#efefec}
+.pick-photo img {width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+.pick-label {font: .8rem/1.4 ui-monospace,monospace;color:#484943}
+.pick h3 {font-size:clamp(1.2rem,3vw,2rem);letter-spacing:-.04em;line-height:1.1;margin:.35rem 0 .55rem}
+.pick h3 a {text-decoration-thickness:1px}
+.pick-note {max-width:52ch;line-height:1.5}
+.like {margin-top:.9rem}
+.like button {min-height:38px;padding:.5rem .75rem;background:#111;color:white;font-weight:700;font-size:.83rem}
+.like-form {display:flex;gap:.5rem;align-items:end;flex-wrap:wrap}
+.like-form label {display:grid;gap:.2rem;font-size:.85rem}
+.like-form input {border:1px solid var(--line);font:inherit;padding:.6rem;max-width:100%;width:12rem;box-sizing:border-box}
+.like .like-cancel {background:transparent;color:var(--ink);text-decoration:underline}
+.like-status:not(:empty) {margin-top:.4rem;font-size:.9rem}

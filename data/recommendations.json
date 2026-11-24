@@ -1,0 +1,43 @@
+{
+  "interested": [
+    {
+      "name": "Tekla",
+      "label": "Home · Textiles",
+      "note": "Start with the striped terry. The little washcloth gets the same treatment as the full-size bath towel.",
+      "url": "https://teklafabrics.com/product/terry-towel-coastal-stripes",
+      "image": "https://afurastore.com/cdn/shop/files/tekla-towel-coastal-blue-stripes-1.jpg?width=600"
+    },
+    {
+      "name": "David Zwirner Books",
+      "label": "Art · Publisher",
+      "note": "A gallery bookshop worth browsing even when you haven’t seen the exhibition. Start with an artist you know and see who’s on the shelf beside them.",
+      "url": "https://www.davidzwirner.com/collect/david-zwirner-books",
+      "image": "https://cdn.sanity.io/images/juzvn5an/release-adp/67426c4cd444d18cda1daa2649453b3c5c3e7e61-3000x2250.jpg?w=600"
+    },
+    {
+      "name": "Autumn Sonata",
+      "label": "Home · Textiles",
+      "note": "The Karin towel caught my eye. Its brown-and-cream pattern looks a little different on each side.",
+      "url": "https://autumnsonata.co/products/karin-bath-towel",
+      "image": "https://thefinestore.com/cdn/shop/products/autumn_sonata_karin_bath_towel_walnut_cream-1.png?v=1661262883&width=540"
+    }
+  ],
+  "gifts": [
+    {
+      "id": "john-derian-watercolors",
+      "name": "Choosing Keeping for John Derian Watercolor Set",
+      "label": "Art supplies · John Derian",
+      "note": "For the friend who keeps a sketchbook. The colors come from a boy’s watercolor study from 1912, down to the palette tucked inside the paper box.",
+      "url": "https://www.johnderian.com/products/choosing-keeping-for-john-derian-watercolor-set",
+      "image": "https://www.johnderian.com/cdn/shop/files/1_John_Derian_Watercolor.png?v=1790947891&width=600"
+    },
+    {
+      "id": "history-of-pictures",
+      "name": "A History of Pictures for Children",
+      "label": "Books · Thames & Hudson",
+      "note": "For a kid who draws and the grown-up who draws with them. David Hockney and Martin Gayford talk their way from cave walls to computer screens, with illustrations by Rose Blake.",
+      "url": "https://www.thamesandhudson.com/products/a-history-of-pictures-for-children",
+      "image": "https://www.thetoyfolks.com/cdn/shop/files/NewProject_85_f0dd26eb-4ee6-4058-9605-deb0e6d8f19a.png?v=1775596738&width=600"
+    }
+  ]
+}
