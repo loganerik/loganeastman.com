@@ -60,7 +60,6 @@ share.onclick = async () => {
 
 
 const views = document.querySelector('.views');
-views.hidden = false;
 
 function applyView() {
   const params = new URLSearchParams(location.search);
