@@ -36,7 +36,7 @@ The more "context" I give to Claude Duet, Grok Bot, Muse, and a Dot I named Leo,
 
 ## Jensen Huang is back!
 
-Yeah, well so is measles. 
+### Yeah, well so is measles. 
 
 Also considered: 
 
@@ -46,7 +46,7 @@ Also considered:
 
 ## The theme of NYT DealBook
 
-> **SORKIN:** Here is a description of reality. Is that actually reality and do you mean what everyone knows you mean? 
+> **ANDREW ROSS SORKIN:** Here is a description of reality. Is that actually reality and do you mean what everyone knows you mean? 
 >
 > **GUEST:**  Bleep borp beep. 
 
