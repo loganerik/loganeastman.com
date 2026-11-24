@@ -36,8 +36,8 @@ Yeah, well so is measles.
 
 Also considered: 
 
-* Johnny Depp is back! 
-* Cliff Booth is back!
+* Johnny Depp
+* Cliff Booth
 * Dems in Congress!
 * The FOCKERS!
 
