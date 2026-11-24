@@ -54,23 +54,23 @@
   });
   CMS.registerEditorComponent({
     id: 'figure', label: 'Figure (image)',
-    hint: 'An image within the article: framed in gold or plain, with optional caption and optional green duotone. The Cover image is set separately above Body.',
+    hint: 'An image within the article: framed in gold or plain, with optional caption and optional duotone in the column’s Accent colour. The Cover image is set separately above Body.',
     fields: [
       { name: 'src', label: 'Image', widget: 'image', media_folder: '', public_folder: '', hint: 'Upload or choose a JPG, PNG, or WebP for this passage. Keep the image beside this entry so the site can resize it.' },
       { name: 'alt', label: 'Alt text', widget: 'string', hint: 'Describe what the image conveys. Screen readers use this text; the caption is a separate visible note.' },
       { name: 'caption', label: 'Caption', widget: 'string', required: false, hint: 'Optional context or photo credit, displayed below the image. Markdown links and emphasis are supported.' },
       { name: 'frame', label: 'Gold frame', widget: 'boolean', default: true, required: false, hint: 'On: the site’s thin gold frame. Off: the image sits plain on the page.' },
-      { name: 'duotone', label: 'Duotone', widget: 'boolean', default: false, required: false, hint: 'Turn on for the site’s green-toned image treatment. Works with or without the frame.' },
+      { name: 'duotone', label: 'Duotone', widget: 'select', default: 'follow', required: false, options: [{ label: 'Follow the column setting', value: 'follow' }, { label: 'On', value: 'on' }, { label: 'Off', value: 'off' }], hint: 'Tint this picture in the column’s Accent colour (green unless Accent is set). Follow uses Cover → Duotone for the whole column; On or Off decides for this picture alone.' },
     ],
     pattern: /^{{< figure src="((?:\\.|[^"\\])*)"(?: alt="((?:\\.|[^"\\])*)")?(?: caption="((?:\\.|[^"\\])*)")?(?: duotone="(true|false)")?(?: frame="(true|false)")? >}}$/m,
-    fromBlock: match => ({ src: readAttribute(match[1]), alt: readAttribute(match[2]), caption: readAttribute(match[3]), duotone: match[4] === 'true', frame: match[5] !== 'false' }),
-    toBlock: data => `{{< figure src=${quoteAttribute(data.src)} alt=${quoteAttribute(data.alt)}${data.caption ? ` caption=${quoteAttribute(data.caption)}` : ''}${data.duotone ? ' duotone="true"' : ''}${data.frame === false ? ' frame="false"' : ''} >}}`,
+    fromBlock: match => ({ src: readAttribute(match[1]), alt: readAttribute(match[2]), caption: readAttribute(match[3]), duotone: match[4] === 'true' ? 'on' : match[4] === 'false' ? 'off' : 'follow', frame: match[5] !== 'false' }),
+    toBlock: data => `{{< figure src=${quoteAttribute(data.src)} alt=${quoteAttribute(data.alt)}${data.caption ? ` caption=${quoteAttribute(data.caption)}` : ''}${data.duotone === 'on' || data.duotone === true ? ' duotone="true"' : data.duotone === 'off' ? ' duotone="false"' : ''}${data.frame === false ? ' frame="false"' : ''} >}}`,
     toPreview: (data, getAsset) => {
       const src0 = field(data, 'src');
       let src = src0 ? String(src0) : '';
       if (src && typeof getAsset === 'function') { try { const a = getAsset(src); if (a) src = a.toString(); } catch (e) {} }
       const plain = field(data, 'frame') === false ? ' th-figure--plain' : '';
-      const duo = field(data, 'duotone') ? 'th-duotone' : '';
+      const d = field(data, 'duotone'); const duo = (d === 'on' || d === true) ? 'th-duotone' : '';
       const caption = field(data, 'caption');
       return `<figure class="th-figure${plain}">${src ? `<img class="${duo}" src="${escapeHTML(src)}" alt="${escapeHTML(field(data, 'alt'))}">` : '<div style="padding:2em;text-align:center;color:#6a5346">Choose an image</div>'}${caption ? `<figcaption>${escapeHTML(caption)}</figcaption>` : ''}</figure>`;
     },

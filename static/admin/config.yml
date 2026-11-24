@@ -77,7 +77,7 @@ collections:
         widget: object
         required: false
         collapsed: true
-        hint: "Optional cover settings. Pattern and Accent control the generated artwork; Image adds a featured photo to the homepage and column. Open Writing guide for examples."
+        hint: "Optional. Pattern and Accent style this column's card on the homepage and archive whether or not it has a photo; left blank, each column automatically gets a different pattern and palette from the one before it. Image adds a featured photo. Open Writing guide for examples."
         fields:
           - label: Pattern
             name: style
@@ -111,7 +111,7 @@ collections:
             widget: boolean
             required: false
             default: false
-            hint: "Covers are black and white by default. Duotone tints the cover, and the featured photo at the top of the column, in the column's Accent colour instead (green by default; rose, jade, brown or olive when Accent is set)."
+            hint: "Covers are black and white by default. Duotone tints the cover and every picture in this column (featured photo, Figures, and plain images in the Body) in the column's Accent colour (green by default; rose, jade, brown or olive when Accent is set). A Figure block can still turn duotone on or off for one picture."
           - label: Show at top of column
             name: hero
             widget: boolean

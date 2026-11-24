@@ -11,14 +11,26 @@
 {{- $yr := $p.Date.Year -}}
 {{- $mo := int $p.Date.Month -}}
 {{- $dy := $p.Date.Day -}}
-{{- $styleSeed := mod (add (add $yd (mul $yr 17)) $tl) (len $styles) -}}
-{{- $accentSeed := mod (add (add (mul $yd 7) $mo) (add $dl (mul $tl 3))) (len $accents) -}}
+{{- /* Auto style/accent rotate by the column's position in date order (oldest = 0), so
+       consecutive columns never share a pattern or palette. If the previous column pinned
+       the same value by hand, step past it. Front matter overrides always win. */ -}}
+{{- $cols := (where site.RegularPages "Section" "columns").ByDate -}}
+{{- $idx := 0 -}}
+{{- range $i, $e := $cols }}{{ if eq $e.RelPermalink $p.RelPermalink }}{{ $idx = $i }}{{ end }}{{ end -}}
+{{- $prevCover := dict -}}
+{{- if gt $idx 0 }}{{ $prevCover = (index $cols (sub $idx 1)).Params.cover | default dict }}{{ end -}}
 {{- $variant := mod (add $dy (mul $tl 5)) 3 -}}
 {{- $motif := mod (add (add $yd $yr) $dl) 3 -}}
 {{- $style := $cover.style | default "" -}}
-{{- if not (in $styles $style) }}{{ $style = index $styles $styleSeed }}{{ end -}}
+{{- if not (in $styles $style) -}}
+  {{- $style = index $styles (mod $idx (len $styles)) -}}
+  {{- if eq $style ($prevCover.style | default "") }}{{ $style = index $styles (mod (add $idx 1) (len $styles)) }}{{ end -}}
+{{- end -}}
 {{- $accent := $cover.accent | default "" -}}
-{{- if not (in $accents $accent) }}{{ $accent = index $accents $accentSeed }}{{ end -}}
+{{- if not (in $accents $accent) -}}
+  {{- $accent = index $accents (mod $idx (len $accents)) -}}
+  {{- if eq $accent ($prevCover.accent | default "") }}{{ $accent = index $accents (mod (add $idx 1) (len $accents)) }}{{ end -}}
+{{- end -}}
 {{- $inks := dict "sage" "#39745b" "rose" "#bc7f82" "jade" "#39847a" "brown" "#8d6e58" "olive" "#768b60" -}}
 {{- $tints := dict "sage" "#edf3e8" "rose" "#f6ede9" "jade" "#e9f2ee" "brown" "#f3efe6" "olive" "#eff2e6" -}}
 {{- $deeps := dict "sage" "#214634" "rose" "#7e4a50" "jade" "#1f4f48" "brown" "#52392c" "olive" "#445335" -}}
