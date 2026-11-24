@@ -1,6 +1,20 @@
 {
   "items": [
     {
+      "id": "ee58b917-1e99-435a-aede-7719b2676f7e",
+      "name": "Duo Biotic Toothpaste",
+      "url": "https://evenmouth.com/products/duo-biotic-toothpaste",
+      "image": "https://cdn.shopify.com/s/files/1/0648/9748/2887/files/PDP_Toothpaste_Image_1_1.png?v=1793121837",
+      "note": "Mint toothpaste, available individually or in multipacks.",
+      "brand": "Evenmouth",
+      "category": "Lifestyle & Skincare",
+      "details": "1 Tube",
+      "type": "Toothpaste",
+      "label": "Oral care · Evenmouth",
+      "price": 18,
+      "dateAdded": "2026-11-24"
+    },
+    {
       "id": "autumn-sonata-karin-bath-towel",
       "name": "Karin Bath Towel",
       "brand": "Autumn Sonata",
