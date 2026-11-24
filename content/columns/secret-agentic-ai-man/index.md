@@ -36,7 +36,7 @@ The more "context" I give to Claude Duet, Grok Bot, Muse, and a Dot I named Leo,
 
 ## Jensen Huang is back!
 
-Yeah, well so is measles. 
+### Yeah, well so is measles.
 
 Also considered: 
 
@@ -46,7 +46,7 @@ Also considered:
 
 ## The theme of NYT DealBook
 
-> **SORKIN:** Here is a description of reality. Is that actually reality and do you mean what everyone knows you mean? 
+> **ANDREW ROSS SORKIN:** Here is a description of reality. Is that actually reality and do you mean what everyone knows you mean? 
 >
 > **GUEST:**  Bleep borp beep. 
 
@@ -54,4 +54,4 @@ I only watched [Mamdani](https://www.nytimes.com/2026/11/22/business/dealbook/zo
 
 ## If I was producing, not stewarding Bond
 
-Title song by DJ John Summit (ft. Slayyyter). Main titles by Beeple. Tilly Norwood as M. Q would be an off-gridder with a tortured relationship with the Crown -- some British knock-off Mr. Beast. Bond girl would be Millie Bobby Brown. There’d be an Enola Holmes joke. A consortium of villains from every sphere would be using somewhere in Nigeria as a testing ground for “a world without work and death.” Meghan Markle would play one. And yes, she’d do it. Of course she’d do it. **The twist**: everyone in the test is very happy and nothing is wrong with it. It’s perfect. Except it’s uncanny. Call it *Rather Dark Innit*. Just kidding. Maybe *Dead or Don’t Die*.
+Title song by DJ John Summit (ft. Slayyyter). Main titles by Beeple. Tilly Norwood as M. Q would be an off-gridder with a tortured relationship with the Crown -- some British knock-off Mr. Beast. Bond girl would be Millie Bobby Brown. There’d be an Enola Holmes joke. A consortium of villains from every sphere would be using somewhere in Nigeria as a testing ground for “a world without work and death.” Meghan Markle would play one. And yes, she’d do it. Of course she’d do it. **The twist**: everyone in the test is very happy and nothing is wrong with it. It’s perfect. Except it’s uncanny. Call it *Rather Dark Innit*. Just kidding. Maybe *Dead or [Don’t Die](https://dontdie.bryanjohnson.com/)*.
