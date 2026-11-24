@@ -6,7 +6,7 @@
   {{ $older := after 5 $posts }}
   {{ if or (gt (len $tags) 0) (gt (len $older) 0) }}
   <section class="th-archive" aria-labelledby="th-archive-heading">
-    <div class="th-section-topline"><h2 id="th-archive-heading">From the archive</h2><a href="/archive/">Every edition ↗</a></div>
+    <div class="th-section-topline"><h2 id="th-archive-heading">From the archive</h2><a href="/archive/">Every column ↗</a></div>
     {{ with $tags }}
     <p class="th-tagline"><span class="th-topic-label">Explore</span>{{ range first 12 .ByCount }}<a class="th-topic-pill th-topic-pill--small" href="{{ .Page.RelPermalink }}">{{ .Page.LinkTitle }}</a>{{ end }}</p>
     {{ end }}
