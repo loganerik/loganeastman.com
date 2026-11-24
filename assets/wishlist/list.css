@@ -31,3 +31,16 @@ header h1 {font-size:clamp(2.25rem,4.6vw,4.75rem)}
 .item-note {margin:0 0 14px;color:#30312f;font-size:.92rem;line-height:1.45}
 .item-note strong {margin-right:.35em}
 .compact .item-note {grid-column:1/-1;margin:3px 0 0}
+
+.added {font-size:.8rem;color:#555;margin:0 0 .65rem}
+.gift-buttons,.gift-controls {display:flex;flex-wrap:wrap;gap:.45rem 1rem}
+.gift-buttons button {font-size:.88rem;text-align:left;text-decoration:underline;text-underline-offset:3px;padding:.4rem 0}
+.compact .gift-buttons,.compact .added {grid-column:1/-1}
+.compact .added {margin:0}
+#gift-dialog {width:min(26rem,90vw);border:1px solid var(--ink);padding:1.5rem;color:var(--ink);background:#fbfbf9}
+#gift-dialog::backdrop {background:#1117}
+#gift-dialog h2 {font-size:1.45rem;letter-spacing:-.035em}
+#gift-message {line-height:1.45;margin:1rem 0}
+.gift-controls {justify-content:flex-end}
+.gift-controls button {border:1px solid var(--ink);padding:.5rem .8rem}
+#gift-confirm {background:var(--ink);color:white}

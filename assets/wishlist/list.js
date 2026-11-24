@@ -15,6 +15,8 @@ function updateList() {
       if (!x || !y) return Number(!x) - Number(!y);
       return sort === 'asc' ? x - y : y - x;
     }
+    if (sort === 'newest') return b.dataset.added.localeCompare(a.dataset.added);
+    if (sort === 'oldest') return a.dataset.added.localeCompare(b.dataset.added);
     if (sort === 'name') return nameOf(a).localeCompare(nameOf(b));
     if (sort === 'brand' || sort === 'category') return a.dataset[sort].localeCompare(b.dataset[sort]);
     return 0;
@@ -61,10 +63,14 @@ share.onclick = async () => {
 
 const views = document.querySelector('.views');
 
+let manualSort = false;
+el('sort').addEventListener('change', () => { manualSort = true; });
+
 function applyView() {
   const params = new URLSearchParams(location.search);
   const compact = params.get('view') === 'list';
   const pictures = params.get('pictures') !== 'off';
+  if (!manualSort) el('sort').value = compact ? 'original' : 'newest';
   document.body.classList.toggle('compact', compact);
   document.body.classList.toggle('no-pictures', compact && !pictures);
   el('pictures-control').hidden = !compact;
@@ -92,3 +98,82 @@ el('pictures').onchange = () => {
 };
 window.addEventListener('popstate', applyView);
 applyView();
+
+const dialog = el('gift-dialog');
+const confirmGift = el('gift-confirm');
+const message = el('gift-message');
+let selectedGift;
+let operation;
+let requestNumber = 0;
+
+function hideGift() {
+  requestNumber++;
+  message.textContent = '';
+  selectedGift = null;
+}
+dialog.addEventListener('close', hideGift);
+el('gift-close').onclick = () => dialog.close();
+window.addEventListener('pagehide', () => { if (dialog.open) dialog.close(); });
+for (const controls of grid.querySelectorAll('.gift-buttons')) controls.hidden = false;
+
+grid.addEventListener('click', event => {
+  const button = event.target.closest('[data-gift]');
+  if (!button) return;
+  const card = button.closest('article');
+  selectedGift = card.dataset.id;
+  operation = button.dataset.gift;
+  el('gift-name').textContent = nameOf(card);
+  const checking = operation === 'check';
+  message.textContent = checking
+    ? 'Reveal whether someone has claimed this gift? Close to keep it a surprise.'
+    : 'Confirm you got this gift. Other buyers can check its status. Logan won’t be notified.';
+  confirmGift.textContent = checking ? 'Reveal' : 'Confirm claim';
+  confirmGift.hidden = false;
+  confirmGift.disabled = false;
+  dialog.showModal();
+});
+
+function giftKey(action) {
+  // A status check also works with browser storage disabled.
+  const storage = 'wishlist-buyer-key-v1';
+  if (action === 'check') {
+    try { return localStorage.getItem(storage) || crypto.randomUUID(); }
+    catch { return crypto.randomUUID(); }
+  }
+  const key = localStorage.getItem(storage) || crypto.randomUUID();
+  localStorage.setItem(storage, key);
+  return key;
+}
+
+confirmGift.onclick = async () => {
+  const ticket = ++requestNumber;
+  confirmGift.disabled = true;
+  message.textContent = 'One moment…';
+  try {
+    const response = await fetch('/api/wishlist', {
+      method: 'POST', cache: 'no-store', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: selectedGift, action: operation, key: giftKey(operation) })
+    });
+    if (!response.ok) throw new Error();
+    const { state } = await response.json();
+    if (ticket !== requestNumber || !dialog.open) return;
+    const messages = {
+      available: operation === 'release' ? 'Your claim was removed.' : 'No one has claimed this gift yet.',
+      taken: 'Someone has already claimed this gift.',
+      yours: 'You’ve claimed this gift.'
+    };
+    if (!Object.hasOwn(messages, state)) throw new Error();
+    message.textContent = messages[state];
+    confirmGift.hidden = state !== 'yours';
+    if (state === 'yours') {
+      operation = 'release';
+      confirmGift.textContent = 'Undo my claim';
+    }
+  } catch {
+    if (ticket !== requestNumber || !dialog.open) return;
+    message.textContent = 'Couldn’t confirm the gift status. Please try again later.';
+    confirmGift.textContent = 'Try again';
+  } finally {
+    if (ticket === requestNumber) confirmGift.disabled = false;
+  }
+};
