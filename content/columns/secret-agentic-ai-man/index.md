@@ -1,7 +1,7 @@
 ---
 title: Secret Agentic Man
 date: 2026-11-24T09:00:00-08:00
-draft: true
+draft: false
 categories:
   - AI
   - Film
