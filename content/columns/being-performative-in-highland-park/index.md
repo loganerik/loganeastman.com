@@ -30,7 +30,7 @@ At any rate, a column details a promising new treatment for pancreatic cancer.
 
 What's the world coming to when you can't find a newspaper to read? Or that, socially, you're damned if you do and damned if you don't?
 
-{{< figure src="ft-weekend.jpg" alt="" duotone="true" >}}
+![](ft-weekend.jpg)
 
 ## Managed decline
 
