@@ -86,7 +86,8 @@ function findItem(predicate) {
 }
 async function lookUp() {
   const sequence=++previewSequence;
-  const url=address.value.trim();
+  const pasted=address.value.trim();
+  const url=/^(?:[a-z0-9-]+\.)+[a-z]{2,}(?:[/?#]|$)/i.test(pasted)?'https://'+pasted:pasted;
   if (!valid(url)) { message('Enter a web address starting with https:// or http://.'); return; }
   const match=findItem(item=>key(item.url)===key(url));
   entry.hidden=true;
