@@ -89,17 +89,23 @@ async function lookUp() {
   const url=address.value.trim();
   if (!valid(url)) { message('Enter a web address starting with https:// or http://.'); return; }
   const match=findItem(item=>key(item.url)===key(url));
-  if (match) {
-    show(match.group,match.item);
-    message('Already on '+groups[match.group]+'. Edit the entry or choose a different list.');
-    return;
-  }
   entry.hidden=true;
-  message('Looking up the title and image…');
+  message('Looking up item details…');
   const data=await request({action:'preview',url});
   if (sequence!==previewSequence) return;
-  show('interested',{url,name:data.name || new URL(url).hostname.replace(/^www\./,''),image:data.image,brand:data.brand});
-  message(data.name?'Review the details and choose a list.':'Review the title and add an image if you like.');
+  const item={...match?.item,url:match?.item.url || url};
+  const added=[];
+  for (const field of fields) {
+    if ((item[field]==null || item[field]==='') && data[field]!==undefined && data[field]!=='') {
+      item[field]=data[field];
+      added.push(field);
+    }
+  }
+  item.name ||= new URL(url).hostname.replace(/^www\./,'');
+  show(match?.group || 'interested',item);
+  const prefix=match?'Already on '+groups[match.group]+'. ':'';
+  message(prefix+(added.length?'Filled in '+added.join(', ')+'. Review before saving.':match?'Showing your saved details.':'The shop didn’t provide readable details. You can enter them here.'));
+
 }
 lookup.onsubmit=event=>{event.preventDefault();lookUp().catch(e=>message(e.message));};
 address.oninput=()=>{previewSequence++;entry.hidden=true;};
