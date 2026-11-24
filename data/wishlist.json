@@ -1,6 +1,19 @@
 {
   "items": [
     {
+      "id": "homonoid-cairo-smith-paperback",
+      "name": "Homonoid",
+      "brand": "Askari Productions",
+      "category": "Books & Magazines",
+      "type": "Books",
+      "price": null,
+      "note": "",
+      "url": "https://a.co/d/09t61LyA",
+      "image": "https://images.squarespace-cdn.com/content/v1/628aab55592584625b259700/9f193c3f-6e09-42c7-8496-2a2f79b1b454/Homonoid+Kindle+Cover+V2.jpg?format=500w",
+      "details": "Cairo Smith · Paperback",
+      "dateAdded": "2026-11-24"
+    },
+    {
       "id": "cf57b793-3ca4-4ba6-8f01-d6ab65cc33a1",
       "name": "Dash Stripe Spiral Green and Ecru",
       "url": "https://florespaper.com/products/dash-stripe-spiral-green-and-ecru",
