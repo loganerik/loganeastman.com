@@ -111,7 +111,7 @@ collections:
             widget: boolean
             required: false
             default: false
-            hint: "Covers are black and white by default. Duotone tints the cover and every picture in this column (featured photo, Figures, and plain images in the Body) in the column's Accent colour (green by default; rose, jade, brown or olive when Accent is set). A Figure block can still turn duotone on or off for one picture."
+            hint: "Homepage and archive covers are always black and white with the Accent band and pattern. Duotone tints that cover, and the featured photo if it is shown at the top of the column, in the Accent colour instead (green by default; rose, jade, brown or olive when Accent is set). Pictures in the Body are never affected: they show as is unless a Figure block has its own Duotone switched on."
           - label: Show at top of column
             name: hero
             widget: boolean

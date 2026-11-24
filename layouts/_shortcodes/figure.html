@@ -2,9 +2,8 @@
        frame defaults to true (gold frame); frame="false" shows the image plain. */ -}}
 {{- $src := .Get "src" -}}
 {{- $r := .Page.Resources.GetMatch $src -}}
-{{- /* duotone: explicit "true"/"false" on the figure wins; otherwise follow the column's Cover → Duotone. */ -}}
-{{- $duo := .Page.Params.cover.duotone | default false -}}
-{{- with .Get "duotone" }}{{ $duo = eq . "true" }}{{ end -}}
+{{- /* Body figures are regular unless duotone="true" (tinted in the column's Accent). */ -}}
+{{- $duo := eq (.Get "duotone" | default "false") "true" -}}
 {{- $plain := eq (.Get "frame" | default "true") "false" -}}
 <figure class="th-figure{{ if $plain }} th-figure--plain{{ end }}{{ if .Get "class" }} {{ .Get "class" }}{{ end }}">
   {{- with $r -}}

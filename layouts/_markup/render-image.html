@@ -1,8 +1,8 @@
 {{- /* Markdown images: ![alt](photo.jpg "caption") get the gold frame.
        Bundle resources are resized; external/static URLs pass through. */ -}}
 {{- $r := .Page.Resources.GetMatch .Destination -}}
-{{- /* Duotone when the column's Cover → Duotone is on, or per image via {class="duotone"}. */ -}}
-{{- $duo := or (in (.Attributes.class | default "") "duotone") (.Page.Params.cover.duotone | default false) -}}
+{{- /* Body images are regular. Opt one in with ![alt](photo.jpg){class="duotone"} (tinted in the column's Accent). */ -}}
+{{- $duo := in (.Attributes.class | default "") "duotone" -}}
 <figure class="th-figure">
   {{- with $r -}}
     {{- $large := .Resize "1400x webp q85" -}}{{- $small := .Resize "800x webp q85" -}}
