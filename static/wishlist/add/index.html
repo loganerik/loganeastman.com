@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>Add to Logan’s List</title><link rel="stylesheet" href="./editor.css"><script defer src="./editor.js?v=lookup-3"></script></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>Add to Logan’s List</title><link rel="stylesheet" href="./editor.css"><script defer src="./editor.js?v=lookup-4"></script></head>
 <body><main><header><a href="/wishlist/">Logan’s List</a><button id="logout" hidden>Sign out</button></header>
 <h1>List editor</h1>
 <p id="message" role="status">Opening editor…</p>
@@ -7,6 +7,7 @@
 <section id="editor" hidden>
 <label>Saved items<select id="saved"><option value="">New entry</option></select></label>
 <form id="lookup"><label>Shop or product link<input type="text" inputmode="url" autocapitalize="none" spellcheck="false" name="url" required placeholder="https://"></label><button>Look up link</button></form>
+<div id="alternate" hidden><p>Try a second source by sharing this link with Microlink.</p><button id="alternateLookup" type="button">Look up with Microlink</button></div>
 <form id="entry" hidden><label>List<select name="group"><option value="interested">Interested</option><option value="wishlist">Wishlist</option><option value="gifts">Gifts for You</option></select></label>
 <label>Title<input name="name" maxlength="300" required></label>
 <label>Note<textarea name="note" rows="2" maxlength="3000"></textarea></label>

@@ -84,6 +84,47 @@ function findItem(predicate) {
     if (item) return {group,item};
   }
 }
+function isHostname(name,url) {
+  return String(name || '').toLowerCase().replace(/^www\./,'')===new URL(url).hostname.replace(/^www\./,'');
+}
+let references;
+async function referenceFields(value) {
+  try {
+    references ||= fetch('./reference-previews.json?v=1').then(r=>{if(!r.ok) throw new Error(); return r.json();});
+    const catalog=await references;
+    const url=new URL(value);
+    const variant=url.searchParams.get('variant');
+    url.search='';
+    url.hash='';
+    if (variant) url.searchParams.set('variant',variant);
+    return catalog[key(url.href)] || {};
+  } catch {references=null;return {};}
+}
+byId('alternateLookup').onclick=async()=>{
+  const sequence=previewSequence;
+  const url=currentUrl;
+  const button=byId('alternateLookup');
+  button.disabled=true;
+  message('Checking Microlink…');
+  try {
+    const endpoint=new URL('https://api.microlink.io/');
+    endpoint.searchParams.set('url',url);
+    const response=await fetch(endpoint,{credentials:'omit',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(20000)});
+    if (!response.ok) throw new Error();
+    const {data}=await response.json();
+    if (sequence!==previewSequence) return;
+    if (!data?.title) throw new Error();
+    const values={name:data.title,brand:data.publisher,label:data.publisher,image:data.image?.url || data.logo?.url,
+      note:data.description ? 'From the shop: '+data.description.slice(0,320) : ''};
+    for (const [field,value] of Object.entries(values)) {
+      if (value && (!f[field].value || (field==='name' && isHostname(f.name.value,url)))) f[field].value=value;
+    }
+    displayPhoto();
+    byId('alternate').hidden=true;
+    message('Loaded the link preview. Review the details before saving.');
+  } catch {if(sequence===previewSequence) message('The second source could not load this link. You can still enter the details here.');}
+  finally {button.disabled=false;}
+};
 async function lookUp() {
   const sequence=++previewSequence;
   const pasted=address.value.trim();
@@ -92,26 +133,38 @@ async function lookUp() {
   const match=findItem(item=>key(item.url)===key(url));
   entry.hidden=true;
   message('Looking up item details…');
-  const data=await request({action:'preview',url});
+  byId('alternate').hidden=true;
+  let live={};
+  try {live=await request({action:'preview',url});}
+  catch(e) {if (!byId('login').hidden) throw e;}
+  if (isHostname(live.name,url)) delete live.name;
+  const reference=live.name && live.image && live.price ? {} : await referenceFields(url);
   if (sequence!==previewSequence) return;
   const item={...match?.item,url:match?.item.url || url};
   const added=[];
+  const cached=[];
   for (const field of fields) {
-    if ((item[field]==null || item[field]==='') && data[field]!==undefined && data[field]!=='') {
-      item[field]=data[field];
+    const value=live[field] || reference[field];
+    if (value && (!item[field] || (field==='name' && isHostname(item.name,url)))) {
+      item[field]=value;
       added.push(field);
+      if (!live[field]) cached.push(field);
     }
   }
-  item.name ||= new URL(url).hostname.replace(/^www\./,'');
   show(match?.group || 'interested',item);
+  byId('alternate').hidden=Boolean(item.name && !isHostname(item.name,url) && item.image);
   const prefix=match?'Already on '+groups[match.group]+'. ':'';
-  message(prefix+(added.length?'Filled in '+added.join(', ')+'. Review before saving.':match?'Showing your saved details.':'The shop didn’t provide readable details. You can enter them here.'));
+  if (cached.length) message(prefix+'Loaded saved shop details. '+(item.price?'Price on file: $'+item.price+'. ':'')+'Review before saving.');
+  else if (added.length) message(prefix+'Filled in '+added.join(', ')+'. Review before saving.');
+  else if (byId('alternate').hidden) message(prefix+'Showing your saved details.');
+  else message(prefix+'The shop lookup returned incomplete details. Try the second source below or enter them yourself.');
 
 }
 lookup.onsubmit=event=>{event.preventDefault();lookUp().catch(e=>message(e.message));};
-address.oninput=()=>{previewSequence++;entry.hidden=true;};
+address.oninput=()=>{previewSequence++;entry.hidden=true;byId('alternate').hidden=true;};
 saved.onchange=async()=>{
   const id=saved.value;
+  byId('alternate').hidden=true;
   previewSequence++;
   entry.hidden=true;
   try {
