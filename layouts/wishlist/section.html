@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Logan’s Wishlist · Christmas 2026</title>
+<meta name="description" content="{{ .Description }}"><meta name="robots" content="noindex">
+<link rel="icon" href="/tryhard/favicon.svg"><link rel="stylesheet" href="/wishlist/list.css">
+<script src="/wishlist/list.js" defer></script>
+</head>
+<body>
+<header><a href="/">Logan Eastman</a><button id="share" hidden>Share list</button></header>
+<main>
+<div class="mast"><div><p class="season">Christmas 2026</p><h1>The Wishlist<span>.</span></h1></div>
+<p class="intro">A Christmas list for friends &amp; family. Open “Gift details” to check if someone’s already getting it.</p></div>
+{{ $items := site.Data.wishlist.items }}
+<form id="filters" hidden><label>Category<select id="category"><option value="">All categories</option>{{ range sort (uniq (apply $items "index" "." "category")) }}<option>{{ . }}</option>{{ end }}</select></label>
+<label id="type-control" hidden>Apparel type<select id="type"><option value="">All apparel</option>{{ range sort (uniq (apply (where $items "category" "Apparel") "index" "." "type")) }}<option>{{ . }}</option>{{ end }}</select></label>
+<label>Brand<select id="brand"><option value="">All brands</option>{{ range sort (uniq (apply $items "index" "." "brand")) }}<option>{{ . }}</option>{{ end }}</select></label>
+<label>Sort by<select id="sort"><option value="original">List order</option><option value="desc">Price: high to low</option><option value="asc">Price: low to high</option><option value="brand">Brand: A–Z</option><option value="category">Category: A–Z</option><option value="name">Item: A–Z</option></select></label>
+<output id="count" aria-live="polite">{{ len $items }} items</output></form>
+<details class="sizing"><summary>Logan’s clothing sizes</summary><p>Tops are usually Small, sometimes Medium. Pants are usually 28–29, sometimes 30. Follow the size on the item when one is listed.</p></details>
+<section class="grid" aria-label="Gift ideas">
+{{ range $i, $item := $items }}
+<article data-id="{{ .id }}" data-type="{{ .type }}" data-category="{{ .category }}" data-brand="{{ .brand }}" data-price="{{ with .price }}{{ . }}{{ end }}">
+<a class="photo" href="{{ .url }}" target="_blank" rel="noopener noreferrer" aria-label="Shop {{ .name }}"><img src="{{ .image }}" alt="{{ .name }}" {{ if gt $i 3 }}loading="lazy"{{ end }}></a>
+<div class="info"><div class="meta"><span>{{ .brand }}</span><span>{{ with .price }}{{ lang.FormatCurrency 2 "USD" . | replaceRE "\\.00$" "" }}{{ else }}Varies{{ end }}</span></div>
+<h2>{{ .name }}</h2><p class="note">{{ .note }}</p><div class="actions"><a href="{{ .url }}" target="_blank" rel="noopener noreferrer">{{ if .altUrl }}Shop FT{{ else }}Shop item{{ end }}</a>{{ with .altUrl }}<a href="{{ . }}" target="_blank" rel="noopener noreferrer">Shop WSJ</a>{{ end }}<button class="details" hidden>Gift details</button></div></div>
+</article>
+{{ end }}
+</section>
+<p id="empty" hidden>No gifts match these filters. <button id="reset">Clear filters</button></p>
+<noscript><p>Enable JavaScript to filter the list and check private gift details.</p></noscript>
+</main>
+<dialog aria-labelledby="gift-name"><button id="close" aria-label="Close gift details">×</button><p class="season">For gift buyers</p><h2 id="gift-name"></h2>
+<p id="status" role="status"></p><div class="dialog-actions"><button id="claim" hidden>I’m getting this</button><a id="email" hidden>Email someone privately</a><button id="release" hidden>Release this gift</button><button id="retry" hidden>Try again</button></div></dialog>
+</body></html>
