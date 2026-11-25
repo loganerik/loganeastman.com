@@ -1,6 +1,19 @@
 {
   "items": [
     {
+      "id": "finisterre-coho-sweatshirt-burnt-umber",
+      "name": "Men’s Coho Sweatshirt",
+      "brand": "Finisterre",
+      "category": "Apparel",
+      "type": "Sweatshirts",
+      "price": 90,
+      "note": "",
+      "url": "https://finisterre.com/en-us/products/mens-organic-cotton-coho-sweatshirt-burnt-umber?variant=56202855645568",
+      "image": "https://finisterre.com/cdn/shop/files/canada-ecoms-sweats-1.jpg?v=1754391593&width=640",
+      "details": "Burnt Umber · Size Medium",
+      "dateAdded": "2026-11-25"
+    },
+    {
       "id": "6c694541-fef3-4f1b-bdaf-22db248ed7a4",
       "name": "Classic Christmas Crime Stories",
       "url": "https://shop.nypl.org/collections/classic-books-pocket-editions/products/classic-christmas-crime-stories",
