@@ -1,19 +1,6 @@
 {
   "items": [
     {
-      "id": "lazar-nelio-biedermann-hardcover",
-      "name": "Lázár",
-      "brand": "Summit Books",
-      "category": "Books & Magazines",
-      "type": "Books",
-      "price": 28,
-      "note": "",
-      "url": "https://www.amazon.com/dp/1668200554?th=1",
-      "image": "https://d28hgpri8am2if.cloudfront.net/book_images/onix/cvr9781668200551/lazar-9781668200551_hr.jpg",
-      "details": "Nelio Biedermann · Hardcover",
-      "dateAdded": "2026-11-25"
-    },
-    {
       "id": "6c694541-fef3-4f1b-bdaf-22db248ed7a4",
       "name": "Classic Christmas Crime Stories",
       "url": "https://shop.nypl.org/collections/classic-books-pocket-editions/products/classic-christmas-crime-stories",
