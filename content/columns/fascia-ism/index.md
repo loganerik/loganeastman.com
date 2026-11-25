@@ -1,7 +1,7 @@
 ---
 title: Fascia-ism
 date: 2026-11-25T07:00:00-08:00
-draft: true
+draft: false
 categories:
   - Health
   - Food
