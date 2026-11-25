@@ -2,10 +2,21 @@
 title: Fascia-ism
 date: 2026-11-25T07:00:00-08:00
 draft: true
+categories:
+  - Health
+  - Food
+  - Trends
+tags:
+  - fascia
+  - exercise
+  - nutrition
 cover:
   duotone: false
-  hero: true
+  hero: false
   focus: smart
+  style: scallops
+  accent: brown
+  image: cosmos_715604422.webp
 ---
 {{< pullquote >}}
 The foot bone's connected to the... leg bone. The leg bone's connected to the... knee bone. The knee bone's connected to a... mysterious saran-wrap-like tissue that connects the entire body and is definitely the source of all your pain. 
