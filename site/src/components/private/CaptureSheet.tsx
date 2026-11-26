@@ -1,73 +1,94 @@
-// The small universal "+" : a bottom sheet on phones, a popover on desktop. Thought · Link · Piece · List · Add to list.
+// The small universal "+": one box for a thought, a link, or a photo. The agent files it; you say why.
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { api } from './api';
 
-type Mode = 'thought' | 'link' | 'piece' | 'list' | 'entry';
-export default function CaptureSheet({ preset }: { preset?: { mode?: Mode; list?: string; collection?: string } }) {
+type Intent = '' | 'writing' | 'feed' | 'list' | 'review';
+export default function CaptureSheet({ preset }: { preset?: { mode?: string; list?: string; collection?: string } }) {
   const dlg = useRef<HTMLDialogElement>(null);
-  const [mode, setMode] = useState<Mode>(preset?.mode ?? 'thought');
   const [text, setText] = useState('');
-  const [url, setUrl] = useState('');
-  const [why, setWhy] = useState('');
+  const [intent, setIntent] = useState<Intent>(preset?.mode === 'piece' ? 'writing' : preset?.mode === 'thought' ? 'feed' : preset?.mode === 'entry' || preset?.mode === 'list' ? 'list' : '');
+  const [people, setPeople] = useState('');
+  const [tags, setTags] = useState('');
   const [priv, setPriv] = useState(false);
+  const [photos, setPhotos] = useState<File[]>([]);
   const [status, setStatus] = useState('');
-  const [cfg, setCfg] = useState<{ collections: Array<{ key: string; title: string }>; listTypes: Array<{ key: string; title: string }> } | null>(null);
-  const [lists, setLists] = useState<Array<{ id: string; title: string | null; path: string }>>([]);
-  const [sel, setSel] = useState(preset?.list ?? preset?.collection ?? '');
-  const open = () => { dlg.current?.showModal(); if (!cfg) api('/api/config').then((c) => setCfg(c as never)).catch(() => {}); if (!lists.length) api<{ lists: typeof lists }>('/api/index/lists').then((d) => setLists(d.lists)).catch(() => {}); };
+  const [busy, setBusy] = useState(false);
+  const [lists, setLists] = useState<Array<{ title: string | null; path: string }>>([]);
+  const [list, setList] = useState(preset?.list ?? '');
+  const open = () => { dlg.current?.showModal(); setStatus(''); if (!lists.length) api<{ lists: typeof lists }>('/api/index/lists').then((d) => setLists(d.lists)).catch(() => {}); };
   useEffect(() => { const h = (e: KeyboardEvent) => { if (e.key === 'n' && (e.metaKey || e.ctrlKey) && e.shiftKey) { e.preventDefault(); open(); } }; addEventListener('keydown', h); return () => removeEventListener('keydown', h); }, []);
+
+  const parse = (raw: string) => {
+    // a trailing "@Sam #ceramics" line is private context, never public text
+    const lines = raw.trim().split('\n');
+    const last = lines[lines.length - 1] ?? '';
+    const ppl: string[] = people.split(',').map((s) => s.trim()).filter(Boolean);
+    const tg: string[] = tags.split(',').map((s) => s.trim().replace(/^#/, '')).filter(Boolean);
+    if (/^(\s*[@#][\w-]+)+\s*$/.test(last)) {
+      for (const m of last.matchAll(/([@#])([\w-]+)/g)) (m[1] === '@' ? ppl : tg).push(m[2]!);
+      lines.pop();
+    }
+    const body = lines.join('\n').trim();
+    const url = body.match(/https?:\/\/\S+/)?.[0] ?? '';
+    const why = url ? body.replace(url, '').trim() : body;
+    return { url, why, body, ppl, tg };
+  };
+
   const submit = async (e: Event) => {
     e.preventDefault();
-    setStatus('Saving…');
+    const { url, why, body, ppl, tg } = parse(text);
+    if (!body && !photos.length) return;
+    setBusy(true); setStatus('Saving…');
     try {
-      if (mode === 'thought') {
-        const r = await api<{ id: string }>('/api/records', { method: 'POST', body: JSON.stringify({ type: 'feed', frontmatter: { visibility: priv ? 'private' : 'public' }, body: text }) });
+      if (photos.length) {
+        for (const f of photos) {
+          const fd = new FormData(); fd.append('file', f); fd.append('title', why.slice(0, 80) || f.name.replace(/\.[^.]+$/, '')); fd.append('why', why); fd.append('visibility', priv ? 'private' : 'public');
+          const r = await fetch('/api/photos', { method: 'POST', body: fd, credentials: 'include' });
+          if (!r.ok) throw new Error((await r.json().catch(() => ({})) as { error?: string }).error ?? `${r.status}`);
+        }
+        setStatus(`${photos.length} photo${photos.length > 1 ? 's' : ''} saved. Approve ${photos.length > 1 ? 'them' : 'it'} for the wall from the editor.`);
+        setPhotos([]); setText('');
+      } else if (!url && intent === 'feed') {
+        await api('/api/records', { method: 'POST', body: JSON.stringify({ type: 'feed', frontmatter: { visibility: priv ? 'private' : 'public', tags: tg.map((t) => (priv ? t : `private/${t}`)) }, body }) });
         setStatus('Posted. Live in a couple of minutes.'); setText('');
-        void r;
-      } else if (mode === 'link') {
-        await api('/api/captures', { method: 'POST', body: JSON.stringify({ client_id: crypto.randomUUID(), url, why, visibility: priv ? 'private' : 'public', intent: sel && sel !== 'auto' ? 'list' : '', list_hint: sel && sel !== 'auto' ? sel : undefined }) });
-        setStatus('Saved to the inbox. The agent takes it from here.'); setUrl(''); setWhy('');
-      } else if (mode === 'piece') {
-        const r = await api<{ id: string }>('/api/records', { method: 'POST', body: JSON.stringify({ type: 'writing', frontmatter: { title: text || 'Untitled', collection: sel || undefined, visibility: priv ? 'private' : 'public' } }) });
-        location.href = `/private/edit/?id=${r.id}`;
-      } else if (mode === 'list') {
-        const r = await api<{ id: string }>('/api/records', { method: 'POST', body: JSON.stringify({ type: 'list', frontmatter: { title: text, list_type: sel || undefined, visibility: priv ? 'private' : 'public' } }) });
-        location.href = `/private/edit/?id=${r.id}`;
-      } else if (mode === 'entry') {
-        await api('/api/captures', { method: 'POST', body: JSON.stringify({ client_id: crypto.randomUUID(), url: url || undefined, text: !url ? text : undefined, why, intent: 'list', list_hint: sel || undefined, visibility: priv ? 'private' : 'public' }) });
-        setStatus('Queued for the list. The agent identifies it and files it.'); setUrl(''); setText(''); setWhy('');
+      } else {
+        await api('/api/captures', { method: 'POST', body: JSON.stringify({ client_id: crypto.randomUUID(), url: url || undefined, text: !url ? body : undefined, why, intent, list_hint: list || undefined, visibility: priv ? 'private' : 'public', people: ppl, tags: tg }) });
+        setStatus('Sent. The agent identifies it, gathers the facts, and files it; watch the inbox.'); setText(''); setPeople(''); setTags('');
       }
     } catch (x) { setStatus(`Not saved: ${(x as Error).message}`); }
+    finally { setBusy(false); }
   };
+
   return (
     <>
-      <button type="button" class="fab" aria-label="Add" title="Add (⌘⇧N)" onClick={open}>+</button>
+      <button type="button" class="fab" aria-label="Capture" title="Capture (⌘⇧N)" onClick={open}>+</button>
       <dialog ref={dlg} class="sheet" onClick={(e) => { if (e.target === dlg.current) dlg.current?.close(); }}>
         <form class="sheet__form" method="dialog" onSubmit={submit}>
-          <nav class="chips mono" aria-label="What to add">
-            {(['thought', 'link', 'entry', 'piece', 'list'] as Mode[]).map((m) => <button type="button" class={mode === m ? 'on' : ''} onClick={() => { setMode(m); setStatus(''); }}>{{ thought: 'Thought', link: 'Link', entry: 'Add to list', piece: 'New piece', list: 'New list' }[m]}</button>)}
-          </nav>
-          {mode === 'thought' && <textarea placeholder="A short thought…" value={text} onInput={(e) => setText((e.target as HTMLTextAreaElement).value)} rows={4} autofocus />}
-          {(mode === 'link' || mode === 'entry') && (<>
-            <input placeholder={mode === 'entry' ? 'Link, or a title' : 'Paste a link'} value={mode === 'entry' && !url ? text || url : url} onInput={(e) => { const v = (e.target as HTMLInputElement).value; if (/^https?:\/\//.test(v)) { setUrl(v); setText(''); } else { setText(v); setUrl(''); } }} inputMode="url" autofocus />
-            <input placeholder="Why I'm interested (one sentence)" value={why} onInput={(e) => setWhy((e.target as HTMLInputElement).value)} />
-            <select value={sel} onChange={(e) => setSel((e.target as HTMLSelectElement).value)} aria-label="List">
-              <option value="">{mode === 'entry' ? 'Pick a list' : 'Let the agent decide'}</option>
-              {lists.map((l) => <option value={l.path.split('/').pop()!}>{l.title ?? l.path}</option>)}
-            </select>
-          </>)}
-          {mode === 'piece' && (<>
-            <input placeholder="Title" value={text} onInput={(e) => setText((e.target as HTMLInputElement).value)} autofocus />
-            <select value={sel} onChange={(e) => setSel((e.target as HTMLSelectElement).value)} aria-label="Collection">{cfg?.collections.map((c) => <option value={c.key}>{c.title}</option>)}</select>
-          </>)}
-          {mode === 'list' && (<>
-            <input placeholder="List title" value={text} onInput={(e) => setText((e.target as HTMLInputElement).value)} autofocus />
-            <select value={sel} onChange={(e) => setSel((e.target as HTMLSelectElement).value)} aria-label="List type">{cfg?.listTypes.map((c) => <option value={c.key}>{c.title}</option>)}</select>
-          </>)}
+          <div class="sheet__head"><h2 class="sheet__title">Capture</h2><button type="button" class="sheet__close" aria-label="Close" onClick={() => dlg.current?.close()}>×</button></div>
+          <textarea class="sheet__box" placeholder="A thought, a link, a photo…" rows={5} value={text} onInput={(e) => setText((e.target as HTMLTextAreaElement).value)} autofocus
+            onPaste={(e) => { const files = [...(e.clipboardData?.files ?? [])].filter((f) => /^image\//.test(f.type)); if (files.length) { e.preventDefault(); setPhotos((p) => [...p, ...files]); } }} />
+          <div class="chips">
+            <label class="btn btn--soft"><input type="file" accept="image/*" multiple hidden onChange={(e) => { setPhotos((p) => [...p, ...[...((e.target as HTMLInputElement).files ?? [])]]); (e.target as HTMLInputElement).value = ''; }} />+ Photo</label>
+            {photos.map((f, i) => <span class="chip" key={i}>{f.name} <button type="button" class="sheet__x" aria-label="remove" onClick={() => setPhotos((p) => p.filter((_, j) => j !== i))}>×</button></span>)}
+          </div>
+          <p class="mono sheet__label">File as</p>
+          <div class="chips" role="radiogroup" aria-label="File as">
+            {([['', 'Auto'], ['writing', 'Writing'], ['feed', 'Feed'], ['list', 'List'], ['review', 'Review']] as Array<[Intent, string]>).map(([v, l]) => <button type="button" class="chip" aria-pressed={intent === v} onClick={() => setIntent(v)}>{l}</button>)}
+            {intent === 'list' && lists.length > 0 && <select class="sheet__select" value={list} onChange={(e) => setList((e.target as HTMLSelectElement).value)} aria-label="Which list"><option value="">Agent picks the list</option>{lists.map((l) => <option value={l.path.split('/').pop()!}>{l.title ?? l.path}</option>)}</select>}
+          </div>
+          <div class="rule-label sheet__rule"><span>Private context</span></div>
+          <div class="sheet__ctx">
+            <label><span class="mono">@ People</span><input value={people} onInput={(e) => setPeople((e.target as HTMLInputElement).value)} placeholder="Names, comma-separated" /></label>
+            <label><span class="mono"># Tags</span><input value={tags} onInput={(e) => setTags((e.target as HTMLInputElement).value)} placeholder="Subjects, comma-separated" /></label>
+          </div>
+          <p class="mono muted sheet__hint">You can also end your capture with a line like @Sam #ceramics. Neither appears on the public site.</p>
           <div class="sheet__row">
-            <label class="mono"><input type="checkbox" checked={priv} onChange={(e) => setPriv((e.target as HTMLInputElement).checked)} /> Private</label>
-            <span class="mono muted sheet__status">{status}</span>
-            <button class="btn btn--solid" type="submit">{mode === 'piece' || mode === 'list' ? 'Create' : 'Save'}</button>
+            <span class="seg" role="radiogroup" aria-label="Visibility">
+              <button type="button" class="seg__b" aria-pressed={!priv} onClick={() => setPriv(false)}>Public</button>
+              <button type="button" class="seg__b" aria-pressed={priv} onClick={() => setPriv(true)}>Private</button>
+            </span>
+            <span class="mono muted sheet__status">{status || (priv ? 'Stays private.' : 'Posts after the agent organizes it.')}</span>
+            <button class="btn btn--solid" type="submit" disabled={busy}>{photos.length ? 'Save photos' : intent === 'feed' && !/https?:\/\//.test(text) ? 'Post' : 'Send to AI'}</button>
           </div>
         </form>
       </dialog>

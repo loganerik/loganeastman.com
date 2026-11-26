@@ -1,7 +1,7 @@
 // The one write tool: turn a capture plus a decision into vault records, idempotently.
 import { z } from 'zod';
 import { defineTool, ToolError } from './registry';
-import { itemKind, newId, itemSlug, serializeNote, itemPath, listEntryPath, listPath, feedPath, reviewPath, writingPath, datedSlug, formatWikilink, normalizeTarget } from '@lem/vault-core';
+import { itemKind, newId, itemSlug, slugify, serializeNote, itemPath, listEntryPath, listPath, feedPath, reviewPath, writingPath, datedSlug, formatWikilink, normalizeTarget } from '@lem/vault-core';
 import { one, all, run, now, json } from '../db';
 import type { CaptureRow } from '../routes/captures';
 import { enrich, type Enriched } from '../processor/enrich';
@@ -57,6 +57,20 @@ export const captureOrganize = defineTool<{ capture_id: string; decision: Organi
     const ops: VaultOp[] = [];
     const result: OrganizeResult = { records: [], commit_oid: null, suggestions: [] };
     const why = capture.why.trim();
+    const privTags = json<string[]>(capture.tags_json ?? null, []).map((t) => `private/${slugify(t)}`);
+    const people = json<string[]>(capture.people_json ?? null, []);
+    const peopleRefs: Array<{ to: string; kind: string }> = [];
+    for (const name of people) {
+      const slug = slugify(name);
+      if (!slug) continue;
+      const path = `people/${slug}`;
+      if (!(await one(env.DB, 'SELECT 1 FROM records WHERE path = ?', path))) {
+        const pid = newId('person');
+        ops.push({ op: 'create', path: `${path}.md`, contents: serializeNote({ id: pid, type: 'person', name, visibility: 'private', created: t }, ''), ifAbsent: true });
+        await run(env.DB, 'INSERT OR IGNORE INTO records (id, path, type, kind, title, visibility, frontmatter_json, indexed_at) VALUES (?, ?, ?, NULL, ?, ?, ?, ?)', pid, path, 'person', name, 'private', JSON.stringify({ name }), t);
+      }
+      peopleRefs.push({ to: formatWikilink(path), kind: 'mention' });
+    }
 
     // ---- the item (reuse by identity, else create + enrich) ----
     let itemRef: { id: string; path: string; title: string; kind: string } | null = null;
@@ -83,7 +97,7 @@ export const captureOrganize = defineTool<{ capture_id: string; decision: Organi
           ...(decision.url && !enriched ? { url: decision.url, site_name: decision.site_name, og_title: decision.title, og_description: decision.description } : {}),
           ...(enriched?.keys ?? {}),
           artwork: { ...(enriched?.artwork.poster ? { poster: enriched.artwork.poster } : {}), ...(enriched?.artwork.logo ? { logo: enriched.artwork.logo } : {}), ...(enriched?.artwork.cover ? { cover: enriched.artwork.cover } : {}), ...(!enriched && decision.og_image ? { og: decision.og_image } : {}) },
-          tags: [], related: [], locked: [], created: t,
+          tags: privTags, related: peopleRefs, locked: [], created: t,
         };
         ops.push({ op: 'create', path: file, contents: serializeNote(fm, ''), ifAbsent: true });
         itemRef = { id, path, title, kind };
@@ -107,13 +121,13 @@ export const captureOrganize = defineTool<{ capture_id: string; decision: Organi
         }
         const entryPath = listEntryPath(listKey, itemRef.path.split('/').pop()!);
         const entryId = newId('entry');
-        ops.push({ op: 'create', path: entryPath, contents: serializeNote({ id: entryId, type: 'list-entry', list: formatWikilink(normalizeTarget(listFile)), item: formatWikilink(itemRef.path), added: day, state: 'active', visibility: lt?.private_default ? 'private' : visibility, capture: capture.id }, why), ifAbsent: true });
+        ops.push({ op: 'create', path: entryPath, contents: serializeNote({ id: entryId, type: 'list-entry', list: formatWikilink(normalizeTarget(listFile)), item: formatWikilink(itemRef.path), added: day, state: 'active', visibility: lt?.private_default ? 'private' : visibility, capture: capture.id, tags: privTags, related: peopleRefs }, why), ifAbsent: true });
         result.records.push({ id: entryId, path: entryPath, type: 'list-entry', created: true });
       } else if (f.target === 'feed') {
         const id = newId('feed');
         const path = feedPath(day, id);
         const body = why || capture.text || (capture.url ? capture.url : '');
-        const fm: Record<string, unknown> = { id, type: 'feed', date: t, visibility };
+        const fm: Record<string, unknown> = { id, type: 'feed', date: t, visibility, tags: privTags, related: peopleRefs };
         if (itemRef) fm.about = formatWikilink(itemRef.path);
         else if (capture.url) fm.link = capture.url;
         ops.push({ op: 'create', path, contents: serializeNote(fm, itemRef ? body : capture.url && body !== capture.url ? `${body}\n\n${capture.url}` : body), ifAbsent: true });

@@ -1,9 +1,9 @@
 /* Minimal Art Deco scrapbook on warm paper. Change these and the site changes with them. */
 :root {
   color-scheme: light;
-  --paper: #f4ecdf;
-  --paper-deep: #ebe1cf;
-  --paper-edge: #e3d6bf;
+  --paper: #f7f6f0;
+  --paper-deep: #efede4;
+  --paper-edge: #e4e1d4;
   --ink: #1a1a18;
   --ink-soft: #4a4843;
   --ink-faint: #8a857a;
@@ -12,8 +12,9 @@
   --pink: #ecd0c7;        /* fill only */
   --pink-ink: #9a5f52;    /* text-safe pink, 4.6:1 on paper */
   --on-dark: #f7efe2;
-  --rule: color-mix(in oklab, var(--ink) 30%, var(--paper));
-  --rule-soft: color-mix(in oklab, var(--ink) 16%, var(--paper));
+  --rule: color-mix(in oklab, var(--ink) 28%, var(--paper));
+  --rule-soft: color-mix(in oklab, var(--ink) 12%, var(--paper));
+  --pill-bg: #e4ebe3;
 
   --bg: var(--paper);
   --fg: var(--ink);

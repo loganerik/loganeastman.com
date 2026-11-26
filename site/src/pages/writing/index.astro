@@ -1,27 +1,64 @@
 ---
 import Section from '../../layouts/Section.astro';
-import SectionGrid from '../../components/section/SectionGrid.astro';
 import PieceCard from '../../components/section/PieceCard.astro';
+import OwnerOnly from '../../components/private/OwnerOnly.astro';
 import { index, writingIn } from '../../lib/content';
 import identity from '@theme/identity';
 const idx = await index();
 const collections = idx.config.collections.filter((c) => !identity.writing.rootCollections.includes(c.key));
+const all = collections.flatMap((c) => writingIn(idx, c.key).map((p) => ({ p, c }))).sort((a, b) => String(b.p.data.date).localeCompare(String(a.p.data.date)));
 ---
-<Section preset={{ mode: 'piece' }} title="Writing" description="Longer pieces, by collection." feeds={[{ title: 'Writing', href: '/writing/rss.xml' }]} action={{ label: 'New piece', href: '/private/new/?kind=writing' }}>
-  {collections.map((c) => {
-    const pieces = writingIn(idx, c.key);
-    return (
-      <section class="coll">
-        <div class="rule-label"><span><a href={`/writing/${c.key}/`}>{c.title}</a> · {pieces.length}</span></div>
-        {pieces.length === 0 ? <p class="muted">Nothing published yet.</p> : (
-          <SectionGrid variant={c.form === 'arch' ? 'arches' : 'covers'}>{pieces.slice(0, 6).map((p) => <li><PieceCard piece={p} form={c.form} /></li>)}</SectionGrid>
-        )}
-      </section>
-    );
-  })}
+<Section preset={{ mode: 'piece' }} title="Writing" description="Longer pieces, by collection." feeds={[{ title: 'Writing', href: '/writing/rss.xml' }]}>
+  <div class="chips writing__filters" slot="intro" data-filters>
+    <button type="button" class="chip" aria-pressed="true" data-filter="">All writing</button>
+    {collections.map((c) => <button type="button" class="chip" aria-pressed="false" data-filter={c.key}>{c.title}</button>)}
+  </div>
+  <OwnerOnly slot="action">
+    <a class="btn btn--soft" href="/private/new/?type=writing">New piece</a>
+    <a class="btn" href="/private/?tab=config">Manage collections</a>
+  </OwnerOnly>
+  {all.length === 0 && <p class="muted">Nothing published yet.</p>}
+  <ul class="writing__grid" data-pieces>
+    {all.map(({ p, c }) => <li data-collection={c.key}><PieceCard piece={p} form={c.form} kicker={c.title} /></li>)}
+  </ul>
+  <OwnerOnly>
+    <details class="drafts" data-drafts>
+      <summary class="mono">Private drafts <span data-drafts-count></span></summary>
+      <ul class="drafts__list" data-drafts-list></ul>
+    </details>
+  </OwnerOnly>
 </Section>
+<script>
+  const filters = document.querySelector('[data-filters]');
+  filters?.addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-filter]');
+    if (!b) return;
+    filters.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    const key = b.dataset.filter ?? '';
+    document.querySelectorAll<HTMLElement>('[data-pieces] > li').forEach((li) => { li.hidden = !!key && li.dataset.collection !== key; });
+  });
+  // owner: private drafts, loaded only once the owner gate has stamped the template
+  const load = async () => {
+    const box = document.querySelector<HTMLElement>('[data-drafts]');
+    if (!box) return;
+    const r = await fetch('/api/records?type=writing&status=draft&limit=50', { credentials: 'include' });
+    if (!r.ok) return;
+    const { records } = (await r.json()) as { records: Array<{ id: string; title: string | null; path: string; date: string | null }> };
+    const priv = await fetch('/api/records?type=writing&visibility=private&limit=50', { credentials: 'include' }).then((x) => (x.ok ? x.json() : { records: [] })) as { records: typeof records };
+    const seen = new Set<string>();
+    const list = [...records, ...priv.records].filter((x) => !seen.has(x.id) && seen.add(x.id));
+    box.querySelector('[data-drafts-count]')!.textContent = `(${list.length})`;
+    box.querySelector('[data-drafts-list]')!.innerHTML = list.map((x) => `<li><a href="/private/edit/?id=${x.id}">${(x.title ?? x.path).replace(/</g, '&lt;')}</a></li>`).join('') || '<li class="muted">None.</li>';
+    box.hidden = false;
+  };
+  if (document.documentElement.dataset.owner) load();
+  else new MutationObserver((_, o) => { if (document.documentElement.dataset.owner) { o.disconnect(); load(); } }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-owner'] });
+</script>
 <style>
-  .coll { margin-bottom: var(--space-6); }
-  .coll .grid { margin-top: var(--space-4); }
-  .rule-label a { text-decoration: none; }
+  .writing__filters { margin-top: var(--space-3); }
+  .writing__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-6) var(--space-5); }
+  @media (min-width: 900px) { .writing__grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-7) var(--space-6); } }
+  .drafts { margin-top: var(--space-6); }
+  .drafts summary { cursor: pointer; }
+  .drafts__list { list-style: none; padding: 0; margin: var(--space-3) 0 0; display: grid; gap: var(--space-2); }
 </style>

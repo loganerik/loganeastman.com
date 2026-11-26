@@ -1,0 +1,13 @@
+---
+// A moon in dusty pink behind a stepped tower, with two thin verticals: the arch's window.
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+---
+<svg class={`orn orn--skyline ${cls}`} viewBox="0 0 200 150" aria-hidden="true" focusable="false">
+  <defs><linearGradient id="sky" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#b9cfc3" /><stop offset="1" stop-color="#d8d3bf" /></linearGradient></defs>
+  <rect width="200" height="150" fill="url(#sky)" />
+  <circle cx="100" cy="78" r="42" fill="var(--pink)" />
+  <path d="M92 118 V62 h4 v-10 h8 v10 h4 v56 Z" fill="var(--green)" />
+  <path d="M60 10 V150" stroke="var(--green)" stroke-width="2" /><path d="M140 10 V150" stroke="var(--green)" stroke-width="2" />
+  <path d="M52 108 H66" stroke="var(--green)" stroke-width="2" /><path d="M134 108 H148" stroke="var(--green)" stroke-width="2" />
+</svg>

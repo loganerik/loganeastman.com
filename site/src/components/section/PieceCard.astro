@@ -1,26 +1,47 @@
 ---
-// A writing title inside an arch (columns) or a stepped frame. Words inside the shape.
+// A writing piece as a scrapbook clipping: its cover cutout when it has one, otherwise the title inside a deco form.
 import type { Rec } from '../../lib/content';
 import type { Writing } from '@lem/vault-core';
 import { urlFor } from '../../lib/urls';
 import { fmtDate } from '../../lib/dates';
 import { restingAngle } from '../../lib/artwork';
-interface Props { piece: Rec<Writing>; form?: 'arch' | 'stepped' }
-const { piece, form = 'arch' } = Astro.props;
+import Clip from '../art/Clip.astro';
+import Sunburst from '../forms/Sunburst.astro';
+import Skyline from '../forms/Skyline.astro';
+interface Props { piece: Rec<Writing>; form?: 'arch' | 'stepped'; kicker?: string }
+const { piece, form = 'arch', kicker } = Astro.props;
 const d = piece.data;
+const hasArt = !!(d.artwork?.clip || d.artwork?.thumb || d.artwork?.full);
 ---
-<a class={`piece piece--${form} ${form} card`} href={urlFor(piece)} style={`--angle:${restingAngle(d.id, 'text')}deg`}>
-  <span class="piece__inner">
-    <span class="mono muted piece__date">{fmtDate(d.date)}</span>
+<a class={`piece card ${hasArt ? 'piece--art' : 'piece--' + form}`} href={urlFor(piece)} style={`--angle:${restingAngle(d.id, hasArt ? 'cutout' : 'text')}deg`}>
+  <span class="piece__art">
+    {hasArt ? (
+      <Clip record={piece} context="list" decorative />
+    ) : form === 'arch' ? (
+      <span class="clip clip--shape piece__arch" aria-hidden="true"><span class="piece__arch-window"><Skyline /></span><span class="piece__arch-plate">{d.title}</span></span>
+    ) : (
+      <span class="clip clip--shape stepped piece__frame" aria-hidden="true"><span><Sunburst width={40} class="piece__orn" /><span class="piece__frame-title">{d.title}</span></span></span>
+    )}
+  </span>
+  <span class="piece__text">
+    <span class="mono muted piece__kicker">{kicker ?? d.collection}{d.date && ` · ${fmtDate(d.date)}`}</span>
     <span class="piece__title">{d.title}</span>
     {d.summary && <span class="piece__summary muted">{d.summary}</span>}
   </span>
 </a>
 <style>
-  .piece { display: block; text-decoration: none; min-height: 200px; transition: transform var(--motion-fast) var(--ease-lift); transform: rotate(var(--angle)); }
-  .piece:hover, .piece:focus-visible { transform: rotate(calc(var(--angle) * 0.4)) translateY(var(--lift)); }
-  .piece__inner { display: grid; gap: var(--space-2); text-align: center; }
-  .piece__title { font-size: var(--step-2); line-height: 1.08; text-wrap: balance; }
+  .piece { display: grid; gap: var(--space-3); text-decoration: none; align-content: start; }
+  .piece__art { display: block; aspect-ratio: 1; display: grid; place-items: center; }
+  .piece__art .clip { width: 88%; transition: transform var(--motion-fast) var(--ease-lift); transform: rotate(var(--angle)); }
+  .piece:hover .piece__art .clip, .piece:focus-visible .piece__art .clip { transform: rotate(calc(var(--angle) * 0.4)) translateY(var(--lift)); }
+  .piece__kicker { text-transform: uppercase; }
+  .piece__title { font-size: var(--step-1); line-height: 1.15; text-wrap: balance; }
   .piece__summary { font-size: var(--step--1); line-height: 1.4; }
-  .piece--arch { padding-top: 3rem; }
+  .piece__arch { display: grid; grid-template-rows: 1fr auto; width: 100%; aspect-ratio: 0.9; background: var(--green); border-radius: 48% 48% 6px 6px / 40% 40% 6px 6px; padding: 10px; box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--on-dark) 45%, var(--green)), inset 0 0 0 5px var(--green), inset 0 0 0 6px color-mix(in oklab, var(--on-dark) 35%, var(--green)); }
+  .piece__arch-window { border-radius: 46% 46% 0 0 / 40% 40% 0 0; overflow: hidden; }
+  .piece__arch-window :global(svg) { display: block; width: 100%; height: 100%; }
+  .piece__arch-plate { display: grid; place-items: center; color: var(--on-dark); font-family: var(--font-display); font-size: var(--step-1); line-height: 1.1; text-align: center; padding: 0.7rem 0.6rem 0.9rem; text-wrap: balance; }
+  .piece__frame { aspect-ratio: 1; display: grid; place-items: center; text-align: center; padding: 1.4rem; }
+  .piece__orn { display: block; margin: 0 auto 0.5rem; color: var(--green); }
+  .piece__frame-title { font-family: var(--font-display); font-size: var(--step-1); line-height: 1.1; text-wrap: balance; }
 </style>

@@ -51,8 +51,10 @@ function fieldsFor(type: string, cfg: { collections: Array<{ key: string; title:
   }
 }
 
-export default function Editor(props: { id?: string }) {
+export default function Editor(props: { id?: string; inline?: boolean; onDone?: (saved: boolean) => void }) {
   const id = props.id || new URLSearchParams(location.search).get('id') || '';
+  const inline = !!props.inline;
+  const [savedOnce, setSavedOnce] = useState(false);
   const [rec, setRec] = useState<Loaded | null>(null);
   const [cfg, setCfg] = useState<{ collections: Array<{ key: string; title: string }>; listTypes: Array<{ key: string; title: string }>; site: { rating_scale: number } } | null>(null);
   const [fm, setFm] = useState<Record<string, unknown>>({});
@@ -70,6 +72,7 @@ export default function Editor(props: { id?: string }) {
   const [mode, setMode] = useState<'rich' | 'markdown'>(() => (new URLSearchParams(location.search).get('mode') === 'markdown' ? 'markdown' : 'rich'));
   const [lossy, setLossy] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [showMeta, setShowMeta] = useState(false);
   const bodyRef = useRef(body);
   bodyRef.current = body;
 
@@ -159,7 +162,7 @@ export default function Editor(props: { id?: string }) {
     setStatus('Saving…');
     try {
       const r = await api<{ sha: string; status: string }>(`/api/records/${rec.id}`, { method: 'PUT', body: JSON.stringify({ frontmatter: { ...fm, artwork: artwork ?? fm.artwork }, body: bodyRef.current, base_sha: override?.baseSha ?? sha ?? undefined }) });
-      setSha(r.sha); setDirty(false); setConflict(null); await clearDraft(rec.id);
+      setSha(r.sha); setDirty(false); setConflict(null); setSavedOnce(true); await clearDraft(rec.id);
       setStatus(r.status === 'skipped' ? 'No changes' : `Saved ${new Date().toLocaleTimeString()} · live in a couple of minutes`);
     } catch (e) {
       if (e instanceof ApiError && e.status === 409) { setConflict(e.body as never); setStatus('Changed elsewhere since you opened it'); }
@@ -181,6 +184,30 @@ export default function Editor(props: { id?: string }) {
         </div>
       )}
       {rec.conflict && <div class="banner banner--warn">This file has git conflict markers. <a href={`/private/?tab=conflicts`}>Resolve it</a> first, or edit the raw text carefully.</div>}
+      {inline ? (
+        <div class="toolbar toolbar--inline">
+          <div class="chips">
+            <button type="button" class="btn" onClick={() => { if (dirty && !confirm('Discard unsaved changes?')) return; props.onDone?.(savedOnce); }}>Done</button>
+            <button type="button" class="btn btn--solid" onClick={() => save()}>Save changes</button>
+            <button type="button" class="btn" aria-pressed={mode === 'markdown'} disabled={!!lossy && mode === 'markdown'} onClick={() => switchMode(mode === 'rich' ? 'markdown' : 'rich')}>{mode === 'rich' ? 'Markdown' : 'Rich text'}</button>
+            <label class="btn"><input type="file" accept="image/*" multiple hidden onChange={(e) => { const files = [...((e.target as HTMLInputElement).files ?? [])]; (e.target as HTMLInputElement).value = ''; const el = richHost.current ?? host.current; if (el && files.length) { const dt = new DataTransfer(); files.forEach((f) => dt.items.add(f)); el.dispatchEvent(new DragEvent('drop', { dataTransfer: dt, bubbles: true, cancelable: true })); } }} />Add photos</label>
+            <button type="button" class="btn" aria-pressed={showMeta} onClick={() => setShowMeta(!showMeta)}>Cover</button>
+            <span class="mono muted toolbar__status">{status}{dirty && !status.startsWith('Saving') ? ' · unsaved' : ''}</span>
+          </div>
+          {mode === 'rich' && (
+            <div class="chips">
+              <button type="button" class="btn" onClick={() => rich.current?.cmd('bold')}>Bold</button>
+              <button type="button" class="btn" onClick={() => rich.current?.cmd('italic')}>Italic</button>
+              <button type="button" class="btn" onClick={() => rich.current?.cmd('h2')}>Heading</button>
+              <button type="button" class="btn" onClick={() => rich.current?.cmd('text')}>Paragraph</button>
+              <button type="button" class="btn" onClick={() => { const href = prompt('Link URL'); if (href) rich.current?.cmd('link', { href }); }}>Link</button>
+              <button type="button" class="btn" onClick={() => rich.current?.cmd('ul')}>Bullets</button>
+              <button type="button" class="btn" onClick={() => rich.current?.cmd('ol')}>Numbered</button>
+              <button type="button" class="btn" onClick={() => rich.current?.cmd('quote')}>Quote</button>
+            </div>
+          )}
+        </div>
+      ) : (
       <div class="editor__bar mono">
         <span class="muted">{rec.type} · {rec.path}</span>
         <span class="editor__status">{status}{dirty && !status.startsWith('Saving') ? ' · unsaved' : ''}</span>
@@ -189,7 +216,10 @@ export default function Editor(props: { id?: string }) {
           <button class="btn btn--solid" onClick={() => save()}>Save</button>
         </span>
       </div>
-      <form class="fm" onSubmit={(e) => { e.preventDefault(); save(); }}>
+      )}
+      {inline && <p class="mono muted editor__kicker">{String(fm.collection ?? fm.kind ?? rec.type)} · {String(fm.visibility ?? 'public')}{fm.draft ? ' · draft' : ''}</p>}
+      {inline && (fm.title !== undefined || rec.type === 'writing') && <input class="editor__title" value={String(fm.title ?? '')} placeholder="Title" onInput={(e) => { setFm({ ...fm, title: (e.target as HTMLInputElement).value }); setDirty(true); }} />}
+      <form class="fm" hidden={inline && !showMeta} onSubmit={(e) => { e.preventDefault(); save(); }}>
         {fields.map((f) => {
           const v = fm[f.key];
           const upd = (val: unknown) => { setFm({ ...fm, [f.key]: val === '' ? undefined : val }); setDirty(true); };
@@ -202,7 +232,7 @@ export default function Editor(props: { id?: string }) {
         })}
       </form>
       {(rec.type === 'item' || rec.type === 'writing' || rec.type === 'feed') && (
-        <details class="artwork">
+        <details class="artwork" open={inline && showMeta} hidden={inline && !showMeta}>
           <summary class="mono">Artwork {artwork?.treatment ? `· ${artwork.treatment}` : ''}</summary>
           <div class="artwork__row">
             <label class="fm__f"><span class="mono">Treatment</span><select value={String(artwork?.treatment ?? '')} onChange={(e) => { setArtwork({ ...(artwork ?? {}), treatment: (e.target as HTMLSelectElement).value || undefined }); setDirty(true); }}><option value="">default for kind</option>{['cutout', 'paper', 'cover', 'poster', 'lettering', 'logo', 'typeset', 'none'].map((o) => <option value={o}>{o}</option>)}</select></label>
@@ -236,7 +266,7 @@ export default function Editor(props: { id?: string }) {
           </div>
         </details>
       )}
-      <div class="toolbar mono" role="toolbar" aria-label="Formatting">
+      <div class="toolbar mono" role="toolbar" aria-label="Formatting" hidden={inline}>
         {mode === 'rich' && (<>
           <button type="button" onClick={() => rich.current?.cmd('h2')} title="Heading 2">H2</button>
           <button type="button" onClick={() => rich.current?.cmd('h3')} title="Heading 3">H3</button>

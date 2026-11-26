@@ -43,3 +43,13 @@
 .embed-node__name { font-size: 0.7rem; color: var(--fg-muted); }
 .callout-marker { background: var(--pink); color: var(--ink); padding: 0 0.3rem; font-size: 0.7rem; }
 mark.hl { background: var(--pink); }
+
+/* ---- inline editing on reading pages ---- */
+.inline-edit { display: block; }
+.toolbar--inline { position: sticky; top: 0.5rem; display: grid; gap: 0.5rem; padding: 0.6rem; border: 1px solid var(--rule); border-radius: 1.6rem; background: var(--paper); z-index: 6; margin-bottom: var(--space-4); }
+.toolbar--inline .chips { gap: 0.4rem; }
+.toolbar__status { align-self: center; margin-left: 0.4rem; }
+.editor__kicker { text-transform: uppercase; }
+.editor__title { font-family: var(--font-display); font-size: var(--step-4); font-weight: 400; line-height: 1.05; border: 0; background: transparent; width: 100%; padding: 0; margin: var(--space-2) 0 var(--space-3); color: var(--ink); }
+.editor__title:focus { outline: none; border-bottom: 1px solid var(--rule); }
+.owner-row { margin: var(--space-3) 0; align-items: center; }

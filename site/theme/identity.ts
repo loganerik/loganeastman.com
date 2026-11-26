@@ -6,6 +6,7 @@ export interface Identity {
   mascots: Mascot[];
   placements: { nav: string[]; about: string[]; wall: Array<{ who: string; after: number; side: 'left' | 'right' }> };
   nav: Array<{ label: string; href: string }>;
+  footer: { about: { label: string; href: string } };
   writing: { rootCollections: string[] };
   kinds: Record<string, { route: string; label: string; plural: string; treatment: string }>;
   wall: { maxTiles: number; quotas: Record<string, number>; perturbation: number };
@@ -27,13 +28,18 @@ const identity: Identity = {
       sizes: { upright: [460, 319], resting: [480, 320], stretching: [480, 362] } },
     { id: 'toast', label: 'Toast', poses: { sofa: 'pom-sofa.webp', rug: 'pom-rug.webp', quilt: 'pom-quilt.webp' },
       sizes: { sofa: [490, 324], rug: [490, 350], quilt: [488, 490] } },
+    { id: 'pair', label: 'Ares and Artemis', poses: { home: 'cats-upright-photo.webp' }, sizes: { home: [480, 720] } },
   ],
   placements: {
-    nav: ['ares:upright', 'artemis:upright'],
+    nav: ['pair:home'],
     about: ['face'],
     wall: [
-      { who: 'toast:sofa', after: 7, side: 'right' },
-      { who: 'artemis:resting', after: 19, side: 'left' },
+      { who: 'ares:lounging', after: 1, side: 'right' },
+      { who: 'artemis:stretching', after: 3, side: 'right' },
+      { who: 'toast:sofa', after: 6, side: 'right' },
+      { who: 'ares:resting', after: 9, side: 'left' },
+      { who: 'artemis:resting', after: 12, side: 'right' },
+      { who: 'toast:rug', after: 16, side: 'left' },
     ],
   },
   nav: [
@@ -42,8 +48,8 @@ const identity: Identity = {
     { label: 'Lists', href: '/lists/' },
     { label: 'Reviews', href: '/reviews/' },
     { label: 'Horizon', href: '/horizon/' },
-    { label: 'About', href: '/about/' },
   ],
+  footer: { about: { label: 'About', href: '/about/' } },
   writing: { rootCollections: ['pages'] },
   kinds: {
     film: { route: 'film', label: 'Film', plural: 'Films', treatment: 'lettering' },

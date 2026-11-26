@@ -17,16 +17,18 @@ const captureInput = z.object({
   intent: z.enum(['writing', 'feed', 'list', 'review']).or(z.literal('')).optional(),
   list_hint: z.string().max(80).optional(),
   visibility: z.enum(['public', 'private']).optional().default('public'),
+  people: z.array(z.string().max(80)).max(20).optional(),
+  tags: z.array(z.string().max(60)).max(30).optional(),
 });
 
 export interface CaptureRow {
   id: string; client_id: string | null; url: string | null; text: string | null; title: string | null; why: string;
   intent: string | null; list_hint: string | null; visibility: string; status: string; claimed_by: string | null; claimed_until: string | null;
-  result_json: string | null; error: string | null; created_at: string; updated_at: string;
+  result_json: string | null; error: string | null; created_at: string; updated_at: string; people_json?: string | null; tags_json?: string | null;
 }
 
 export function publicCapture(r: CaptureRow) {
-  return { ...r, result: json(r.result_json, null), result_json: undefined };
+  return { ...r, result: json(r.result_json, null), result_json: undefined, people: json<string[]>(r.people_json ?? null, []), tags: json<string[]>(r.tags_json ?? null, []), people_json: undefined, tags_json: undefined };
 }
 
 /** Persist first, think later. Idempotent on client_id. Returns {capture, created}. */
@@ -40,9 +42,10 @@ export async function createCapture(env: AppEnv['Bindings'], input: z.infer<type
   const t = now();
   await run(
     env.DB,
-    `INSERT INTO captures (id, client_id, url, text, title, why, intent, list_hint, visibility, status, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'queued', ?, ?)`,
+    `INSERT INTO captures (id, client_id, url, text, title, why, intent, list_hint, visibility, status, created_at, updated_at, people_json, tags_json)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'queued', ?, ?, ?, ?)`,
     id, input.client_id ?? null, input.url || null, input.text || null, input.title || null, input.why, input.intent || null, input.list_hint ?? null, input.visibility, t, t,
+    input.people?.length ? JSON.stringify(input.people) : null, input.tags?.length ? JSON.stringify(input.tags) : null,
   );
   await run(env.DB, `INSERT OR IGNORE INTO jobs (id, kind, subject_id, idempotency_key, status, next_run_at, created_at, updated_at) VALUES (?, 'organize', ?, ?, 'pending', ?, ?, ?)`,
     newId('job'), id, `organize:${id}`, t, t, t);

@@ -1,10 +1,12 @@
 ---
 import identity from '@theme/identity';
+import Pet from '../art/Pet.astro';
 const year = new Date().getFullYear();
 ---
 <footer class="footer wrap">
   <div class="rule-double rule-double--fine"></div>
   <div class="footer__row">
+    <a class="footer__about" href={identity.footer.about.href}><Pet who="face" size="xs" /> <span class="mono">{identity.footer.about.label}</span></a>
     <span class="mono muted">{identity.site.name} · {year}</span>
     <span class="mono muted"><a href="/rss.xml">RSS</a> · <a href="/feed.json">JSON</a></span>
     <span class="mono muted">Film data from <a href="https://www.themoviedb.org/" rel="noopener">TMDB</a></span>
@@ -14,5 +16,7 @@ const year = new Date().getFullYear();
   .footer { margin-top: var(--space-7); padding-bottom: var(--space-5); }
   .footer__row { display: flex; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; padding-top: var(--space-3); }
   .footer a { text-decoration: none; }
+  .footer__about { display: inline-flex; align-items: center; gap: var(--space-2); text-transform: none; }
+  .footer__about .mono { text-transform: none; letter-spacing: 0.02em; font-size: 0.9rem; }
   .footer a:hover { text-decoration: underline; }
 </style>

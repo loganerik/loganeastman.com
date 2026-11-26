@@ -2,6 +2,7 @@
 // Quiet reading page: a kicker, the title, meta line, then the prose at reading measure.
 import Base from './Base.astro';
 import '../styles/prose.css';
+import '../styles/editor.css';
 interface Props { title: string; description?: string; image?: string; kicker?: string; meta?: string[]; noindex?: boolean; wide?: boolean; feeds?: Array<{ title: string; href: string }> }
 const { title, description, image, kicker, meta = [], noindex, wide = false, feeds } = Astro.props;
 ---
@@ -10,16 +11,18 @@ const { title, description, image, kicker, meta = [], noindex, wide = false, fee
     <header class="reading__head">
       <slot name="art" />
       <div class="reading__titles">
-        {kicker && <p class="mono muted reading__kicker">{kicker}</p>}
-        <h1 class="reading__title">{title}</h1>
-        {meta.length > 0 && <p class="mono muted reading__meta">{meta.map((m, i) => <><span>{m}</span>{i < meta.length - 1 && <span class="sep"> · </span>}</>)}</p>}
+        <div data-article>
+          {kicker && <p class="mono muted reading__kicker">{kicker}</p>}
+          <h1 class="reading__title">{title}</h1>
+          {meta.length > 0 && <p class="mono muted reading__meta">{meta.map((m, i) => <><span>{m}</span>{i < meta.length - 1 && <span class="sep"> · </span>}</>)}</p>}
+        </div>
         <slot name="controls" />
       </div>
     </header>
-    <div class="reading__body prose">
+    <div class="reading__body prose" data-article>
       <slot />
     </div>
-    <slot name="after" />
+    <div data-article><slot name="after" /></div>
   </article>
 </Base>
 <style>

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'preact/hooks';
 import { api, when, publicUrl, type Capture, type RecordSummary, type Question } from './api';
 
-type Tab = 'inbox' | 'drafts' | 'published' | 'search' | 'people' | 'conflicts' | 'suggestions' | 'tokens';
-const TABS: Array<[Tab, string]> = [['inbox', 'Inbox'], ['drafts', 'Drafts'], ['published', 'Published'], ['search', 'Search'], ['people', 'People & tags'], ['conflicts', 'Conflicts'], ['suggestions', 'Suggestions'], ['tokens', 'Agents']];
+type Tab = 'inbox' | 'drafts' | 'published' | 'search' | 'people' | 'conflicts' | 'suggestions' | 'tokens' | 'config';
+const TABS: Array<[Tab, string]> = [['inbox', 'Inbox'], ['drafts', 'Drafts'], ['published', 'Published'], ['search', 'Search'], ['people', 'People & tags'], ['conflicts', 'Conflicts'], ['suggestions', 'Suggestions'], ['tokens', 'Agents'], ['config', 'Collections & lists']];
 
 export default function PrivateHub({ initialTab = 'inbox' }: { initialTab?: Tab }) {
   const [tab, setTab] = useState<Tab>(() => (new URLSearchParams(location.search).get('tab') as Tab) || initialTab);
@@ -48,6 +48,7 @@ export default function PrivateHub({ initialTab = 'inbox' }: { initialTab?: Tab 
       {tab === 'conflicts' && <Conflicts />}
       {tab === 'suggestions' && <Suggestions />}
       {tab === 'tokens' && <Tokens />}
+      {tab === 'config' && <Config />}
     </div>
   );
 }
@@ -262,6 +263,29 @@ function Tokens() {
       <form class="quick" onSubmit={mint}><input placeholder="Token name (e.g. claude)" value={name} onInput={(e) => setName((e.target as HTMLInputElement).value)} /><button class="btn btn--solid">Mint token</button></form>
       {fresh && <p class="fresh"><strong>Copy it now; it is not shown again:</strong> <code>{fresh}</code></p>}
       <ul class="recs">{data?.tokens.map((t) => <li key={t.id}><span class="recs__title">{t.name}</span><span class="mono muted">{t.scopes} · made {when(t.created_at)}{t.last_used_at ? ` · used ${when(t.last_used_at)}` : ''}{t.revoked_at ? ' · revoked' : ''}</span>{!t.revoked_at && <button class="link mono" onClick={async () => { await api(`/api/tokens/${t.id}`, { method: 'DELETE' }); reload(); }}>Revoke</button>}</li>)}</ul>
+    </section>
+  );
+}
+
+function Config() {
+  const [name, setName] = useState<'collections' | 'list-types' | 'site'>('collections');
+  const { data, reload } = useLoader(() => api<{ raw: string; sha: string | null; path: string }>(`/api/config/raw/${name}`), [name]);
+  const [text, setText] = useState('');
+  const [status, setStatus] = useState('');
+  useEffect(() => { if (data) { setText(data.raw); setStatus(''); } }, [data]);
+  const save = async () => {
+    setStatus('Saving…');
+    try { await api(`/api/config/raw/${name}`, { method: 'PUT', body: JSON.stringify({ raw: text, base_sha: data?.sha ?? undefined }) }); setStatus('Saved · live after the next build'); reload(); }
+    catch (e) { setStatus(`Not saved: ${(e as Error).message}`); }
+  };
+  return (
+    <section>
+      <p class="muted">Writing collections and list types are plain YAML in the vault. Add a collection like <code>stories</code> here, create the folder <code>writing/stories/</code> in Obsidian (or just save a piece into it), and the section appears.</p>
+      <div class="chips" style="margin:1rem 0">
+        {(['collections', 'list-types', 'site'] as const).map((n) => <button type="button" class="chip" aria-pressed={name === n} onClick={() => setName(n)}>{{ collections: 'Writing collections', 'list-types': 'List types', site: 'Site' }[n]}</button>)}
+      </div>
+      <textarea class="config__raw" value={text} onInput={(e) => setText((e.target as HTMLTextAreaElement).value)} rows={22} spellcheck={false} />
+      <p class="chips"><button class="btn btn--solid" type="button" onClick={save}>Save</button><span class="mono muted" style="align-self:center">{status}</span></p>
     </section>
   );
 }

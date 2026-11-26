@@ -1,12 +1,27 @@
-.fab { position: fixed; right: max(1rem, env(safe-area-inset-right)); bottom: max(1rem, env(safe-area-inset-bottom)); width: 3rem; height: 3rem; border-radius: 50%; border: 0; background: var(--green); color: var(--on-dark); font: 400 1.8rem/1 var(--font-display); box-shadow: var(--shadow-contact); cursor: pointer; z-index: 40; }
-.fab:hover { transform: translateY(var(--lift)); }
-.sheet { border: 0; padding: 0; background: transparent; width: min(100vw, 32rem); max-width: 100vw; margin: auto auto 0; }
+.fab { position: fixed; right: max(1.25rem, env(safe-area-inset-right)); bottom: max(1.25rem, env(safe-area-inset-bottom)); width: 3.4rem; height: 3.4rem; border-radius: 50%; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); font: 300 2rem/1 var(--font-display); box-shadow: var(--shadow-contact); cursor: pointer; z-index: 40; transition: transform var(--motion-fast) var(--ease-lift); }
+.fab:hover { transform: translateY(var(--lift)); border-color: var(--green); color: var(--green); }
+.sheet { border: 0; padding: 0; background: transparent; width: min(100vw, 36rem); max-width: 100vw; margin: auto auto 0; }
 @media (min-width: 700px) { .sheet { margin: auto; } }
 .sheet::backdrop { background: rgb(26 26 24 / 0.35); }
-.sheet__form { background: var(--paper); border: 1px solid var(--rule); outline: 1px solid var(--rule); outline-offset: 3px; padding: var(--space-4); display: grid; gap: var(--space-3); }
-.chips { display: flex; gap: var(--space-2); flex-wrap: wrap; }
-.chips button { font: inherit; border: 1px solid var(--rule); background: var(--paper); padding: 0.4rem 0.7rem; cursor: pointer; }
-.chips button.on { background: var(--green); color: var(--on-dark); border-color: var(--green); }
-.sheet__form input, .sheet__form textarea, .sheet__form select { font: inherit; padding: 0.55rem 0.65rem; border: 1px solid var(--rule); background: #fff8; width: 100%; box-sizing: border-box; }
-.sheet__row { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
-.sheet__status { flex: 1; }
+.sheet__form { background: var(--paper); border: 1px solid var(--rule); border-radius: 1.6rem 1.6rem 0 0; padding: var(--space-4); display: grid; gap: var(--space-3); }
+@media (min-width: 700px) { .sheet__form { border-radius: 1.6rem; } }
+.sheet__head { display: flex; justify-content: space-between; align-items: center; }
+.sheet__title { font-size: var(--step-2); font-weight: 400; }
+.sheet__close { width: 2.4rem; height: 2.4rem; border-radius: 50%; border: 0; background: var(--paper-deep); font-size: 1.3rem; cursor: pointer; }
+.sheet__box { font-family: var(--font-mono); font-size: 0.95rem; line-height: 1.5; padding: 0.9rem 1rem; border: 1.5px solid var(--pink-ink); border-radius: 1rem; background: var(--paper-deep); width: 100%; box-sizing: border-box; resize: vertical; }
+.sheet__box:focus { outline: none; border-color: var(--green); }
+.sheet__label { margin-top: 0.2rem; text-transform: none; font-size: 0.9rem; }
+.sheet__select { font: inherit; padding: 0.5rem 0.8rem; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); }
+.sheet__rule { margin-top: 0.4rem; }
+.sheet__rule span { text-transform: none; font-size: 0.85rem; }
+.sheet__ctx { display: grid; gap: var(--space-3); grid-template-columns: 1fr 1fr; }
+.sheet__ctx label { display: grid; gap: 0.3rem; }
+.sheet__ctx .mono { text-transform: none; font-size: 0.8rem; }
+.sheet__ctx input { font: inherit; font-family: var(--font-mono); font-size: 0.85rem; padding: 0.55rem 0.8rem; border: 1px solid var(--rule); border-radius: 0.6rem; background: #fff8; width: 100%; box-sizing: border-box; }
+.sheet__hint { text-transform: none; letter-spacing: 0; font-size: 0.8rem; }
+.sheet__row { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-top: 0.4rem; }
+.sheet__status { flex: 1; text-transform: none; letter-spacing: 0; font-size: 0.8rem; }
+.sheet__x { border: 0; background: none; cursor: pointer; font: inherit; padding: 0 0 0 0.2rem; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; }
+.seg__b { font-family: var(--font-mono); font-size: 0.85rem; padding: 0.55rem 1rem; border: 0; background: var(--paper); cursor: pointer; color: var(--ink); }
+.seg__b[aria-pressed='true'] { background: var(--green); color: var(--on-dark); }

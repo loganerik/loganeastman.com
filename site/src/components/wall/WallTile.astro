@@ -2,6 +2,8 @@
 import type { WallTile } from '../../lib/wall/candidates';
 import Clip from '../art/Clip.astro';
 import { angleFor } from '../../lib/wall/arrange';
+import Sunburst from '../forms/Sunburst.astro';
+import Skyline from '../forms/Skyline.astro';
 interface Props { tile: WallTile }
 const { tile: t } = Astro.props;
 const angle = angleFor(t.id, t.band, 0);
@@ -13,9 +15,11 @@ const textOnly = t.kind === 'thought' || t.kind === 'queue' || (t.kind === 'piec
     {t.kind === 'thought' ? (
       <span class="clip clip--shape slip slip--fit tile__slip" aria-hidden="true"><span class="tile__text">{t.text}</span></span>
     ) : t.kind === 'queue' ? (
-      <span class="clip clip--shape seal seal--green tile__seal" aria-hidden="true"><span><span class="tile__seal-title">{t.title}</span><span class="mono tile__seal-n">{t.count}</span></span></span>
+      <span class="clip clip--shape seal seal--pink tile__seal" aria-hidden="true"><span><Sunburst class="tile__seal-orn" width={48} /><span class="tile__seal-title">{t.title}</span><span class="mono tile__seal-n">{t.count}</span></span></span>
+    ) : textOnly && t.shape === 'arch' ? (
+      <span class="clip clip--shape tile__arch" aria-hidden="true"><span class="tile__arch-window"><Skyline /></span><span class="tile__arch-plate"><span class="tile__arch-title">{t.title}</span></span></span>
     ) : textOnly ? (
-      <span class={`clip clip--shape ${t.shape === 'arch' ? 'arch' : 'stepped'} tile__frame`} aria-hidden="true"><span class="tile__frame-inner"><span class="mono tile__kicker">{t.caption}</span><span class="tile__frame-title">{t.title}</span></span></span>
+      <span class="clip clip--shape stepped tile__frame" aria-hidden="true"><span class="tile__frame-inner"><Sunburst class="tile__frame-orn" width={40} /><span class="mono tile__kicker">{t.caption}</span><span class="tile__frame-title">{t.title}</span></span></span>
     ) : (
       <Clip record={t.record} context="wall" decorative sizes="(max-width: 600px) 50vw, (max-width: 900px) 25vw, 18vw" />
     )}

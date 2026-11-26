@@ -8,7 +8,7 @@ import { one, all, run, now, json } from '../db';
 import { vaultFor } from '../vault/github';
 import { vaultCommit } from '../do/VaultWriter';
 import { indexFile } from './github';
-import { parseNote, serializeNote, validateRecord, newId, slugify, itemSlug, datedSlug, itemPath, listPath, listEntryPath, feedPath, reviewPath, writingPath, normalizeTarget, conflictSides, resolveConflict, parseConflict, hasConflictMarkers, type ItemKind } from '@lem/vault-core';
+import { parseNote, serializeNote, validateRecord, siteConfigSchema, collectionsConfigSchema, listTypesConfigSchema, newId, slugify, itemSlug, datedSlug, itemPath, listPath, listEntryPath, feedPath, reviewPath, writingPath, normalizeTarget, conflictSides, resolveConflict, parseConflict, hasConflictMarkers, type ItemKind } from '@lem/vault-core';
 import { loadVaultConfig } from '../vault/config';
 
 export const records = new Hono<AppEnv>();
@@ -219,4 +219,31 @@ records.post('/api/suggestions/:id/:verb', requireOwner, async (c) => {
     return c.json({ ok: true });
   }
   return c.json({ error: 'verb must be accept or dismiss' }, 400);
+});
+
+// ---- config notes: _config/site|collections|list-types, edited as raw text ----
+const CONFIG_FILES: Record<string, string> = { site: '_config/site.md', collections: '_config/collections.md', 'list-types': '_config/list-types.md' };
+records.get('/api/config/raw/:name', requireOwner, async (c) => {
+  const file = CONFIG_FILES[c.req.param('name')];
+  if (!file) return c.json({ error: 'unknown config' }, 404);
+  const blob = await vaultFor(c.env).readFile(file);
+  return c.json({ path: file, raw: blob?.text ?? '', sha: blob?.sha ?? null });
+});
+records.put('/api/config/raw/:name', requireOwner, async (c) => {
+  const file = CONFIG_FILES[c.req.param('name')];
+  if (!file) return c.json({ error: 'unknown config' }, 404);
+  const { raw, base_sha } = (await c.req.json().catch(() => ({}))) as { raw?: string; base_sha?: string };
+  if (typeof raw !== 'string') return c.json({ error: 'raw required' }, 400);
+  const fm = parseNote(raw).frontmatter;
+  try {
+    if (file.endsWith('collections.md')) collectionsConfigSchema.parse(fm);
+    else if (file.endsWith('list-types.md')) listTypesConfigSchema.parse(fm);
+    else siteConfigSchema.parse(fm);
+  } catch (e) {
+    return c.json({ error: `invalid config: ${(e as Error).message.slice(0, 300)}` }, 400);
+  }
+  const commit = await vaultCommit(c.env, { message: `config: ${file.split('/').pop()}`, ops: [{ op: 'write', path: file, contents: raw, baseSha: base_sha }] });
+  if (commit.results[0]?.status === 'conflict') return c.json({ error: 'changed since you loaded it' }, 409);
+  await c.env.KV.delete(`vault-config:${c.env.VAULT_BRANCH}`).catch(() => {});
+  return c.json({ ok: true, commit: commit.oid });
 });

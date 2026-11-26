@@ -2,6 +2,9 @@
 import Base from '../../layouts/Base.astro';
 import FeedSlip from '../../components/section/FeedSlip.astro';
 import OwnerOnly from '../../components/private/OwnerOnly.astro';
+import InlineEdit from '../../components/private/editor/InlineEdit';
+import '../../styles/editor.css';
+import '../../styles/prose.css';
 import { index, feedPosts, type Rec } from '../../lib/content';
 import { renderRecord } from '../../lib/render';
 import { urlFor } from '../../lib/urls';
@@ -21,9 +24,9 @@ const older = posts[i + 1];
 ---
 <Base title={post.data.title ?? r.excerpt.slice(0, 60)} description={r.excerpt} type="article">
   <div class="wrap one">
-    <FeedSlip post={post} link={false} />
+    <div data-article><FeedSlip post={post} link={false} /></div>
     {about?.public && <p class="mono muted">About <a href={urlFor(about)}>{(about.data as { title?: string }).title}</a></p>}
-    <OwnerOnly><p class="mono"><a href={`/private/edit/?id=${post.data.id}`}>Edit</a></p></OwnerOnly>
+    <OwnerOnly><InlineEdit client:only="preact" recordId={post.data.id} /></OwnerOnly>
     <nav class="mono muted pager" aria-label="Feed navigation">
       {older && <a href={urlFor(older)}>← Older</a>}
       <a href="/feed/">All thoughts</a>

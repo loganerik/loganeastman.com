@@ -32,22 +32,10 @@ function recency(date: string | undefined, half = 90): number {
 }
 
 function spanFor(kind: TileKind, r: VaultRecord, words = 0, hero = false): WallTile['span'] {
-  const art = (r.data as { artwork?: { clip_size?: [number, number]; thumb_size?: [number, number]; full_size?: [number, number] } }).artwork;
-  const size = art?.clip_size ?? art?.thumb_size ?? art?.full_size;
-  const ar = size ? size[0] / size[1] : 1;
-  switch (kind) {
-    case 'photo':
-      if (hero) return { c: 3, r: 2 };
-      if (ar >= 1.3) return { c: 2, r: 1 };
-      if (ar <= 0.8) return { c: 1, r: 2 };
-      return { c: 2, r: 2 };
-    case 'piece': return art ? { c: 2, r: 2 } : { c: 2, r: 1 };
-    case 'thought': return words <= 8 ? { c: 1, r: 1 } : words <= 30 ? { c: 2, r: 1 } : { c: 2, r: 2 };
-    case 'pick':
-    case 'gift': return ar <= 0.85 ? { c: 1, r: 2 } : { c: 2, r: 1 };
-    case 'queue': return { c: 2, r: 1 };
-    case 'review': return { c: 2, r: 1 };
-  }
+  if (hero) return { c: 2, r: 2 };
+  if (kind === 'thought') return words <= 10 ? { c: 1, r: 1 } : { c: 2, r: 1 };
+  if (kind === 'piece' && !(r.data as { artwork?: unknown }).artwork) return { c: 1, r: 1 };
+  return { c: 1, r: 1 };
 }
 
 function bandFor(kind: TileKind, r: VaultRecord): WallTile['band'] {
@@ -105,7 +93,7 @@ export function wallCandidates(idx: VaultIndex): WallTile[] {
   for (const [k, list] of byKind) picked.push(...list.sort((a, b) => b.score - a.score).slice(0, quotas[k] ?? 6));
   picked.sort((a, b) => b.score - a.score);
   let heroes = 0;
-  for (const t of picked) if (t.kind === 'photo' && heroes < 2) { t.span = { c: 3, r: 2 }; heroes++; }
+  for (const t of picked) if (t.kind === 'photo' && heroes < 1) { t.span = { c: 2, r: 2 }; heroes++; }
   return picked.slice(0, identity.wall.maxTiles);
 }
 

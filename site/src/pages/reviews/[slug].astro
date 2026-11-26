@@ -1,6 +1,7 @@
 ---
 import Reading from '../../layouts/Reading.astro';
 import OwnerOnly from '../../components/private/OwnerOnly.astro';
+import InlineEdit from '../../components/private/editor/InlineEdit';
 import Clip from '../../components/art/Clip.astro';
 import { index, type Rec } from '../../lib/content';
 import { renderRecord } from '../../lib/render';
@@ -19,7 +20,7 @@ const title = rv.data.title ?? (item ? `On ${item.data.title}` : 'Review');
 ---
 <Reading title={title} description={r.excerpt} kicker="Review" meta={[fmtDate(rv.data.date), ...(rv.data.rating != null ? [`${rv.data.rating} / ${idx.config.site.rating_scale}`] : [])]}>
   <Fragment slot="art">{item?.public && <a href={urlFor(item)} class="subject"><Clip record={item} context="list" /></a>}</Fragment>
-  <OwnerOnly slot="controls"><p class="mono"><a href={`/private/edit/?id=${rv.data.id}`}>Edit</a></p></OwnerOnly>
+  <OwnerOnly slot="controls"><InlineEdit client:only="preact" recordId={rv.data.id} /></OwnerOnly>
   {item?.public && <p class="mono muted">About <a href={urlFor(item)}>{item.data.title}</a></p>}
   <Fragment set:html={r.html} />
 </Reading>

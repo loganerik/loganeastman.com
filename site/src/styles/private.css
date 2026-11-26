@@ -43,3 +43,11 @@
 .side pre { white-space: pre-wrap; font-family: var(--font-display); font-size: var(--step--1); margin: 0; }
 .fresh { padding: var(--space-3); background: var(--pink); overflow-wrap: anywhere; }
 code { font-family: var(--font-mono); font-size: 0.85em; }
+
+.hub__tabs button { border: 1px solid var(--rule); border-radius: 999px; padding: 0.45rem 0.9rem; color: var(--ink); text-transform: none; letter-spacing: 0.01em; font-size: 0.85rem; }
+.hub__tabs button[aria-current] { background: var(--green); color: var(--on-dark); border-color: var(--green); }
+.hub__tabs sup { color: inherit; }
+.config__raw { width: 100%; box-sizing: border-box; font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.5; padding: 0.8rem; border: 1px solid var(--rule); background: #fff8; }
+.quick { border-radius: 1.4rem; }
+.quick input, .quick select { border-radius: 999px; padding: 0.55rem 0.9rem; }
+.status { border-radius: 999px; }
