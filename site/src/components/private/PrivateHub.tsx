@@ -32,7 +32,10 @@ export default function PrivateHub({ initialTab = 'inbox' }: { initialTab?: Tab 
   return (
     <div class="hub">
       <header class="hub__head">
-        <p class="mono muted">Private</p>
+        <div class="hub__top">
+          <p class="mono muted">Private</p>
+          <button type="button" class="btn" onClick={() => { try { localStorage.removeItem('ownerHint'); sessionStorage.removeItem('owner'); } catch { /* ignore */ } location.href = '/cdn-cgi/access/logout'; }}>Sign out</button>
+        </div>
         <h1>{TABS.find(([k]) => k === tab)?.[1]}</h1>
         <nav class="mono hub__tabs" aria-label="Private sections">
           {TABS.map(([k, label]) => (
