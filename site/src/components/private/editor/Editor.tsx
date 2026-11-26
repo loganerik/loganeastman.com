@@ -11,6 +11,7 @@ import { MergeView } from '@codemirror/merge';
 import { api, ApiError, publicUrl, type RecordSummary } from '../api';
 import { loadDraft, saveDraft, clearDraft, type Draft } from './drafts';
 import { createRichEditor, isLossy, type RichEditor } from './milkdown';
+import CoverPanel from './CoverPanel';
 
 interface Loaded { id: string; path: string; type: string; frontmatter: Record<string, unknown>; body: string; raw: string; sha: string; conflict: { ours: string; theirs: string } | null }
 
@@ -161,7 +162,7 @@ export default function Editor(props: { id?: string; inline?: boolean; onDone?: 
     if (mode === 'rich' && rich.current) bodyRef.current = rich.current.getMarkdown();
     setStatus('Saving…');
     try {
-      const r = await api<{ sha: string; status: string }>(`/api/records/${rec.id}`, { method: 'PUT', body: JSON.stringify({ frontmatter: { ...fm, artwork: artwork ?? fm.artwork }, body: bodyRef.current, base_sha: override?.baseSha ?? sha ?? undefined }) });
+      const r = await api<{ sha: string; status: string }>(`/api/records/${rec.id}`, { method: 'PUT', body: JSON.stringify({ frontmatter: { ...fm, artwork: artwork ?? undefined }, body: bodyRef.current, base_sha: override?.baseSha ?? sha ?? undefined }) });
       setSha(r.sha); setDirty(false); setConflict(null); setSavedOnce(true); await clearDraft(rec.id);
       setStatus(r.status === 'skipped' ? 'No changes' : `Saved ${new Date().toLocaleTimeString()} · live in a couple of minutes`);
     } catch (e) {
@@ -231,39 +232,11 @@ export default function Editor(props: { id?: string; inline?: boolean; onDone?: 
           return <label class={`fm__f ${f.key === 'title' || f.key === 'name' ? 'fm__f--title' : ''}`} key={f.key}><span class="mono">{f.label}</span><input value={String(v ?? '')} onInput={(e) => upd((e.target as HTMLInputElement).value)} /></label>;
         })}
       </form>
-      {(rec.type === 'item' || rec.type === 'writing' || rec.type === 'feed') && (
-        <details class="artwork" open={inline && showMeta} hidden={inline && !showMeta}>
-          <summary class="mono">Artwork {artwork?.treatment ? `· ${artwork.treatment}` : ''}</summary>
-          <div class="artwork__row">
-            <label class="fm__f"><span class="mono">Treatment</span><select value={String(artwork?.treatment ?? '')} onChange={(e) => { setArtwork({ ...(artwork ?? {}), treatment: (e.target as HTMLSelectElement).value || undefined }); setDirty(true); }}><option value="">default for kind</option>{['cutout', 'paper', 'cover', 'poster', 'lettering', 'logo', 'typeset', 'none'].map((o) => <option value={o}>{o}</option>)}</select></label>
-            <label class="fm__f"><span class="mono">Alt text</span><input value={String(artwork?.alt ?? '')} onInput={(e) => { setArtwork({ ...(artwork ?? {}), alt: (e.target as HTMLInputElement).value || undefined }); setDirty(true); }} /></label>
-            {(rec.type === 'writing' || rec.type === 'feed') && (
-              <label class="fm__f"><span class="mono">Cover (from images in the body)</span>
-                <select value={String(fm.cover ?? '')} onChange={async (e) => {
-                  const pick = (e.target as HTMLSelectElement).value;
-                  if (!pick) { setFm({ ...fm, cover: undefined }); setArtwork(null); setDirty(true); return; }
-                  const idx = await api<{ attachments: Record<string, { variants: Record<string, { url: string; w: number; h: number }> }> }>('/api/media/index');
-                  const key = Object.keys(idx.attachments).find((k) => k.endsWith('/' + pick.split('/').pop()!) || k === pick);
-                  const v = key ? idx.attachments[key]!.variants : null;
-                  setFm({ ...fm, cover: key ?? pick });
-                  setArtwork({ ...(artwork ?? {}), treatment: artwork?.treatment ?? 'paper', thumb: v?.thumb?.url, thumb_size: v?.thumb ? [v.thumb.w, v.thumb.h] : undefined, full: v?.full?.url, full_size: v?.full ? [v.full.w, v.full.h] : undefined });
-                  setDirty(true);
-                }}>
-                  <option value="">none</option>
-                  {[...bodyRef.current.matchAll(/!\[\[([^\]|]+)(?:\|[^\]]*)?\]\]/g)].map((m) => m[1]!).filter((v, i, a) => a.indexOf(v) === i).map((t) => <option value={t}>{t.split('/').pop()}</option>)}
-                </select>
-              </label>
-            )}
-            {artwork?.full && <a class="mono" href={String(artwork.full)} target="_blank" rel="noopener">open full artwork</a>}
-            {artwork?.thumb && <img class="artwork__clip" src={String(artwork.thumb)} alt="" width={120} />}
-            {rec.type === 'item' && (fm.kind === 'photo' || fm.kind === 'product' || fm.kind === 'place') && artwork?.media && (
-              <button type="button" class="btn" onClick={async () => { await api(`/api/media/${artwork.media}/variants/clip/regenerate`, { method: 'POST', body: JSON.stringify({ provider: 'local' }) }); setStatus('Cutout queued for the Mac'); }}>Regenerate cutout</button>
-            )}
-            {rec.type === 'item' && fm.kind === 'photo' && (
-              <label class="fm__f fm__f--bool"><input type="checkbox" checked={!!fm.approved} onChange={(e) => { setFm({ ...fm, approved: (e.target as HTMLInputElement).checked }); setDirty(true); }} /> <span class="mono">Approved for public use</span></label>
-            )}
-            {artwork?.clip && <img class="artwork__clip" src={String(artwork.clip)} alt="" width={120} />}
-          </div>
+      {(rec.type === 'item' || rec.type === 'writing' || rec.type === 'feed' || rec.type === 'review') && (
+        <details class="artwork" open={!inline || showMeta || !artwork} hidden={inline && !showMeta && !!artwork}>
+          <summary class="mono">Cover &amp; artwork {artwork?.treatment ? `· ${artwork.treatment}` : ''}</summary>
+          <CoverPanel recordId={rec.id} type={rec.type} kind={fm.kind as string | undefined} body={body} cover={fm.cover as string | undefined} artwork={artwork as never} approved={fm.approved as boolean | undefined}
+            onChange={(n) => { setArtwork(n.artwork); setFm({ ...fm, cover: n.cover, ...(n.approved !== undefined ? { approved: n.approved } : {}) }); setDirty(true); }} onStatus={setStatus} />
         </details>
       )}
       <div class="toolbar mono" role="toolbar" aria-label="Formatting" hidden={inline}>
