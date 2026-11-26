@@ -1,0 +1,31 @@
+---
+import Reading from '../../../layouts/Reading.astro';
+import OwnerOnly from '../../../components/private/OwnerOnly.astro';
+import { index, writingIn, type Rec } from '../../../lib/content';
+import { renderRecord } from '../../../lib/render';
+import { slugOf } from '../../../lib/urls';
+import { fmtDate } from '../../../lib/dates';
+import identity from '@theme/identity';
+import type { Writing } from '@lem/vault-core';
+import { publicTags } from '@lem/vault-core';
+export async function getStaticPaths() {
+  const idx = await index();
+  return idx.config.collections
+    .filter((c) => !identity.writing.rootCollections.includes(c.key))
+    .flatMap((c) => writingIn(idx, c.key).map((w) => ({ params: { collection: c.key, slug: slugOf(w) }, props: { path: w.path } })));
+}
+const idx = await index();
+const piece = idx.byPath.get(Astro.props.path) as Rec<Writing>;
+const c = idx.config.collections.find((x) => x.key === piece.data.collection);
+const r = await renderRecord(piece, idx);
+const tags = publicTags(piece.data.tags);
+---
+<Reading title={piece.data.title} description={piece.data.summary ?? r.excerpt} kicker={c?.title} meta={[fmtDate(piece.data.date), `${r.wordCount} words`]} image={piece.data.artwork?.full}>
+  <OwnerOnly slot="controls"><p class="mono"><a href={`/private/edit/?id=${piece.data.id}`}>Edit</a></p></OwnerOnly>
+  <Fragment set:html={r.html} />
+  <Fragment slot="after">{tags.length > 0 && <p class="mono muted tags">{tags.map((t) => <a href={`/tags/${t}/`}>#{t}</a>)}</p>}</Fragment>
+</Reading>
+<style>
+  .tags { margin-top: var(--space-5); display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .tags a { text-decoration: none; }
+</style>

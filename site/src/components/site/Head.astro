@@ -1,0 +1,28 @@
+---
+import identity from '@theme/identity';
+import '../../styles/global.css';
+interface Props { title?: string; description?: string; image?: string; type?: 'website' | 'article'; canonical?: string; feeds?: Array<{ title: string; href: string }>; noindex?: boolean }
+const { title, description = identity.site.description, image, type = 'website', canonical, feeds = [], noindex = false } = Astro.props;
+const fullTitle = title ? `${title} · ${identity.site.name}` : identity.site.name;
+const url = canonical ?? new URL(Astro.url.pathname, Astro.site ?? identity.site.url).toString();
+const buildId = import.meta.env.BUILD_ID ?? 'dev';
+---
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={url} />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="theme-color" content="#f4ecdf" />
+<meta name="build" content={buildId} />
+{noindex && <meta name="robots" content="noindex" />}
+<meta property="og:site_name" content={identity.site.name} />
+<meta property="og:title" content={title ?? identity.site.name} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content={type} />
+<meta property="og:url" content={url} />
+{image && <meta property="og:image" content={new URL(image, Astro.site ?? identity.site.url).toString()} />}
+<meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+<link rel="alternate" type="application/rss+xml" title={`${identity.site.name} · everything`} href="/rss.xml" />
+{feeds.map((f) => <link rel="alternate" type="application/rss+xml" title={f.title} href={f.href} />)}

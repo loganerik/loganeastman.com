@@ -1,0 +1,14 @@
+{
+  "name": "Logan Eastman",
+  "short_name": "LE",
+  "start_url": "/private/",
+  "display": "standalone",
+  "background_color": "#f4ecdf",
+  "theme_color": "#243d32",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }],
+  "share_target": {
+    "action": "/share",
+    "method": "GET",
+    "params": { "title": "title", "text": "text", "url": "url" }
+  }
+}

@@ -1,0 +1,38 @@
+---
+import Section from '../../layouts/Section.astro';
+import SectionGrid from '../../components/section/SectionGrid.astro';
+import ListEntry from '../../components/section/ListEntry.astro';
+import { index, entriesOf, listType, type Rec } from '../../lib/content';
+import { renderRecord } from '../../lib/render';
+import type { List } from '@lem/vault-core';
+
+export async function getStaticPaths() {
+  const idx = await index();
+  return idx.ofType<List>('list').map((l) => ({ params: { slug: l.stem }, props: { path: l.path } }));
+}
+const idx = await index();
+const list = idx.byPath.get(Astro.props.path) as Rec<List>;
+const entries = entriesOf(idx, list);
+const t = listType(idx, list.data.list_type);
+const intro = await renderRecord(list, idx);
+const active = entries.filter((e) => e.entry.data.state !== 'done');
+const done = entries.filter((e) => e.entry.data.state === 'done');
+---
+<Section preset={{ mode: 'entry', list: list.stem }} title={list.data.title} kicker={t?.title} count={entries.length} description={intro.excerpt || `${list.data.title} · ${entries.length} entries`}
+  action={{ label: t?.add_label ?? 'Add', href: `/private/new/?kind=list-entry&list=${list.data.id}` }}>
+  {intro.html && <div class="prose intro" slot="intro" set:html={intro.html} />}
+  {entries.length === 0 && <p class="muted">Nothing here yet.</p>}
+  <SectionGrid variant="rows">
+    {active.map((e) => <ListEntry e={e} showArt={t?.queue ?? true} />)}
+  </SectionGrid>
+  {done.length > 0 && (
+    <section class="done">
+      <div class="rule-label"><span>Finished</span></div>
+      <SectionGrid variant="rows">{done.map((e) => <ListEntry e={e} showArt={t?.queue ?? true} />)}</SectionGrid>
+    </section>
+  )}
+</Section>
+<style>
+  .intro { margin-top: var(--space-3); color: var(--fg-muted); }
+  .done { margin-top: var(--space-6); }
+</style>

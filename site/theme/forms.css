@@ -1,0 +1,64 @@
+/* Recurring Art Deco forms: arch, seal, stepped slip, stepped frame, double rules, cut-paper edge. */
+.rule-double { border-top: 3px double var(--rule); }
+.rule-double--fine { border-top-width: 2px; border-top-style: double; border-color: var(--rule-soft); }
+.rule-label { display: flex; align-items: center; gap: var(--space-3); }
+.rule-label::before, .rule-label::after { content: ''; flex: 1; border-top: 3px double var(--rule); }
+.rule-label > span { font: 500 var(--mono-size) / 1 var(--font-mono); letter-spacing: var(--mono-tracking); text-transform: uppercase; color: var(--fg-muted); }
+
+.arch {
+  border: var(--rule-w) solid var(--rule);
+  border-radius: var(--arch-radius);
+  outline: var(--rule-w) solid var(--rule);
+  outline-offset: var(--double-gap);
+  background: var(--paper);
+  padding: 2.2rem 1.25rem 1.25rem;
+}
+.arch--green { background: var(--green); color: var(--on-dark); border-color: var(--green-soft); outline-color: var(--green); }
+
+.seal {
+  aspect-ratio: var(--seal-ratio);
+  border-radius: 50%;
+  border: 3px double var(--rule);
+  display: grid; place-items: center; text-align: center;
+  padding: 10% 14%;
+  background: var(--paper);
+}
+.seal--green { background: var(--green); color: var(--on-dark); border-color: color-mix(in oklab, var(--on-dark) 55%, var(--green)); }
+.seal--pink { background: var(--pink); color: var(--ink); border-color: var(--pink-ink); }
+
+.slip {
+  --s: var(--step);
+  background: var(--paper-deep);
+  clip-path: polygon(
+    0 calc(var(--s) * 2), var(--s) calc(var(--s) * 2), var(--s) var(--s), calc(var(--s) * 2) var(--s), calc(var(--s) * 2) 0,
+    calc(100% - var(--s) * 2) 0, calc(100% - var(--s) * 2) var(--s), calc(100% - var(--s)) var(--s), calc(100% - var(--s)) calc(var(--s) * 2), 100% calc(var(--s) * 2),
+    100% calc(100% - var(--s) * 2), calc(100% - var(--s)) calc(100% - var(--s) * 2), calc(100% - var(--s)) calc(100% - var(--s)), calc(100% - var(--s) * 2) calc(100% - var(--s)), calc(100% - var(--s) * 2) 100%,
+    calc(var(--s) * 2) 100%, calc(var(--s) * 2) calc(100% - var(--s)), var(--s) calc(100% - var(--s)), var(--s) calc(100% - var(--s) * 2), 0 calc(100% - var(--s) * 2)
+  );
+  padding: calc(var(--s) * 2.5) calc(var(--s) * 3);
+}
+.slip--fit { width: fit-content; max-width: 34ch; }
+.slip--ink { background: var(--ink); color: var(--on-dark); }
+.slip--green { background: var(--green); color: var(--on-dark); }
+.slip--pink { background: var(--pink); color: var(--ink); }
+
+.stepped {
+  position: relative; padding: calc(var(--step) * 3);
+  background: var(--paper);
+}
+.stepped::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  --s: var(--step);
+  background: var(--rule);
+  clip-path: polygon(
+    0 calc(var(--s) * 2), var(--s) calc(var(--s) * 2), var(--s) var(--s), calc(var(--s) * 2) var(--s), calc(var(--s) * 2) 0,
+    calc(100% - var(--s) * 2) 0, calc(100% - var(--s) * 2) var(--s), calc(100% - var(--s)) var(--s), calc(100% - var(--s)) calc(var(--s) * 2), 100% calc(var(--s) * 2),
+    100% calc(100% - var(--s) * 2), calc(100% - var(--s)) calc(100% - var(--s) * 2), calc(100% - var(--s)) calc(100% - var(--s)), calc(100% - var(--s) * 2) calc(100% - var(--s)), calc(100% - var(--s) * 2) 100%,
+    calc(var(--s) * 2) 100%, calc(var(--s) * 2) calc(100% - var(--s)), var(--s) calc(100% - var(--s)), var(--s) calc(100% - var(--s) * 2), 0 calc(100% - var(--s) * 2)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  padding: 1px;
+}
+
+.paper-edge { clip-path: var(--paper-edge-path, none); }

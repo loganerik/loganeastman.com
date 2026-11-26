@@ -1,0 +1,27 @@
+---
+import Section from '../../layouts/Section.astro';
+import SectionGrid from '../../components/section/SectionGrid.astro';
+import PieceCard from '../../components/section/PieceCard.astro';
+import { index, writingIn } from '../../lib/content';
+import identity from '@theme/identity';
+const idx = await index();
+const collections = idx.config.collections.filter((c) => !identity.writing.rootCollections.includes(c.key));
+---
+<Section preset={{ mode: 'piece' }} title="Writing" description="Longer pieces, by collection." feeds={[{ title: 'Writing', href: '/writing/rss.xml' }]} action={{ label: 'New piece', href: '/private/new/?kind=writing' }}>
+  {collections.map((c) => {
+    const pieces = writingIn(idx, c.key);
+    return (
+      <section class="coll">
+        <div class="rule-label"><span><a href={`/writing/${c.key}/`}>{c.title}</a> · {pieces.length}</span></div>
+        {pieces.length === 0 ? <p class="muted">Nothing published yet.</p> : (
+          <SectionGrid variant={c.form === 'arch' ? 'arches' : 'covers'}>{pieces.slice(0, 6).map((p) => <li><PieceCard piece={p} form={c.form} /></li>)}</SectionGrid>
+        )}
+      </section>
+    );
+  })}
+</Section>
+<style>
+  .coll { margin-bottom: var(--space-6); }
+  .coll .grid { margin-top: var(--space-4); }
+  .rule-label a { text-decoration: none; }
+</style>

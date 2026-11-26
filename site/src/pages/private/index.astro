@@ -1,0 +1,8 @@
+---
+import Base from '../../layouts/Base.astro';
+import PrivateHub from '../../components/private/PrivateHub';
+import '../../styles/private.css';
+---
+<Base title="Private" noindex noFab>
+  <div class="wrap"><PrivateHub client:only="preact" /></div>
+</Base>

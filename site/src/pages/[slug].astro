@@ -1,0 +1,27 @@
+---
+// Root-level pages (collections listed in identity.writing.rootCollections, e.g. About).
+import Reading from '../layouts/Reading.astro';
+import Pet from '../components/art/Pet.astro';
+import OwnerOnly from '../components/private/OwnerOnly.astro';
+import { index, type Rec } from '../lib/content';
+import { renderRecord } from '../lib/render';
+import { slugOf } from '../lib/urls';
+import identity from '@theme/identity';
+import type { Writing } from '@lem/vault-core';
+export async function getStaticPaths() {
+  const idx = await index();
+  return idx.ofType<Writing>('writing').filter((w) => identity.writing.rootCollections.includes(w.data.collection)).map((w) => ({ params: { slug: slugOf(w) }, props: { path: w.path } }));
+}
+const idx = await index();
+const page = idx.byPath.get(Astro.props.path) as Rec<Writing>;
+const r = await renderRecord(page, idx);
+const isAbout = slugOf(page) === 'about';
+---
+<Reading title={page.data.title} description={page.data.summary ?? r.excerpt}>
+  <Fragment slot="art">{isAbout && identity.placements.about.map((p) => <Pet who={p} size="s" class="about-pet" />)}</Fragment>
+  <OwnerOnly slot="controls"><p class="mono"><a href={`/private/edit/?id=${page.data.id}`}>Edit</a></p></OwnerOnly>
+  <Fragment set:html={r.html} />
+</Reading>
+<style>
+  .about-pet { justify-self: start; }
+</style>

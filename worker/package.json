@@ -1,0 +1,22 @@
+{
+  "name": "worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --port 8787 --ip 127.0.0.1",
+    "deploy": "wrangler deploy",
+    "migrate:local": "wrangler d1 migrations apply DB --local",
+    "migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "types": "wrangler types"
+  },
+  "dependencies": {
+    "@lem/providers": "*",
+    "@lem/vault-core": "*",
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "hono": "^4.13.22",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "wrangler": "^4.168.0"
+  }
+}

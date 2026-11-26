@@ -1,0 +1,5 @@
+<nav class="collections" aria-label="Collections">
+  {{ range slice (dict "url" "/wishlist/" "name" "WISHLIST") (dict "url" "/wishlist/interested/" "name" "INTERESTED") (dict "url" "/wishlist/gifts-for-you/" "name" "GIFTS FOR YOU") }}
+    <a href="{{ .url }}" {{ if eq $.RelPermalink .url }}aria-current="page"{{ end }}>{{ .name }}</a>
+  {{ end }}
+</nav>

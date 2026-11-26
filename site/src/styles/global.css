@@ -1,0 +1,61 @@
+@import '@theme/fonts.css';
+@import '@theme/tokens.css';
+@import '@theme/forms.css';
+
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--bg); color: var(--fg); font-family: var(--font-display); font-size: 100%; -webkit-text-size-adjust: 100%; text-rendering: optimizeLegibility; }
+body { margin: 0; min-height: 100dvh; font-size: var(--step-0); line-height: 1.5; display: flex; flex-direction: column; }
+img, svg, video { max-width: 100%; height: auto; display: block; }
+a { color: inherit; text-decoration-color: var(--rule); text-underline-offset: 0.14em; }
+a:hover { text-decoration-color: var(--accent); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 2px; }
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 500; line-height: 1.12; margin: 0; letter-spacing: -0.005em; text-wrap: balance; }
+h1 { font-size: var(--step-3); }
+h2 { font-size: var(--step-2); }
+h3 { font-size: var(--step-1); }
+p { margin: 0; }
+hr { border: 0; border-top: 3px double var(--rule); margin: var(--space-5) 0; }
+::selection { background: var(--pink); color: var(--ink); }
+
+.mono, .label { font-family: var(--font-mono); font-size: var(--mono-size); letter-spacing: var(--mono-tracking); text-transform: uppercase; font-variant-numeric: tabular-nums; }
+.mono--lc { text-transform: none; letter-spacing: 0.02em; }
+.muted { color: var(--fg-muted); }
+.faint { color: var(--ink-faint); }
+.vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.wrap { width: min(100% - 2 * var(--gutter), var(--content-max)); margin-inline: auto; }
+.measure { max-width: var(--measure); }
+.skip { position: absolute; left: var(--space-3); top: -4rem; background: var(--green); color: var(--on-dark); padding: var(--space-2) var(--space-3); z-index: 100; }
+.skip:focus { top: var(--space-3); }
+
+main { flex: 1; }
+
+/* clippings reserve their space and move only on hover/focus */
+.clip { display: block; position: relative; aspect-ratio: var(--ar, 1); width: 100%; }
+.clip > img, .clip > .typeset { position: absolute; inset: 0; width: 100%; height: 100%; }
+.clip > img { object-fit: contain; }
+.clip--cutout > img { filter: var(--shadow-clip); padding: 4%; }
+.clip--cover > img { object-fit: contain; box-shadow: none; }
+.clip--cover > img, .clip--poster > img { outline: 1px solid rgb(26 26 24 / 0.2); outline-offset: -1px; filter: drop-shadow(0 1px 1px rgb(26 26 24 / 0.2)) drop-shadow(0 8px 10px rgb(26 26 24 / 0.12)); }
+.clip--logo > img { object-fit: contain; padding: 8%; }
+.clip--logo.on-paper > img { filter: brightness(0); }
+.clip--logo.on-dark > img { filter: brightness(0) invert(1) sepia(0.15); }
+
+.typeset { display: grid; place-items: center; text-align: center; padding: 8%; font-family: var(--font-display); font-weight: 500; line-height: 1.05; text-wrap: balance; hyphens: none; }
+.typeset[data-len='short'] { font-size: clamp(1.4rem, 9cqw, 3.2rem); }
+.typeset[data-len='medium'] { font-size: clamp(1.1rem, 7cqw, 2.4rem); }
+.typeset[data-len='long'] { font-size: clamp(0.95rem, 5.2cqw, 1.7rem); }
+.typeset .kicker { display: block; font: 500 var(--mono-size) / 1.2 var(--font-mono); letter-spacing: var(--mono-tracking); text-transform: uppercase; margin-top: 0.6em; opacity: 0.75; }
+.on-dark .typeset { color: var(--on-dark); }
+
+.card .clip, .tile .clip { transition: transform var(--motion-fast) var(--ease-lift); will-change: transform; transform: rotate(var(--angle, 0deg)); }
+.card:hover .clip, .card:focus-within .clip, .tile:hover .clip, .tile:focus-visible .clip { transform: rotate(calc(var(--angle, 0deg) * 0.4)) translateY(var(--lift)); }
+
+.pet { display: inline-block; pointer-events: auto; user-select: none; -webkit-user-drag: none; }
+.pet img { filter: var(--shadow-clip); }
+@keyframes wiggle { 0% { rotate: 0deg } 30% { rotate: -2deg } 65% { rotate: 1.4deg } 100% { rotate: 0deg } }
+.pet:hover img { animation: wiggle var(--motion-wiggle) var(--ease-lift) 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  .card:hover .clip, .tile:hover .clip, .tile:focus-visible .clip { transform: rotate(var(--angle, 0deg)); }
+}

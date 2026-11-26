@@ -1,0 +1,18 @@
+---
+import Section from '../../../layouts/Section.astro';
+import SectionGrid from '../../../components/section/SectionGrid.astro';
+import PieceCard from '../../../components/section/PieceCard.astro';
+import { index, writingIn } from '../../../lib/content';
+import identity from '@theme/identity';
+export async function getStaticPaths() {
+  const idx = await index();
+  return idx.config.collections.filter((c) => !identity.writing.rootCollections.includes(c.key)).map((c) => ({ params: { collection: c.key }, props: { key: c.key } }));
+}
+const idx = await index();
+const c = idx.config.collections.find((x) => x.key === Astro.props.key)!;
+const pieces = writingIn(idx, c.key);
+---
+<Section title={c.title} kicker="Writing" count={pieces.length} description={`${c.title} by ${identity.site.name}`} action={{ label: 'New piece', href: `/private/new/?kind=writing&collection=${c.key}` }}>
+  {pieces.length === 0 && <p class="muted">Nothing published yet.</p>}
+  <SectionGrid variant={c.form === 'arch' ? 'arches' : 'covers'}>{pieces.map((p) => <li><PieceCard piece={p} form={c.form} /></li>)}</SectionGrid>
+</Section>

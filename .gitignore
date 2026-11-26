@@ -1,4 +1,14 @@
-public/
-resources/
-.hugo_build.lock
+node_modules/
+dist/
+.astro/
+.wrangler/
+.dev.vars
+*.log
 .DS_Store
+# the vault is its own repo, cloned beside site/ (see README)
+/vault/
+worker-configuration.d.ts
+# old site build output, kept out of git
+archive/tryhard/public/
+archive/tryhard/resources/
+archive/tryhard/.hugo_build.lock

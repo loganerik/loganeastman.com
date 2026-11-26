@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>{{ .Title }} · Logan's List</title>
+<link rel="icon" href="/tryhard/favicon.svg"><link rel="stylesheet" href="{{ (resources.Get "wishlist/list.css" | fingerprint).RelPermalink }}">
+<script defer src="{{ (resources.Get "wishlist/likes.js" | fingerprint).RelPermalink }}"></script>
+</head>
+<body>
+<header><h1><a class="list-home" href="/wishlist/">Logan's List</a></h1></header>
+<main>{{ partial "wishlist/collections.html" . }}
+<section class="picks" aria-label="{{ .Title }}">
+<h2>{{ .Title }}</h2><p class="picks-intro">{{ .Description }}</p>
+{{ range index site.Data.recommendations .Params.collection }}
+<article class="pick"><a class="pick-photo" href="{{ .url }}" aria-label="Explore {{ .name }}" target="_blank" rel="noopener noreferrer">{{ if .image }}<img src="{{ .image }}" alt="" loading="lazy">{{ else }}<span>{{ .name }}</span>{{ end }}</a>
+<div><p class="pick-label">{{ .label }}</p><h3><a href="{{ .url }}" target="_blank" rel="noopener noreferrer">{{ .name }}</a></h3>
+<p class="pick-note">{{ .note }}</p>
+<div class="like" data-id="{{ .id }}">
+<button class="like-open" type="button" hidden>I LIKE THIS</button>
+<form class="like-form" hidden><label>Your name <input name="name" maxlength="80" autocomplete="given-name" required></label><button>Let Logan know</button><button class="like-cancel" type="button">Cancel</button></form>
+<p class="like-status" role="status"></p>
+</div>
+</div></article>{{ end }}
+</section></main></body></html>

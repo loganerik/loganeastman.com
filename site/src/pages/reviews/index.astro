@@ -1,0 +1,33 @@
+---
+import Section from '../../layouts/Section.astro';
+import { index, type Rec } from '../../lib/content';
+import { renderRecord } from '../../lib/render';
+import { urlFor } from '../../lib/urls';
+import { fmtDate } from '../../lib/dates';
+import Clip from '../../components/art/Clip.astro';
+import type { Review, Item } from '@lem/vault-core';
+const idx = await index();
+const reviews = idx.ofType<Review>('review').sort((a, b) => String(b.data.date).localeCompare(String(a.data.date)));
+const rows = await Promise.all(reviews.map(async (rv) => ({ rv, item: idx.resolve(rv.data.item) as Rec<Item> | undefined, r: await renderRecord(rv, idx) })));
+---
+<Section title="Reviews" count={reviews.length} description="What I thought, after." feeds={[{ title: 'Reviews', href: '/reviews/rss.xml' }]} action={{ label: 'New review', href: '/private/new/?kind=review' }}>
+  {rows.length === 0 && <p class="muted">No reviews yet.</p>}
+  <ul class="reviews">
+    {rows.map(({ rv, item, r }) => (
+      <li class="review card">
+        {item?.public && <a class="review__art" href={urlFor(rv)} tabindex="-1" aria-hidden="true"><Clip record={item} context="list" decorative /></a>}
+        <div>
+          <p class="mono muted">{item?.public ? item.data.title : 'Review'} · {fmtDate(rv.data.date)}{rv.data.rating != null && ` · ${rv.data.rating}/${idx.config.site.rating_scale}`}</p>
+          <h3><a href={urlFor(rv)}>{rv.data.title ?? (item ? `On ${item.data.title}` : 'Review')}</a></h3>
+          <p class="muted">{r.excerpt}</p>
+        </div>
+      </li>
+    ))}
+  </ul>
+</Section>
+<style>
+  .reviews { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4); }
+  .review { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: var(--space-4); padding-bottom: var(--space-4); border-bottom: 1px solid var(--rule-soft); }
+  .review h3 a { text-decoration: none; }
+  .review h3 a:hover { text-decoration: underline; }
+</style>

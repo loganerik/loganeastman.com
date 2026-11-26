@@ -1,0 +1,12 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Editor from '../../../components/private/editor/Editor';
+import '../../../styles/prose.css';
+import '../../../styles/private.css';
+import '../../../styles/editor.css';
+---
+<Base title="Edit" noindex noFab>
+  <div class="wrap edit-page">
+    <Editor client:only="preact" />
+  </div>
+</Base>

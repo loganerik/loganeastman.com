@@ -1,0 +1,22 @@
+/* Self-hosted variable fonts via fontsource (no third-party font requests). */
+@import '@fontsource-variable/newsreader/opsz.css';
+@import '@fontsource-variable/newsreader/opsz-italic.css';
+@import '@fontsource-variable/sometype-mono';
+
+/* Metric-matched fallbacks so text set in the fallback does not reflow when the webfont arrives. */
+@font-face {
+  font-family: 'Newsreader Fallback';
+  src: local('Georgia');
+  size-adjust: 103%;
+  ascent-override: 92%;
+  descent-override: 24%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Sometype Mono Fallback';
+  src: local('Menlo'), local('Consolas');
+  size-adjust: 98%;
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}

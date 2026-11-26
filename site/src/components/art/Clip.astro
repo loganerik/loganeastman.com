@@ -1,0 +1,37 @@
+---
+// Renders a record's clipping per lib/artwork.ts. Always reserves space (aspect-ratio) so nothing shifts.
+import type { VaultRecord } from '../../loaders/index';
+import { clipFor, lengthClass, paperEdgePath, type ClipContext } from '../../lib/artwork';
+interface Props { record: VaultRecord; context: ClipContext; tone?: 'paper' | 'dark'; class?: string; priority?: boolean; sizes?: string; decorative?: boolean; title?: string; kicker?: string }
+const { record, context, tone, class: cls = '', priority = false, sizes = '(max-width: 600px) 45vw, 320px', decorative = false } = Astro.props;
+const spec = clipFor(record, context, { tone });
+const title = Astro.props.title ?? spec.title;
+const kicker = Astro.props.kicker ?? spec.kicker;
+const toneCls = spec.tone === 'dark' ? 'on-dark' : 'on-paper';
+const edge = spec.mode === 'paper' ? paperEdgePath(record.data.id) : undefined;
+---
+<span class={`clip clip--${spec.mode} ${toneCls} ${cls}`} style={`--ar:${spec.ar.toFixed(4)}`} data-treatment={spec.mode}>
+  {spec.mode === 'typeset' ? (
+    <span class="typeset" data-len={lengthClass(title)} aria-hidden={decorative ? 'true' : undefined}>
+      <span>
+        <span class="typeset__title">{title}</span>
+        {kicker && <span class="kicker">{kicker}</span>}
+      </span>
+    </span>
+  ) : (
+    <img
+      src={spec.src}
+      width={spec.width}
+      height={spec.height}
+      alt={decorative ? '' : spec.alt}
+      loading={priority ? 'eager' : 'lazy'}
+      decoding="async"
+      sizes={sizes}
+      style={edge ? `clip-path:${edge}` : undefined}
+    />
+  )}
+</span>
+<style>
+  .clip { container-type: inline-size; }
+  .typeset__title { display: block; }
+</style>

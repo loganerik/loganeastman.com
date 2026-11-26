@@ -1,0 +1,9 @@
+---
+import Base from '../../../layouts/Base.astro';
+import NewRecord from '../../../components/private/editor/NewRecord';
+import '../../../styles/private.css';
+import '../../../styles/editor.css';
+---
+<Base title="New" noindex noFab>
+  <div class="wrap edit-page"><NewRecord client:only="preact" /></div>
+</Base>

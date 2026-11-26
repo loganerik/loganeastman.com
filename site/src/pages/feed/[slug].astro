@@ -1,0 +1,38 @@
+---
+import Base from '../../layouts/Base.astro';
+import FeedSlip from '../../components/section/FeedSlip.astro';
+import OwnerOnly from '../../components/private/OwnerOnly.astro';
+import { index, feedPosts, type Rec } from '../../lib/content';
+import { renderRecord } from '../../lib/render';
+import { urlFor } from '../../lib/urls';
+import type { Feed } from '@lem/vault-core';
+export async function getStaticPaths() {
+  const idx = await index();
+  return feedPosts(idx).map((p) => ({ params: { slug: p.stem }, props: { path: p.path } }));
+}
+const idx = await index();
+const post = idx.byPath.get(Astro.props.path) as Rec<Feed>;
+const r = await renderRecord(post, idx);
+const about = post.data.about ? idx.resolve(post.data.about) : undefined;
+const posts = feedPosts(idx);
+const i = posts.findIndex((p) => p.path === post.path);
+const newer = posts[i - 1];
+const older = posts[i + 1];
+---
+<Base title={post.data.title ?? r.excerpt.slice(0, 60)} description={r.excerpt} type="article">
+  <div class="wrap one">
+    <FeedSlip post={post} link={false} />
+    {about?.public && <p class="mono muted">About <a href={urlFor(about)}>{(about.data as { title?: string }).title}</a></p>}
+    <OwnerOnly><p class="mono"><a href={`/private/edit/?id=${post.data.id}`}>Edit</a></p></OwnerOnly>
+    <nav class="mono muted pager" aria-label="Feed navigation">
+      {older && <a href={urlFor(older)}>← Older</a>}
+      <a href="/feed/">All thoughts</a>
+      {newer && <a href={urlFor(newer)}>Newer →</a>}
+    </nav>
+  </div>
+</Base>
+<style>
+  .one { padding-top: var(--space-6); display: grid; gap: var(--space-4); justify-items: start; }
+  .pager { display: flex; gap: var(--space-4); margin-top: var(--space-5); }
+  .pager a { text-decoration: none; }
+</style>

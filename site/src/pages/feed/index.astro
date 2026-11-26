@@ -1,0 +1,14 @@
+---
+import Section from '../../layouts/Section.astro';
+import SectionGrid from '../../components/section/SectionGrid.astro';
+import FeedSlip from '../../components/section/FeedSlip.astro';
+import { index, feedPosts } from '../../lib/content';
+const idx = await index();
+const posts = feedPosts(idx);
+---
+<Section preset={{ mode: 'thought' }} title="Feed" description="Short thoughts, in order." feeds={[{ title: 'Feed', href: '/feed/rss.xml' }]} action={{ label: 'New thought', href: '/private/new/?kind=feed' }}>
+  {posts.length === 0 && <p class="muted">Quiet so far.</p>}
+  <SectionGrid variant="slips">
+    {posts.map((p) => <li><FeedSlip post={p} angle /></li>)}
+  </SectionGrid>
+</Section>

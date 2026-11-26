@@ -1,0 +1,24 @@
+---
+import { fmtDate } from '../../lib/dates';
+import type { ReleaseDates } from '@lem/vault-core';
+interface Props { dates?: ReleaseDates; region?: string }
+const { dates, region = 'US' } = Astro.props;
+const labels: Record<string, string> = { premiere: 'Premiere', theatrical_limited: 'Limited', theatrical: 'Theatrical', digital: 'Digital', physical: 'Physical', tv: 'TV' };
+const rows = Object.entries(dates ?? {}).filter(([, v]) => typeof v === 'string').sort((a, b) => String(a[1]).localeCompare(String(b[1])));
+---
+{rows.length > 0 && (
+  <section class="dates" aria-labelledby="dates-h">
+    <div class="rule-label"><span id="dates-h">{region} release dates</span></div>
+    <dl class="dates__list">
+      {rows.map(([k, v]) => (
+        <div class="dates__row"><dt class="mono muted">{labels[k] ?? k}</dt><dd class="mono">{fmtDate(String(v))}</dd></div>
+      ))}
+    </dl>
+  </section>
+)}
+<style>
+  .dates { margin: var(--space-5) 0; }
+  .dates__list { margin: var(--space-3) 0 0; display: grid; gap: var(--space-2); }
+  .dates__row { display: flex; justify-content: space-between; gap: var(--space-3); border-bottom: 1px solid var(--rule-soft); padding-bottom: var(--space-2); }
+  dd { margin: 0; }
+</style>

@@ -1,0 +1,13 @@
+---
+interface Props { variant?: 'rows' | 'covers' | 'slips' | 'seals' | 'arches'; class?: string; as?: 'ul' | 'div' }
+const { variant = 'rows', class: cls = '', as: Tag = 'ul' } = Astro.props;
+---
+<Tag class={`grid grid--${variant} ${cls}`}><slot /></Tag>
+<style>
+  .grid { list-style: none; margin: 0; padding: 0; }
+  .grid--rows { display: grid; gap: 0; }
+  .grid--covers { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-5) var(--space-4); }
+  .grid--slips { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: flex-start; }
+  .grid--seals { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-5) var(--space-4); }
+  .grid--arches { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-5) var(--space-4); }
+</style>

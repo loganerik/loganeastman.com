@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ .Title }}</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/tryhard/favicon.svg"><link rel="stylesheet" href="{{ (resources.Get "wishlist/list.css" | fingerprint).RelPermalink }}">
+<script src="{{ (resources.Get "wishlist/list.js" | fingerprint).RelPermalink }}" defer></script>
+</head>
+<body>
+<header>
+  <h1>{{ .Title }}</h1>
+  <div class="tools">
+    <button popovertarget="sizes">Sizes</button>
+    <button id="share" hidden>Share</button>
+    <aside id="sizes" popover aria-label="Clothing sizes">
+      <strong>Sizes</strong>
+      <p>Tops: usually Small, sometimes Medium.<br>Pants: usually 28–29, sometimes 30.</p>
+      <p>Links go to my preferred size and color where possible. Check the item’s size before ordering.</p>
+    </aside>
+  </div>
+</header>
+<main>
+{{ partial "wishlist/collections.html" . }}
+<nav class="views" aria-label="List format"><a id="gallery" href="?">Gallery</a><a id="list" href="?view=list">Christmas List</a><label id="pictures-control" hidden><input id="pictures" type="checkbox" checked> Show pictures</label></nav>
+{{ $items := site.Data.wishlist.items }}
+<form id="filters" hidden><label>Category<select id="category"><option value="">All categories</option>{{ range sort (uniq (apply $items "index" "." "category")) }}<option>{{ . }}</option>{{ end }}</select></label>
+<label id="type-control" hidden>Apparel type<select id="type"><option value="">All apparel</option>{{ range sort (uniq (apply (where $items "category" "Apparel") "index" "." "type")) }}<option>{{ . }}</option>{{ end }}</select></label>
+<label>Brand<select id="brand"><option value="">All brands</option>{{ range sort (uniq (apply $items "index" "." "brand")) }}<option>{{ . }}</option>{{ end }}</select></label>
+<label>Sort by<select id="sort"><option value="newest">Date added: newest first</option><option value="oldest">Date added: oldest first</option><option value="original">List order</option><option value="desc">Price: high to low</option><option value="asc">Price: low to high</option><option value="brand">Brand: A–Z</option><option value="category">Category: A–Z</option><option value="name">Item: A–Z</option></select></label>
+<output id="count" aria-live="polite">{{ len $items }} items</output></form>
+<section class="grid" aria-label="Gift ideas">
+{{ range $i, $item := sort $items "dateAdded" "desc" }}
+<article data-added="{{ .dateAdded }}" data-id="{{ .id }}" data-type="{{ .type }}" data-category="{{ .category }}" data-brand="{{ .brand }}" data-price="{{ with .price }}{{ . }}{{ end }}">
+<a class="photo" href="{{ .url }}" target="_blank" rel="noopener noreferrer" aria-label="Shop {{ .name }}">{{ if .image }}<img src="{{ .image }}" alt="{{ .name }}" {{ if gt $i 3 }}loading="lazy"{{ end }}>{{ else }}<span>{{ .name }}</span>{{ end }}</a>
+<div class="info"><div class="meta"><span>{{ .brand }}</span><span>{{ with .price }}{{ lang.FormatCurrency 2 "USD" . | replaceRE "\\.00$" "" }}{{ else }}Varies{{ end }}</span></div>
+<h2>{{ .name }}</h2>{{ with .details }}<p class="item-details">{{ . }}</p>{{ end }}
+{{ with .note }}<p class="item-note"><strong>Note</strong> {{ . }}</p>{{ end }}<p class="added">Date added <time datetime="{{ .dateAdded }}">{{ time.Format "Jan 2, 2006" .dateAdded }}</time></p>
+<div class="item-actions">
+  <a href="{{ .url }}" target="_blank" rel="noopener noreferrer">BUY</a>
+  <button type="button" data-gift="claim" hidden>MARK GOT</button>
+  <button type="button" data-gift="check" hidden>ANYONE GOT?</button>
+</div></div>
+</article>
+{{ end }}
+</section>
+<p id="empty" hidden>No gifts match these filters. <button id="reset">Clear filters</button></p>
+</main>
+<dialog id="gift-dialog" aria-labelledby="gift-name" aria-describedby="gift-message">
+  <h2 id="gift-name"></h2>
+  <p id="gift-message" role="status"></p>
+  <div class="gift-controls">
+    <button id="gift-close" autofocus>Close</button>
+    <button id="gift-confirm"></button>
+  </div>
+</dialog>
+</body></html>

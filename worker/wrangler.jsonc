@@ -1,0 +1,42 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "loganeastman-com",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "loganeastman.com", "custom_domain": true },
+    { "pattern": "www.loganeastman.com", "custom_domain": true }
+  ],
+  "assets": {
+    "directory": "../site/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": true
+  },
+  "observability": { "enabled": true },
+  "triggers": { "crons": ["* * * * *", "*/15 * * * *", "0 10 * * 1"] },
+  "d1_databases": [{ "binding": "DB", "database_name": "loganeastman", "database_id": "806e0e0a-2f59-4d1e-a8f3-94ad7adcd6b2", "migrations_dir": "migrations" }],
+  "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "loganeastman-media" }],
+  "images": { "binding": "IMAGES" },
+  "kv_namespaces": [{ "binding": "KV", "id": "90bb4e53908f4c39bc67fc9f385f9d92" }],
+  "durable_objects": {
+    "bindings": [
+      { "name": "VAULT_WRITER", "class_name": "VaultWriter" },
+      { "name": "PROCESSOR", "class_name": "Processor" }
+    ]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["VaultWriter", "Processor"] }],
+  "vars": {
+    "ENVIRONMENT": "production",
+    "SITE_URL": "https://loganeastman.com",
+    "VAULT_REPO": "loganerik/vault",
+    "VAULT_BRANCH": "main",
+    "SITE_REPO": "loganerik/loganeastman.com",
+    "OWNER_EMAIL": "logan.eastman@gmail.com",
+    "LLM_PROVIDER": "openai",
+    "OPENAI_MODEL": "gpt-5.1",
+    "BUILTIN_FALLBACK_AFTER_MIN": "20"
+  }
+}

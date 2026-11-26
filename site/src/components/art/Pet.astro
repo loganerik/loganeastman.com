@@ -1,0 +1,27 @@
+---
+// Decorative photographic cutouts: the cats beside the name, the face beside About, Toast on the wall.
+import identity from '@theme/identity';
+interface Props { who: string; size?: 'xs' | 's' | 'm' | 'l'; class?: string; flip?: boolean }
+const { who, size = 's', class: cls = '', flip = false } = Astro.props;
+const assets = import.meta.glob<{ default: { src: string; width: number; height: number } }>('../../../theme/assets/*.webp', { eager: true });
+let src: string | undefined, w = 1, h = 1, label = '';
+if (who === 'face') {
+  const f = identity.owner.face;
+  const m = assets[`../../../theme/assets/${f.src}`];
+  src = m?.default.src; w = f.w; h = f.h; label = identity.owner.name;
+} else {
+  const [id, pose] = who.split(':');
+  const m = identity.mascots.find((x) => x.id === id);
+  const file = m?.poses[pose ?? Object.keys(m.poses)[0]!];
+  const meta = file ? assets[`../../../theme/assets/${file}`] : undefined;
+  src = meta?.default.src; w = meta?.default.width ?? 1; h = meta?.default.height ?? 1; label = m?.label ?? '';
+}
+const heights = { xs: 44, s: 90, m: 160, l: 260 };
+const height = heights[size];
+const width = Math.round((w / h) * height);
+---
+{src && (
+  <span class={`pet pet--${size} ${cls}`} aria-hidden="true" data-pet={who} style={flip ? 'transform: scaleX(-1)' : undefined}>
+    <img src={src} width={width} height={height} alt="" loading={size === 'xs' ? 'eager' : 'lazy'} decoding="async" draggable="false" />
+  </span>
+)}

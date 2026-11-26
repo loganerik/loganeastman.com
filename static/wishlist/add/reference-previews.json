@@ -1,0 +1,64 @@
+{
+  "evenmouth.com": {
+    "name": "Evenmouth Oral Microbiome Care",
+    "brand": "Evenmouth",
+    "label": "Oral care",
+    "note": "Oral care products from Evenmouth.",
+    "image": "https://evenmouth.com/cdn/shop/files/Screenshot_2026-02-19_at_9.21.55_AM.png?v=1771525208"
+  },
+  "evenmouth.com/products/duo-biotic-toothpaste": {
+    "name": "Duo Biotic Toothpaste",
+    "brand": "Evenmouth",
+    "category": "Lifestyle & Skincare",
+    "type": "Toothpaste",
+    "label": "Oral care · Evenmouth",
+    "image": "https://cdn.shopify.com/s/files/1/0648/9748/2887/files/PDP_Toothpaste_Image_1_1.png?v=1793121837",
+    "note": "Mint toothpaste, available individually or in multipacks.",
+    "details": "1 Tube",
+    "price": "18.00"
+  },
+  "evenmouth.com/products/duo-biotic-toothpaste?variant=45398529278087": {
+    "name": "Duo Biotic Toothpaste",
+    "brand": "Evenmouth",
+    "category": "Lifestyle & Skincare",
+    "type": "Toothpaste",
+    "label": "Oral care · Evenmouth",
+    "image": "https://cdn.shopify.com/s/files/1/0648/9748/2887/files/PDP_Toothpaste_Image_1_1.png?v=1793121837",
+    "note": "Mint toothpaste, available individually or in multipacks.",
+    "details": "1 Tube",
+    "price": "18.00"
+  },
+  "evenmouth.com/products/duo-biotic-toothpaste?variant=46443432050823": {
+    "name": "Duo Biotic Toothpaste",
+    "brand": "Evenmouth",
+    "category": "Lifestyle & Skincare",
+    "type": "Toothpaste",
+    "label": "Oral care · Evenmouth",
+    "image": "https://cdn.shopify.com/s/files/1/0648/9748/2887/files/PDP_Toothpaste_Image_1_1.png?v=1793121837",
+    "note": "Mint toothpaste, available individually or in multipacks.",
+    "details": "2 Tubes",
+    "price": "36.00"
+  },
+  "evenmouth.com/products/duo-biotic-toothpaste?variant=45398529310855": {
+    "name": "Duo Biotic Toothpaste",
+    "brand": "Evenmouth",
+    "category": "Lifestyle & Skincare",
+    "type": "Toothpaste",
+    "label": "Oral care · Evenmouth",
+    "image": "https://cdn.shopify.com/s/files/1/0648/9748/2887/files/PDP_Toothpaste_Image_1_1.png?v=1793121837",
+    "note": "Mint toothpaste, available individually or in multipacks.",
+    "details": "3 Tubes",
+    "price": "54.00"
+  },
+  "evenmouth.com/products/duo-biotic-toothpaste?variant=46443432083591": {
+    "name": "Duo Biotic Toothpaste",
+    "brand": "Evenmouth",
+    "category": "Lifestyle & Skincare",
+    "type": "Toothpaste",
+    "label": "Oral care · Evenmouth",
+    "image": "https://cdn.shopify.com/s/files/1/0648/9748/2887/files/PDP_Toothpaste_Image_1_1.png?v=1793121837",
+    "note": "Mint toothpaste, available individually or in multipacks.",
+    "details": "6 Tubes",
+    "price": "108.00"
+  }
+}

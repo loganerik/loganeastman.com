@@ -1,0 +1,41 @@
+---
+import identity from '@theme/identity';
+import Pet from '../art/Pet.astro';
+const path = Astro.url.pathname;
+const [petA, petB] = identity.placements.nav;
+---
+<header class="masthead wrap">
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="masthead__row">
+    <a class="brand" href="/" aria-label={`${identity.site.name} — home`}>
+      {petA && <Pet who={petA} size="xs" class="brand__pet" />}
+      <span class="brand__name">{identity.site.name}</span>
+      {petB && <Pet who={petB} size="xs" class="brand__pet" flip />}
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <ul>
+        {identity.nav.map((n) => (
+          <li><a href={n.href} class="mono" aria-current={path === n.href || (n.href !== '/' && path.startsWith(n.href)) ? 'page' : undefined}>{n.label}</a></li>
+        ))}
+        <template data-owner-only>
+          <li><a href="/private/" class="mono nav__private">Private</a></li>
+        </template>
+      </ul>
+    </nav>
+    <div class="masthead__actions" data-owner-slot></div>
+  </div>
+  <div class="rule-double"></div>
+</header>
+<style>
+  .masthead { padding-top: var(--space-4); }
+  .masthead__row { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; padding-bottom: var(--space-3); }
+  .brand { display: inline-flex; align-items: flex-end; gap: var(--space-2); text-decoration: none; }
+  .brand__name { font-family: var(--font-display); font-size: var(--step-2); font-weight: 500; line-height: 1; letter-spacing: -0.01em; padding-bottom: 2px; }
+  .brand__pet { transform-origin: bottom center; }
+  .nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: clamp(0.6rem, 2vw, 1.4rem); flex-wrap: wrap; }
+  .nav a { text-decoration: none; padding: 0.3rem 0; border-bottom: 1px solid transparent; color: var(--fg-muted); }
+  .nav a:hover, .nav a[aria-current='page'] { color: var(--green); border-bottom-color: var(--green); }
+  .nav__private { color: var(--pink-ink) !important; }
+  .masthead__actions { min-width: 2.5rem; min-height: 1px; }
+  @media (max-width: 599px) { .brand__name { font-size: var(--step-1); } .masthead__row { align-items: center; } }
+</style>

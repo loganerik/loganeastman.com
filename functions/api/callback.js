@@ -1,3 +1,5 @@
+import { finishLogin } from '../../lib/wishlist/session.js';
+
 // GitHub OAuth, step 2: exchange the code for a token and hand it to Decap
 // through the postMessage handshake it expects.
 //
@@ -8,6 +10,7 @@ export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
+  if (state?.startsWith("list-")) return finishLogin(request, env);
   const cookie = request.headers.get("Cookie") || "";
   const saved = (cookie.match(/decap_oauth_state=([^;]+)/) || [])[1];
   const fail = (msg) => page("error", msg);

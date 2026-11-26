@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /private/
+Disallow: /share
+Disallow: /api/
+Sitemap: https://loganeastman.com/sitemap-index.xml

@@ -1,0 +1,18 @@
+---
+import identity from '@theme/identity';
+const year = new Date().getFullYear();
+---
+<footer class="footer wrap">
+  <div class="rule-double rule-double--fine"></div>
+  <div class="footer__row">
+    <span class="mono muted">{identity.site.name} · {year}</span>
+    <span class="mono muted"><a href="/rss.xml">RSS</a> · <a href="/feed.json">JSON</a></span>
+    <span class="mono muted">Film data from <a href="https://www.themoviedb.org/" rel="noopener">TMDB</a></span>
+  </div>
+</footer>
+<style>
+  .footer { margin-top: var(--space-7); padding-bottom: var(--space-5); }
+  .footer__row { display: flex; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; padding-top: var(--space-3); }
+  .footer a { text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+</style>

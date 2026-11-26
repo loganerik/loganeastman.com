@@ -1,0 +1,54 @@
+/* Minimal Art Deco scrapbook on warm paper. Change these and the site changes with them. */
+:root {
+  color-scheme: light;
+  --paper: #f4ecdf;
+  --paper-deep: #ebe1cf;
+  --paper-edge: #e3d6bf;
+  --ink: #1a1a18;
+  --ink-soft: #4a4843;
+  --ink-faint: #8a857a;
+  --green: #243d32;
+  --green-soft: #3a5a4b;
+  --pink: #ecd0c7;        /* fill only */
+  --pink-ink: #9a5f52;    /* text-safe pink, 4.6:1 on paper */
+  --on-dark: #f7efe2;
+  --rule: color-mix(in oklab, var(--ink) 30%, var(--paper));
+  --rule-soft: color-mix(in oklab, var(--ink) 16%, var(--paper));
+
+  --bg: var(--paper);
+  --fg: var(--ink);
+  --fg-muted: var(--ink-soft);
+  --accent: var(--green);
+  --accent-2: var(--pink);
+  --focus: var(--green);
+
+  --font-display: 'Newsreader Variable', 'Newsreader Fallback', Georgia, 'Times New Roman', serif;
+  --font-mono: 'Sometype Mono Variable', 'Sometype Mono Fallback', ui-monospace, Menlo, monospace;
+
+  --step--1: clamp(0.82rem, 0.79rem + 0.15vw, 0.9rem);
+  --step-0: clamp(1.05rem, 1rem + 0.3vw, 1.2rem);
+  --step-1: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  --step-2: clamp(1.6rem, 1.4rem + 1vw, 2.1rem);
+  --step-3: clamp(2rem, 1.6rem + 2vw, 3rem);
+  --step-4: clamp(2.6rem, 2rem + 3vw, 4.2rem);
+  --measure: 62ch;
+  --mono-size: 0.78rem;
+  --mono-tracking: 0.06em;
+
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 1rem; --space-4: 1.5rem; --space-5: 2.5rem; --space-6: 4rem; --space-7: 6rem;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --content-max: 1360px;
+
+  --rule-w: 1px;
+  --double-gap: 3px;
+  --arch-radius: 50% 50% 0 0 / 42% 42% 0 0;
+  --step: 7px;
+  --seal-ratio: 1.3;
+
+  --motion-fast: 180ms;
+  --motion-wiggle: 420ms;
+  --ease-lift: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --lift: -3px;
+  --shadow-contact: 0 1px 1px rgb(26 26 24 / 0.18), 0 8px 14px -10px rgb(26 26 24 / 0.35);
+  --shadow-clip: drop-shadow(0 1px 1px rgb(26 26 24 / 0.25)) drop-shadow(0 6px 8px rgb(26 26 24 / 0.16));
+}

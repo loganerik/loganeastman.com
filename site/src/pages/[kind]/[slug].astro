@@ -1,0 +1,76 @@
+---
+import Base from '../../layouts/Base.astro';
+import '../../styles/prose.css';
+import ItemHeader from '../../components/section/ItemHeader.astro';
+import ReleaseDates from '../../components/section/ReleaseDates.astro';
+import OwnerOnly from '../../components/private/OwnerOnly.astro';
+import { index, listsContaining, reviewsOf, type Rec } from '../../lib/content';
+import { renderRecord } from '../../lib/render';
+import { urlFor, kindRoute } from '../../lib/urls';
+import { fmtDate } from '../../lib/dates';
+import identity from '@theme/identity';
+import type { Item } from '@lem/vault-core';
+import { publicTags } from '@lem/vault-core';
+
+export async function getStaticPaths() {
+  const idx = await index();
+  return idx.ofType<Item>('item').map((item) => ({ params: { kind: kindRoute(item.data.kind), slug: item.stem }, props: { path: item.path } }));
+}
+const idx = await index();
+const item = idx.byPath.get(Astro.props.path) as Rec<Item>;
+const d = item.data;
+const r = await renderRecord(item, idx);
+const lists = listsContaining(idx, item);
+const reviews = reviewsOf(idx, item);
+const tags = publicTags(d.tags);
+const related = (d.related ?? []).map((rel) => ({ rel, rec: idx.resolve(rel.to) })).filter((x) => x.rec?.public);
+const description = d.synopsis ?? r.excerpt ?? `${identity.kinds[d.kind]?.label ?? d.kind}: ${d.title}`;
+---
+<Base title={d.title} description={description} image={d.artwork?.full ?? d.artwork?.thumb} type="article">
+  <article class="wrap item">
+  <ItemHeader item={item}>
+    <OwnerOnly>
+      <p class="mono owner-row"><a href={`/private/edit/?id=${d.id}`}>Edit</a> · <a href={`/private/new/?kind=review&item=${d.id}`}>Write a review</a> · <a href={`/private/new/?kind=list-entry&item=${d.id}`}>Add to a list</a></p>
+    </OwnerOnly>
+  </ItemHeader>
+  {lists.length > 0 && (
+    <section class="on-lists">
+      {lists.map((e) => (
+        <div class="on-lists__row">
+          <p class="mono muted">On <a href={urlFor(e.list)}>{e.list.data.title}</a>{e.entry.data.state === 'done' && ' · finished'} · added {fmtDate(e.entry.data.added)}</p>
+          {e.why && <p class="on-lists__why">{e.why}</p>}
+        </div>
+      ))}
+    </section>
+  )}
+  {d.synopsis && <p class="synopsis muted">{d.synopsis}</p>}
+  {r.html && <div class="prose" set:html={r.html} />}
+  <div class="after-wrap">
+    {(d.kind === 'film' || d.kind === 'tv') && <ReleaseDates dates={d.release_dates} />}
+    {reviews.length > 0 && (
+      <section class="after">
+        <div class="rule-label"><span>Review</span></div>
+        <ul class="plain">{reviews.map((rv) => <li><a href={urlFor(rv)}>{rv.data.title ?? `Review of ${d.title}`}</a> <span class="mono muted">{fmtDate(rv.data.date)}</span></li>)}</ul>
+      </section>
+    )}
+    {related.length > 0 && (
+      <section class="after">
+        <div class="rule-label"><span>Connected</span></div>
+        <ul class="plain">{related.map(({ rel, rec }) => <li><a href={urlFor(rec!)}>{(rec!.data as { title?: string; name?: string }).title ?? (rec!.data as { name?: string }).name}</a>{rel.note && <span class="muted"> — {rel.note}</span>}</li>)}</ul>
+      </section>
+    )}
+    {tags.length > 0 && <p class="mono muted tags">{tags.map((t) => <a href={`/tags/${t}/`}>#{t}</a>)}</p>}
+  </div>
+  </article>
+</Base>
+<style>
+  .item { padding-top: var(--space-5); }
+  .owner-row { margin-top: var(--space-3); }
+  .on-lists { margin: 0 0 var(--space-4); display: grid; gap: var(--space-3); max-width: var(--measure); }
+  .on-lists__why { font-size: var(--step-1); line-height: 1.35; margin-top: var(--space-1); }
+  .synopsis { max-width: var(--measure); margin-bottom: var(--space-4); font-size: var(--step-0); }
+  .after { margin-top: var(--space-5); max-width: var(--measure); }
+  .plain { list-style: none; padding: 0; margin: var(--space-3) 0 0; display: grid; gap: var(--space-2); }
+  .tags { margin-top: var(--space-5); display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .tags a { text-decoration: none; }
+</style>

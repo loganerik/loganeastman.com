@@ -1,0 +1,24 @@
+---
+import type { WallTile } from '../../lib/wall/candidates';
+import Clip from '../art/Clip.astro';
+import { angleFor } from '../../lib/wall/arrange';
+interface Props { tile: WallTile }
+const { tile: t } = Astro.props;
+const angle = angleFor(t.id, t.band, 0);
+const textOnly = t.kind === 'thought' || t.kind === 'queue' || (t.kind === 'piece' && !(t.record.data as { artwork?: unknown }).artwork) || t.kind === 'review';
+---
+<li class={`tile tile--${t.kind} ${t.shape ? 'tile--' + t.shape : ''}`} data-tile={t.id} data-band={t.band} style={`--c:${t.span.c};--r:${t.span.r};--angle:${angle}deg`}>
+  <a class="tile__link" href={t.href}>
+    <span class="vh">{t.kind === 'thought' ? 'Thought' : t.kind === 'queue' ? 'List' : t.kind === 'review' ? 'Review' : t.kind === 'piece' ? 'Writing' : ''}: {t.title}</span>
+    {t.kind === 'thought' ? (
+      <span class="clip clip--shape slip slip--fit tile__slip" aria-hidden="true"><span class="tile__text">{t.text}</span></span>
+    ) : t.kind === 'queue' ? (
+      <span class="clip clip--shape seal seal--green tile__seal" aria-hidden="true"><span><span class="tile__seal-title">{t.title}</span><span class="mono tile__seal-n">{t.count}</span></span></span>
+    ) : textOnly ? (
+      <span class={`clip clip--shape ${t.shape === 'arch' ? 'arch' : 'stepped'} tile__frame`} aria-hidden="true"><span class="tile__frame-inner"><span class="mono tile__kicker">{t.caption}</span><span class="tile__frame-title">{t.title}</span></span></span>
+    ) : (
+      <Clip record={t.record} context="wall" decorative sizes="(max-width: 600px) 50vw, (max-width: 900px) 25vw, 18vw" />
+    )}
+    <span class="tile__cap mono" aria-hidden="true">{textOnly ? '' : t.title}{textOnly ? '' : ' · '}{t.caption}</span>
+  </a>
+</li>

@@ -1,0 +1,29 @@
+---
+// A short thought on a small stepped paper slip. The shape fits the words.
+import type { Rec } from '../../lib/content';
+import type { Feed } from '@lem/vault-core';
+import { renderRecord } from '../../lib/render';
+import { urlFor } from '../../lib/urls';
+import { fmtDate } from '../../lib/dates';
+import { restingAngle } from '../../lib/artwork';
+interface Props { post: Rec<Feed>; angle?: boolean; link?: boolean }
+const { post, angle = false, link = true } = Astro.props;
+const r = await renderRecord(post);
+const href = urlFor(post);
+const date = fmtDate(post.data.date, { month: 'short', day: 'numeric', year: 'numeric' });
+---
+<article class="feed-slip slip slip--fit" style={angle ? `--angle:${restingAngle(post.data.id, 'text')}deg; transform: rotate(var(--angle))` : undefined}>
+  {post.data.title && <h3 class="feed-slip__title">{post.data.title}</h3>}
+  <div class="feed-slip__body prose" set:html={r.html} />
+  <p class="feed-slip__meta mono muted">
+    {link ? <a href={href}><time datetime={String(post.data.date)}>{date}</time></a> : <time datetime={String(post.data.date)}>{date}</time>}
+  </p>
+</article>
+<style>
+  .feed-slip { font-size: var(--step-0); }
+  .feed-slip__title { font-size: var(--step-1); margin-bottom: var(--space-2); }
+  .feed-slip__body { font-size: var(--step-0); line-height: 1.5; max-width: none; }
+  .feed-slip__meta { margin-top: var(--space-3); }
+  .feed-slip__meta a { text-decoration: none; }
+  .feed-slip__meta a:hover { text-decoration: underline; }
+</style>

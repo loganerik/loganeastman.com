@@ -1,0 +1,20 @@
+---
+import Section from '../../layouts/Section.astro';
+import { index, type Rec } from '../../lib/content';
+import { renderRecord } from '../../lib/render';
+import { urlFor, titleOf } from '../../lib/urls';
+import type { Person } from '@lem/vault-core';
+export async function getStaticPaths() {
+  const idx = await index();
+  return idx.ofType<Person>('person').map((p) => ({ params: { slug: p.stem }, props: { path: p.path } }));
+}
+const idx = await index();
+const person = idx.byPath.get(Astro.props.path) as Rec<Person>;
+const r = await renderRecord(person, idx);
+const mentions = idx.records.filter((x) => x.public && x.type !== 'list-entry' && (x.data.related ?? []).some((rel) => idx.resolve(rel.to)?.path === person.path));
+---
+<Section title={person.data.name} kicker="Person" description={r.excerpt || person.data.name}>
+  {r.html && <div class="prose" set:html={r.html} />}
+  {mentions.length > 0 && <ul class="plain">{mentions.map((m) => <li><a href={urlFor(m, idx)}>{titleOf(m)}</a></li>)}</ul>}
+</Section>
+<style>.plain { list-style: none; padding: 0; margin: var(--space-4) 0 0; display: grid; gap: var(--space-2); }</style>

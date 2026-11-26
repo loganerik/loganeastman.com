@@ -1,0 +1,39 @@
+---
+// One row in a list. Queue lists show full artwork; the title and note never move, only the art does.
+import type { ResolvedEntry } from '../../lib/content';
+import { urlFor } from '../../lib/urls';
+import { restingAngle, kickerFor } from '../../lib/artwork';
+import { fmtDate } from '../../lib/dates';
+import Clip from '../art/Clip.astro';
+interface Props { e: ResolvedEntry; showArt?: boolean }
+const { e, showArt = true } = Astro.props;
+const href = urlFor(e.item);
+const d = e.item.data;
+const credit = d.director?.join(', ') ?? d.authors?.join(', ') ?? d.artist ?? d.site_name ?? '';
+const done = e.entry.data.state === 'done';
+---
+<li class={`entry card ${done ? 'entry--done' : ''}`} style={`--angle:${restingAngle(e.item.data.id, 'cover')}deg`}>
+  {showArt && (
+    <a class="entry__art" href={href} tabindex="-1" aria-hidden="true">
+      <Clip record={e.item} context="list" decorative />
+    </a>
+  )}
+  <div class="entry__text">
+    <p class="mono muted">{kickerFor(e.item)}{done && ' · finished'}</p>
+    <h3 class="entry__title"><a href={href}>{d.title}</a></h3>
+    {credit && <p class="muted entry__credit">{credit}</p>}
+    {e.why && <p class="entry__why">{e.why}</p>}
+    <p class="mono faint entry__added">Added {fmtDate(e.entry.data.added)}</p>
+  </div>
+</li>
+<style>
+  .entry { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: var(--space-4); padding: var(--space-4) 0; border-bottom: 1px solid var(--rule-soft); list-style: none; }
+  @media (min-width: 720px) { .entry { grid-template-columns: 150px minmax(0, 1fr); } }
+  .entry__art { display: block; text-decoration: none; }
+  .entry__title { font-size: var(--step-1); font-weight: 500; margin: var(--space-1) 0; }
+  .entry__title a { text-decoration: none; }
+  .entry__title a:hover { text-decoration: underline; }
+  .entry__why { margin-top: var(--space-2); max-width: 56ch; }
+  .entry__added { margin-top: var(--space-2); }
+  .entry--done .entry__title { color: var(--fg-muted); }
+</style>

@@ -1,0 +1,45 @@
+.edit-page { padding-top: var(--space-5); }
+.editor { display: grid; gap: var(--space-4); }
+.editor__bar { display: flex; justify-content: space-between; gap: var(--space-3); align-items: center; flex-wrap: wrap; position: sticky; top: 0; background: var(--paper); padding: var(--space-2) 0; border-bottom: 3px double var(--rule); z-index: 5; }
+.editor__actions { display: flex; gap: var(--space-3); align-items: center; }
+.editor__status { color: var(--fg-muted); }
+.banner { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; padding: var(--space-3); background: var(--pink); }
+.banner--warn { background: var(--pink); }
+.fm { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space-3); align-items: end; }
+.fm__f { display: grid; gap: 0.3rem; }
+.fm__f--title { grid-column: 1 / -1; }
+.fm__f--title input { font-family: var(--font-display); font-size: var(--step-3); font-weight: 400; border: 0; border-bottom: 1px solid var(--rule); background: transparent; padding: 0.2rem 0; }
+.fm__f input, .fm__f select { font: inherit; padding: 0.45rem 0.55rem; border: 1px solid var(--rule); background: #fff6; }
+.fm__f--bool { grid-template-columns: auto 1fr; align-items: center; }
+.artwork summary { cursor: pointer; }
+.artwork__row { display: flex; gap: var(--space-3); flex-wrap: wrap; align-items: end; margin-top: var(--space-2); }
+.artwork__clip { background: var(--paper-deep); }
+.editor__body { min-height: 50vh; max-width: var(--measure); }
+.editor__body .cm-editor { min-height: 50vh; }
+.conflict { position: fixed; inset: 5vh 5vw; width: auto; max-width: none; max-height: 90vh; overflow: auto; background: var(--paper); border: 1px solid var(--rule); outline: 1px solid var(--rule); outline-offset: 3px; padding: var(--space-4); z-index: 50; }
+.conflict__merge { margin: var(--space-3) 0; border: 1px solid var(--rule-soft); }
+.conflict__actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.newrec { display: grid; gap: var(--space-3); max-width: var(--measure); }
+
+/* ---- toolbar + rich mode ---- */
+.toolbar { display: flex; gap: 0.3rem; align-items: center; flex-wrap: wrap; padding: 0.4rem 0; border-top: 1px solid var(--rule-soft); border-bottom: 1px solid var(--rule-soft); position: sticky; top: 2.6rem; background: var(--paper); z-index: 4; }
+.toolbar button, .toolbar__upload { font: 500 0.72rem/1 var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase; background: var(--paper); border: 1px solid var(--rule-soft); padding: 0.4rem 0.55rem; cursor: pointer; color: var(--fg); }
+.toolbar button:hover, .toolbar__upload:hover { border-color: var(--green); color: var(--green); }
+.toolbar button[aria-pressed='true'] { background: var(--green); color: var(--on-dark); border-color: var(--green); }
+.toolbar button:disabled { opacity: 0.4; cursor: not-allowed; }
+.toolbar__sep { width: 1px; height: 1.4rem; background: var(--rule-soft); margin: 0 0.2rem; }
+.toolbar__spacer { flex: 1; }
+.toolbar__upload input { display: none; }
+.toolbar__modes { display: flex; gap: 0.3rem; }
+.lossy { padding: 0.5rem 0; }
+.editor__body--rich .milkdown { outline: none; }
+.editor__body--rich .ProseMirror { outline: none; min-height: 50vh; max-width: var(--measure); }
+.editor__body--rich .ProseMirror p.is-empty::before { content: 'Write here…'; color: var(--ink-faint); }
+.wl--editor { color: var(--green); text-decoration: underline; text-decoration-color: var(--green); cursor: default; }
+.wl--editor::before { content: '[['; opacity: 0.35; } .wl--editor::after { content: ']]'; opacity: 0.35; }
+.ProseMirror-selectednode.wl--editor, .embed-node.ProseMirror-selectednode { outline: 2px solid var(--green); outline-offset: 2px; }
+.embed-node { display: inline-grid; gap: 0.3rem; padding: 0.4rem; background: var(--paper-deep); vertical-align: middle; max-width: 100%; }
+.embed-node--img img { max-width: min(100%, 420px); height: auto; display: block; }
+.embed-node__name { font-size: 0.7rem; color: var(--fg-muted); }
+.callout-marker { background: var(--pink); color: var(--ink); padding: 0 0.3rem; font-size: 0.7rem; }
+mark.hl { background: var(--pink); }

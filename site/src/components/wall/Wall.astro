@@ -1,0 +1,51 @@
+---
+// The home wall. SSR renders the canonical order with seed 0; wall-client.ts reshuffles gently per visit.
+import type { WallTile } from '../../lib/wall/candidates';
+import WallTile from './WallTile.astro';
+import Pet from '../art/Pet.astro';
+import identity from '@theme/identity';
+interface Props { tiles: WallTile[] }
+const { tiles } = Astro.props;
+const units = tiles.reduce((s, t) => s + t.span.c * t.span.r, 0);
+---
+<ul class="wall" data-wall data-perturbation={identity.wall.perturbation} style={`--units:${units}`} aria-label="Recent things">
+  {tiles.map((t) => <WallTile tile={t} />)}
+  {identity.placements.wall.map((p, i) => (
+    <li class="wall__pet" data-pet-after={p.after} data-side={p.side} data-first={i === 0 ? '' : undefined} aria-hidden="true"><Pet who={p.who} size="m" flip={p.side === 'left'} /></li>
+  ))}
+</ul>
+<noscript><style>.wall { visibility: visible !important; }</style></noscript>
+<script src="./wall-client.ts"></script>
+<style is:global>
+  .wall { --cols: 2; --wall-gap: clamp(0.75rem, 2vw, 1.5rem); list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); grid-auto-rows: var(--unit); grid-auto-flow: dense; gap: var(--wall-gap); container-type: inline-size; --unit: calc((100cqw - (var(--cols) - 1) * var(--wall-gap)) / var(--cols)); min-height: calc(ceil(var(--units) / var(--cols)) * (var(--unit) + var(--wall-gap))); visibility: hidden; }
+  .wall[data-arranged] { visibility: visible; }
+  @media (min-width: 600px) { .wall { --cols: 4; } }
+  @media (min-width: 900px) { .wall { --cols: 6; } }
+  @media (min-width: 1200px) { .wall { --cols: 8; } }
+  .tile { grid-column: span min(var(--c), var(--cols)); grid-row: span var(--r); position: relative; min-width: 0; }
+  @media (max-width: 599px) { .tile { grid-column: span min(var(--c), 2); grid-row: span min(var(--r), 2); } }
+  .tile__link { display: grid; place-items: center; width: 100%; height: 100%; text-decoration: none; color: inherit; transform: rotate(var(--angle, 0deg)); transition: transform var(--motion-fast) var(--ease-lift); will-change: transform; }
+  .tile__link:hover, .tile__link:focus-visible { transform: rotate(calc(var(--angle, 0deg) * 0.4)) translateY(var(--lift)); }
+  .tile__link:focus-visible { outline: 2px solid var(--focus); outline-offset: 6px; }
+  .tile .clip { width: 100%; max-height: 100%; }
+  .tile .clip--typeset, .tile .clip--logo { aspect-ratio: auto; height: 100%; }
+  .tile .clip > img { position: static; height: 100%; }
+  .clip--shape { display: grid; place-items: center; aspect-ratio: auto; height: 100%; width: 100%; }
+  .tile__slip { max-width: 100%; }
+  .tile__text { font-family: var(--font-display); font-size: clamp(0.95rem, 2.2cqw, 1.2rem); line-height: 1.35; text-wrap: pretty; }
+  .tile__seal { padding: 12% 16%; }
+  .tile__seal-title { display: block; font-size: clamp(1.1rem, 3cqw, 1.8rem); line-height: 1.05; }
+  .tile__seal-n { display: block; margin-top: 0.4em; opacity: 0.8; }
+  .tile__frame { padding: 1.2rem; }
+  .tile--arch .tile__frame { padding-top: 2.2rem; }
+  .tile__frame-inner { display: grid; gap: 0.5rem; text-align: center; }
+  .tile__kicker { font-size: 0.65rem; color: var(--fg-muted); }
+  .tile__frame-title { font-size: clamp(1.1rem, 3cqw, 1.7rem); line-height: 1.08; text-wrap: balance; }
+  .tile__cap { position: absolute; left: 50%; bottom: -0.2rem; transform: translate(-50%, 100%); white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; font-size: 0.65rem; color: var(--fg-muted); opacity: 0; transition: opacity var(--motion-fast); pointer-events: none; }
+  .tile__link:hover .tile__cap, .tile__link:focus-visible .tile__cap { opacity: 1; }
+  @media (hover: none) { .tile__cap { opacity: 1; position: static; transform: none; white-space: normal; text-align: center; margin-top: 0.3rem; } .tile__link { grid-template-rows: 1fr auto; } }
+  .wall__pet { grid-column: span 2; grid-row: span 1; display: grid; place-items: end center; }
+  .wall__pet[data-side='right'] { justify-self: end; }
+  @media (max-width: 599px) { .wall__pet { display: none; } .wall__pet[data-first] { display: grid; } }
+  @media (prefers-reduced-motion: reduce) { .tile__link { transition: none; } .tile__link:hover { transform: rotate(var(--angle, 0deg)); } }
+</style>

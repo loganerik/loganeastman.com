@@ -1,0 +1,62 @@
+---
+// Item page header: the clipping introduces the piece; full artwork opens from the figure below.
+import type { Rec } from '../../lib/content';
+import type { Item } from '@lem/vault-core';
+import Clip from '../art/Clip.astro';
+import identity from '@theme/identity';
+import { clipFor, lengthClass } from '../../lib/artwork';
+interface Props { item: Rec<Item> }
+const { item } = Astro.props;
+const d = item.data;
+const kind = identity.kinds[d.kind];
+const art = d.artwork ?? {};
+const spec = clipFor(item, 'page');
+const typeset = spec.mode === 'typeset';
+const credits: string[] = [];
+if (d.director?.length) credits.push(`Directed by ${d.director.join(', ')}`);
+if (d.creators?.length) credits.push(`Created by ${d.creators.join(', ')}`);
+if (d.authors?.length) credits.push(d.authors.join(', '));
+if (d.artist) credits.push(d.artist);
+if (d.runtime) credits.push(`${d.runtime} min`);
+if (d.genres?.length) credits.push(d.genres.slice(0, 3).join(' / '));
+---
+<header class={`item-head ${typeset ? 'item-head--typeset' : ''}`}>
+  {!typeset && (
+    <div class="item-head__art">
+      <Clip record={item} context="page" priority class="item-head__clip" />
+    </div>
+  )}
+  <div class="item-head__text">
+    <p class="mono muted">{kind?.label ?? d.kind}{d.year && ` · ${d.year}`}</p>
+    {typeset ? (
+      <h1 class="item-head__title item-head__title--lettering" data-len={lengthClass(d.title)}>{d.title}</h1>
+    ) : (
+      <h1 class="item-head__title">{d.title}</h1>
+    )}
+    {credits.length > 0 && <p class="item-head__credits muted">{credits.join(' · ')}</p>}
+    {d.cast?.length ? <p class="mono muted item-head__cast">With {d.cast.join(', ')}</p> : null}
+    <slot />
+  </div>
+  {art.full && art.treatment !== 'poster' && art.treatment !== 'cover' && (
+    <figure class="item-head__full">
+      <a href={art.full} target="_blank" rel="noopener">
+        <img src={art.full} width={art.full_size?.[0]} height={art.full_size?.[1]} alt={`${d.title} artwork`} loading="lazy" decoding="async" />
+      </a>
+      <figcaption class="mono muted">Full artwork</figcaption>
+    </figure>
+  )}
+</header>
+<style>
+  .item-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); align-items: start; margin-bottom: var(--space-5); }
+  @media (min-width: 720px) { .item-head { grid-template-columns: minmax(200px, 28%) minmax(0, 1fr); } .item-head__full { grid-column: 1 / -1; max-width: 360px; } }
+  .item-head__art { max-width: 320px; }
+  .item-head__title { font-size: var(--step-4); font-weight: 400; margin: var(--space-2) 0 var(--space-3); }
+  .item-head--typeset { grid-template-columns: minmax(0, 1fr); }
+  .item-head__title--lettering { font-weight: 500; letter-spacing: -0.01em; line-height: 1; max-width: 14ch; }
+  .item-head__title--lettering[data-len='short'] { font-size: clamp(3rem, 12vw, 6rem); }
+  .item-head__title--lettering[data-len='medium'] { font-size: clamp(2.4rem, 9vw, 4.8rem); }
+  .item-head__credits { font-size: var(--step-0); }
+  .item-head__cast { margin-top: var(--space-2); text-transform: none; letter-spacing: 0.02em; }
+  .item-head__full img { box-shadow: var(--shadow-contact); }
+  .item-head__full figcaption { margin-top: var(--space-2); }
+</style>

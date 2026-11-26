@@ -1,0 +1,5 @@
+---
+// Wraps controls only the signed-in owner should see. Nothing inside reaches the live DOM for visitors:
+// owner-gate.ts stamps these templates after /api/me confirms the session.
+---
+<template data-owner-only><slot /></template>

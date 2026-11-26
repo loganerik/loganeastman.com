@@ -1,0 +1,26 @@
+---
+// A writing title inside an arch (columns) or a stepped frame. Words inside the shape.
+import type { Rec } from '../../lib/content';
+import type { Writing } from '@lem/vault-core';
+import { urlFor } from '../../lib/urls';
+import { fmtDate } from '../../lib/dates';
+import { restingAngle } from '../../lib/artwork';
+interface Props { piece: Rec<Writing>; form?: 'arch' | 'stepped' }
+const { piece, form = 'arch' } = Astro.props;
+const d = piece.data;
+---
+<a class={`piece piece--${form} ${form} card`} href={urlFor(piece)} style={`--angle:${restingAngle(d.id, 'text')}deg`}>
+  <span class="piece__inner">
+    <span class="mono muted piece__date">{fmtDate(d.date)}</span>
+    <span class="piece__title">{d.title}</span>
+    {d.summary && <span class="piece__summary muted">{d.summary}</span>}
+  </span>
+</a>
+<style>
+  .piece { display: block; text-decoration: none; min-height: 200px; transition: transform var(--motion-fast) var(--ease-lift); transform: rotate(var(--angle)); }
+  .piece:hover, .piece:focus-visible { transform: rotate(calc(var(--angle) * 0.4)) translateY(var(--lift)); }
+  .piece__inner { display: grid; gap: var(--space-2); text-align: center; }
+  .piece__title { font-size: var(--step-2); line-height: 1.08; text-wrap: balance; }
+  .piece__summary { font-size: var(--step--1); line-height: 1.4; }
+  .piece--arch { padding-top: 3rem; }
+</style>

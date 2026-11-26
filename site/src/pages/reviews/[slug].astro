@@ -1,0 +1,28 @@
+---
+import Reading from '../../layouts/Reading.astro';
+import OwnerOnly from '../../components/private/OwnerOnly.astro';
+import Clip from '../../components/art/Clip.astro';
+import { index, type Rec } from '../../lib/content';
+import { renderRecord } from '../../lib/render';
+import { urlFor, slugOf } from '../../lib/urls';
+import { fmtDate } from '../../lib/dates';
+import type { Review, Item } from '@lem/vault-core';
+export async function getStaticPaths() {
+  const idx = await index();
+  return idx.ofType<Review>('review').map((rv) => ({ params: { slug: slugOf(rv) }, props: { path: rv.path } }));
+}
+const idx = await index();
+const rv = idx.byPath.get(Astro.props.path) as Rec<Review>;
+const item = idx.resolve(rv.data.item) as Rec<Item> | undefined;
+const r = await renderRecord(rv, idx);
+const title = rv.data.title ?? (item ? `On ${item.data.title}` : 'Review');
+---
+<Reading title={title} description={r.excerpt} kicker="Review" meta={[fmtDate(rv.data.date), ...(rv.data.rating != null ? [`${rv.data.rating} / ${idx.config.site.rating_scale}`] : [])]}>
+  <Fragment slot="art">{item?.public && <a href={urlFor(item)} class="subject"><Clip record={item} context="list" /></a>}</Fragment>
+  <OwnerOnly slot="controls"><p class="mono"><a href={`/private/edit/?id=${rv.data.id}`}>Edit</a></p></OwnerOnly>
+  {item?.public && <p class="mono muted">About <a href={urlFor(item)}>{item.data.title}</a></p>}
+  <Fragment set:html={r.html} />
+</Reading>
+<style>
+  .subject { display: block; max-width: 180px; }
+</style>

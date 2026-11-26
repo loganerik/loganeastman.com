@@ -1,0 +1,46 @@
+{
+  "interested": [
+    {
+      "name": "Tekla",
+      "label": "Home · Textiles",
+      "note": "Interested in their sheets and towels.",
+      "url": "https://teklafabrics.com/",
+      "image": "https://afurastore.com/cdn/shop/files/tekla-towel-coastal-blue-stripes-1.jpg?width=600",
+      "id": "tekla"
+    },
+    {
+      "name": "David Zwirner Books",
+      "label": "Art · Publisher",
+      "note": "A gallery bookshop worth browsing even when you haven’t seen the exhibition. Start with an artist you know and see who’s on the shelf beside them.",
+      "url": "https://www.davidzwirner.com/collect/david-zwirner-books",
+      "image": "https://cdn.sanity.io/images/juzvn5an/release-adp/67426c4cd444d18cda1daa2649453b3c5c3e7e61-3000x2250.jpg?w=600",
+      "id": "david-zwirner-books"
+    },
+    {
+      "id": "coming-soon",
+      "name": "Coming Soon",
+      "label": "Home · Design shop",
+      "note": "Interested in their home decor, furniture and gifts.",
+      "url": "https://comingsoonnewyork.com/",
+      "image": "https://comingsoonnewyork.com/cdn/shop/files/house.jpg?v=1725501986&width=600"
+    }
+  ],
+  "gifts": [
+    {
+      "id": "john-derian-watercolors",
+      "name": "Choosing Keeping for John Derian Watercolor Set",
+      "label": "Art supplies · John Derian",
+      "note": "For the friend who keeps a sketchbook. The colors come from a boy’s watercolor study from 1912, down to the palette tucked inside the paper box.",
+      "url": "https://www.johnderian.com/products/choosing-keeping-for-john-derian-watercolor-set",
+      "image": "https://www.johnderian.com/cdn/shop/files/1_John_Derian_Watercolor.png?v=1790947891&width=600"
+    },
+    {
+      "id": "art-life-practice",
+      "name": "Art Life Practice",
+      "label": "Art supplies · Creative kits",
+      "note": "For someone who saves ticket stubs and magazine clippings. I’d start with the collage paper pads or the Studio Set.",
+      "url": "https://artlifepractice.com/",
+      "image": "https://artlifepractice.com/cdn/shop/files/ArtLifePractice_TheStudioSet_Group_0258_FSC6.jpg?v=1764649200&width=600"
+    }
+  ]
+}

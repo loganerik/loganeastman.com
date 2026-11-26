@@ -1,0 +1,22 @@
+---
+import Section from '../../layouts/Section.astro';
+import { index } from '../../lib/content';
+import { urlFor, titleOf } from '../../lib/urls';
+import { slugify, isPrivateTag, type Tag } from '@lem/vault-core';
+export async function getStaticPaths() {
+  const idx = await index();
+  const tags = new Map<string, string>();
+  for (const r of idx.records) if (r.public) for (const t of (r.data.tags ?? [])) if (!isPrivateTag(t)) tags.set(slugify(t), t);
+  for (const t of idx.ofType<Tag>('tag', { all: true })) if (!t.public) tags.delete(slugify(t.data.name));
+  return [...tags.entries()].map(([slug, tag]) => ({ params: { slug }, props: { tag } }));
+}
+const idx = await index();
+const tag = Astro.props.tag as string;
+const recs = idx.records.filter((r) => r.public && (r.data.tags ?? []).includes(tag) && r.type !== 'list-entry');
+const tagRec = idx.ofType<Tag>('tag').find((t) => t.data.name === tag);
+---
+<Section title={`#${tag}`} kicker="Tag" count={recs.length} description={tagRec?.data.description ?? `Everything tagged ${tag}`}>
+  {tagRec?.data.description && <p class="muted" slot="intro">{tagRec.data.description}</p>}
+  <ul class="plain">{recs.map((r) => <li><span class="mono muted">{r.type}</span> <a href={urlFor(r, idx)}>{titleOf(r)}</a></li>)}</ul>
+</Section>
+<style>.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-2); }</style>
