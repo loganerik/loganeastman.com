@@ -17,15 +17,15 @@ const units = tiles.reduce((s, t) => s + t.span.c * t.span.r, 0);
 <noscript><style>.wall { visibility: visible !important; }</style></noscript>
 <script src="./wall-client.ts"></script>
 <style is:global>
-  .wall { --cols: 2; --wall-gap: clamp(1.25rem, 4vw, 3.5rem); list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); grid-auto-rows: var(--unit); grid-auto-flow: dense; gap: var(--wall-gap); container-type: inline-size; --unit: calc((100cqw - (var(--cols) - 1) * var(--wall-gap)) / var(--cols)); min-height: calc(ceil(var(--units) / var(--cols)) * (var(--unit) + var(--wall-gap))); visibility: hidden; }
+  .wall { --cols: 2; --wall-gap: clamp(1rem, 3vw, 2.5rem); overflow: visible; padding: 2% 3%; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); grid-auto-rows: var(--unit); grid-auto-flow: dense; gap: var(--wall-gap); container-type: inline-size; --unit: calc((100cqw - (var(--cols) - 1) * var(--wall-gap)) / var(--cols)); min-height: calc(ceil(var(--units) / var(--cols)) * (var(--unit) + var(--wall-gap))); visibility: hidden; }
   .wall[data-arranged] { visibility: visible; }
   @media (min-width: 700px) { .wall { --cols: 3; } }
   @media (min-width: 1000px) { .wall { --cols: 4; } }
   @media (min-width: 1500px) { .wall { --cols: 5; } }
   .tile { grid-column: span min(var(--c), var(--cols)); grid-row: span var(--r); position: relative; min-width: 0; }
   @media (max-width: 599px) { .tile { grid-column: span min(var(--c), 2); grid-row: span min(var(--r), 2); } }
-  .tile__link { display: grid; place-items: center; width: 100%; height: 100%; text-decoration: none; color: inherit; transform: rotate(var(--angle, 0deg)); transition: transform var(--motion-fast) var(--ease-lift); will-change: transform; }
-  .tile__link:hover, .tile__link:focus-visible { transform: rotate(calc(var(--angle, 0deg) * 0.4)) translateY(var(--lift)); }
+  .tile__link { display: grid; place-items: center; width: 100%; height: 100%; text-decoration: none; color: inherit; transform: translate(var(--dx, 0%), var(--dy, 0%)) rotate(var(--angle, 0deg)) scale(var(--s, 1)); transition: transform var(--motion-fast) var(--ease-lift); will-change: transform; }
+  .tile__link:hover, .tile__link:focus-visible { transform: translate(var(--dx, 0%), calc(var(--dy, 0%) - 1.5%)) rotate(calc(var(--angle, 0deg) * 0.4)) scale(calc(var(--s, 1) * 1.03)); }
   .tile__link:focus-visible { outline: 2px solid var(--focus); outline-offset: 6px; }
   .tile .clip { width: 82%; max-height: 82%; margin: auto; }
   .tile .clip--typeset, .tile .clip--logo { aspect-ratio: auto; height: 100%; }
@@ -50,9 +50,9 @@ const units = tiles.reduce((s, t) => s + t.span.c * t.span.r, 0);
   .tile__cap { position: absolute; left: 50%; bottom: -0.2rem; transform: translate(-50%, 100%); white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; font-size: 0.65rem; color: var(--fg-muted); opacity: 0; transition: opacity var(--motion-fast); pointer-events: none; }
   .tile__link:hover .tile__cap, .tile__link:focus-visible .tile__cap { opacity: 1; }
   @media (hover: none) { .tile__cap { opacity: 1; position: static; transform: none; white-space: normal; text-align: center; margin-top: 0.3rem; } .tile__link { grid-template-rows: 1fr auto; } }
-  .wall__pet { grid-column: span 1; grid-row: span 1; display: grid; place-items: center; transform: rotate(var(--angle, 0deg)); }
+  .wall__pet { grid-column: span 1; grid-row: span 1; display: grid; place-items: center; transform: translate(var(--dx, 0%), var(--dy, 0%)) rotate(var(--angle, 0deg)) scale(var(--s, 1)); }
   .wall__pet .pet img { height: auto; width: 85%; max-height: 100%; object-fit: contain; }
   .wall__pet[data-side='right'] { justify-self: end; }
   @media (max-width: 699px) { .wall__pet { display: none; } .wall__pet[data-first] { display: grid; } }
-  @media (prefers-reduced-motion: reduce) { .tile__link { transition: none; } .tile__link:hover { transform: rotate(var(--angle, 0deg)); } }
+  @media (prefers-reduced-motion: reduce) { .tile__link { transition: none; } .tile__link:hover { transform: translate(var(--dx, 0%), var(--dy, 0%)) rotate(var(--angle, 0deg)) scale(var(--s, 1)); } }
 </style>

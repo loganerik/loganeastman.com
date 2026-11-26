@@ -1,6 +1,6 @@
 // Runs after the wall markup. Picks a seed (reused on back/forward so scroll restoration lands), reorders
 // the tiles in the DOM (tab order = visual order), and sets each tile's resting angle.
-import { arrangeOrder, angleFor } from '../../lib/wall/arrange';
+import { arrangeOrder, placementFor } from '../../lib/wall/arrange';
 
 const grid = document.querySelector<HTMLElement>('[data-wall]');
 if (grid) {
@@ -15,13 +15,22 @@ if (grid) {
   const frag = document.createDocumentFragment();
   for (const i of order) {
     const t = tiles[i]!;
-    t.style.setProperty('--angle', `${angleFor(t.dataset.tile!, (t.dataset.band as 'text' | 'cover' | 'cutout') ?? 'cover', seed)}deg`);
+    const pl = placementFor(t.dataset.tile!, (t.dataset.band as 'text' | 'cover' | 'cutout') ?? 'cover', seed);
+    t.style.setProperty('--angle', `${pl.angle}deg`);
+    t.style.setProperty('--dx', `${pl.dx}%`);
+    t.style.setProperty('--dy', `${pl.dy}%`);
+    t.style.setProperty('--s', String(pl.scale));
     frag.appendChild(t);
   }
   const pets = [...grid.querySelectorAll<HTMLElement>('[data-pet-after]')];
   grid.appendChild(frag);
   // pets sit after the nth tile of the arranged order
   for (const p of pets) {
+    const pl = placementFor('pet:' + p.dataset.petAfter, 'cutout', seed);
+    p.style.setProperty('--angle', `${pl.angle}deg`);
+    p.style.setProperty('--dx', `${pl.dx}%`);
+    p.style.setProperty('--dy', `${pl.dy}%`);
+    p.style.setProperty('--s', String(pl.scale));
     const after = Number(p.dataset.petAfter);
     const ref = grid.querySelectorAll('[data-tile]')[Math.min(after, tiles.length - 1)];
     if (ref) ref.after(p); else grid.appendChild(p);

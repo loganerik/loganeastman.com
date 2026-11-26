@@ -61,6 +61,6 @@ const identity: Identity = {
     link: { route: 'links', label: 'Link', plural: 'Links', treatment: 'typeset' },
     photo: { route: 'photos', label: 'Photo', plural: 'Photos', treatment: 'cutout' },
   },
-  wall: { maxTiles: 36, quotas: { photo: 12, piece: 8, thought: 8, pick: 6, queue: 3, review: 4, gift: 2 }, perturbation: 6 },
+  wall: { maxTiles: 36, quotas: { photo: 12, piece: 8, thought: 8, pick: 6, queue: 3, review: 4, gift: 2 }, perturbation: 14 },
 };
 export default identity;
