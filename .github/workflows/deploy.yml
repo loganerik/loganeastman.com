@@ -21,19 +21,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check vault token
-        run: |
-          echo "token length: ${#T}"
-          echo "api status: $(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $T" https://api.github.com/repos/loganerik/vault)"
-          echo "token prefix ok: $([[ "$T" == github_pat_* ]] && echo yes || echo no)"
-        env:
-          T: ${{ secrets.VAULT_READ_TOKEN }}
-
       - name: Check out the vault
         uses: actions/checkout@v4
         with:
           repository: loganerik/vault
-          token: ${{ secrets.VAULT_READ_TOKEN }}
+          ssh-key: ${{ secrets.VAULT_DEPLOY_KEY }}
           path: vault
           fetch-depth: 1
 
