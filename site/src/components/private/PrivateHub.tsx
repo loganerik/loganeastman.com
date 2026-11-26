@@ -5,6 +5,7 @@ type Tab = 'inbox' | 'drafts' | 'published' | 'search' | 'people' | 'conflicts' 
 const TABS: Array<[Tab, string]> = [['inbox', 'Inbox'], ['drafts', 'Drafts'], ['published', 'Published'], ['search', 'Search'], ['people', 'People & tags'], ['conflicts', 'Conflicts'], ['suggestions', 'Suggestions'], ['tokens', 'Agents'], ['config', 'Collections & lists']];
 
 export default function PrivateHub({ initialTab = 'inbox' }: { initialTab?: Tab }) {
+  useEffect(() => { try { localStorage.setItem('ownerHint', '1'); sessionStorage.removeItem('owner'); } catch { /* ignore */ } }, []);
   const [tab, setTab] = useState<Tab>(() => (new URLSearchParams(location.search).get('tab') as Tab) || initialTab);
   const [counts, setCounts] = useState<{ inbox: number; conflicts: number; suggestions: number }>({ inbox: 0, conflicts: 0, suggestions: 0 });
   useEffect(() => {

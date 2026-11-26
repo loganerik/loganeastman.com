@@ -2,7 +2,9 @@
 // (localStorage.ownerHint) asks /api/me, then owner-only templates are stamped into place.
 (() => {
   try {
-    if (!localStorage.getItem('ownerHint')) return;
+    const fromPrivate = document.referrer.includes('/private');
+    if (!localStorage.getItem('ownerHint') && !fromPrivate) return;
+    if (fromPrivate) localStorage.setItem('ownerHint', '1');
   } catch {
     return;
   }

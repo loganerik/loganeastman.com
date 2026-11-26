@@ -13,6 +13,8 @@ export async function api<T = unknown>(path: string, init: RequestInit = {}): Pr
   }
   const body = r.status === 204 ? null : await r.json().catch(() => null);
   if (!r.ok) throw new ApiError((body as { error?: string })?.error ?? `${r.status}`, r.status, body);
+  // an owner call succeeded: let public pages reveal their controls from now on
+  try { localStorage.setItem('ownerHint', '1'); } catch { /* ignore */ }
   return body as T;
 }
 
