@@ -10,7 +10,7 @@ const idx = await index();
 const reviews = idx.ofType<Review>('review').sort((a, b) => String(b.data.date).localeCompare(String(a.data.date)));
 const rows = await Promise.all(reviews.map(async (rv) => ({ rv, item: idx.resolve(rv.data.item) as Rec<Item> | undefined, r: await renderRecord(rv, idx) })));
 ---
-<Section title="Reviews" count={reviews.length} description="What I thought, after." feeds={[{ title: 'Reviews', href: '/reviews/rss.xml' }]} action={{ label: 'New review', href: '/private/new/?kind=review' }}>
+<Section quiet title="Reviews" count={reviews.length} description="What I thought, after." feeds={[{ title: 'Reviews', href: '/reviews/rss.xml' }]} action={{ label: 'New review', href: '/private/new/?kind=review' }}>
   {rows.length === 0 && <p class="muted">No reviews yet.</p>}
   <ul class="reviews">
     {rows.map(({ rv, item, r }) => (

@@ -2,15 +2,15 @@
 // Section pages: steady text, artwork moves. Orderly grids and rows.
 import Base from './Base.astro';
 import OwnerOnly from '../components/private/OwnerOnly.astro';
-interface Props { title: string; description?: string; kicker?: string; count?: number; action?: { label: string; href: string }; feeds?: Array<{ title: string; href: string }>; noindex?: boolean; preset?: { mode?: 'thought' | 'link' | 'piece' | 'list' | 'entry'; list?: string; collection?: string } }
-const { title, description, kicker, count, action, feeds, noindex, preset } = Astro.props;
+interface Props { title: string; description?: string; kicker?: string; count?: number; action?: { label: string; href: string }; feeds?: Array<{ title: string; href: string }>; noindex?: boolean; preset?: { mode?: 'thought' | 'link' | 'piece' | 'list' | 'entry'; list?: string; collection?: string }; quiet?: boolean }
+const { title, description, kicker, count, action, feeds, noindex, preset, quiet = false } = Astro.props;
 ---
 <Base title={title} description={description} feeds={feeds} noindex={noindex} preset={preset}>
   <div class="section wrap">
-    <header class="section__head">
+    <header class={`section__head ${quiet ? 'section__head--quiet' : ''}`}>
       <div>
-        {kicker && <p class="mono muted">{kicker}</p>}
-        <h1>{title}{typeof count === 'number' && <span class="mono muted section__count"> {count}</span>}</h1>
+        {kicker && !quiet && <p class="mono muted">{kicker}</p>}
+        <h1 class={quiet ? 'vh' : undefined}>{title}{typeof count === 'number' && !quiet && <span class="mono muted section__count"> {count}</span>}</h1>
         <slot name="intro" />
       </div>
       <div class="section__action">
@@ -24,6 +24,7 @@ const { title, description, kicker, count, action, feeds, noindex, preset } = As
 <style>
   .section { padding-top: var(--space-5); }
   .section__head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-5); flex-wrap: wrap; }
+  .section__head--quiet { align-items: center; margin-bottom: var(--space-4); }
   .section__count { font-size: var(--mono-size); vertical-align: super; margin-left: 0.4em; }
   .section__action { min-height: 2.4rem; display: flex; align-items: center; gap: var(--space-2); }
 </style>

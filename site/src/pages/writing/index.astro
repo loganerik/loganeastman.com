@@ -8,7 +8,7 @@ const idx = await index();
 const collections = idx.config.collections.filter((c) => !identity.writing.rootCollections.includes(c.key));
 const all = collections.flatMap((c) => writingIn(idx, c.key).map((p) => ({ p, c }))).sort((a, b) => String(b.p.data.date).localeCompare(String(a.p.data.date)));
 ---
-<Section preset={{ mode: 'piece' }} title="Writing" description="Longer pieces, by collection." feeds={[{ title: 'Writing', href: '/writing/rss.xml' }]}>
+<Section quiet preset={{ mode: 'piece' }} title="Writing" description="Longer pieces, by collection." feeds={[{ title: 'Writing', href: '/writing/rss.xml' }]}>
   <div class="chips writing__filters" slot="intro" data-filters>
     <button type="button" class="chip" aria-pressed="true" data-filter="">All writing</button>
     {collections.map((c) => <button type="button" class="chip" aria-pressed="false" data-filter={c.key}>{c.title}</button>)}
@@ -55,7 +55,7 @@ const all = collections.flatMap((c) => writingIn(idx, c.key).map((p) => ({ p, c 
   else new MutationObserver((_, o) => { if (document.documentElement.dataset.owner) { o.disconnect(); load(); } }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-owner'] });
 </script>
 <style>
-  .writing__filters { margin-top: var(--space-3); }
+  .writing__filters { margin-top: 0; }
   .writing__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-6) var(--space-5); }
   @media (min-width: 900px) { .writing__grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-7) var(--space-6); } }
   .drafts { margin-top: var(--space-6); }

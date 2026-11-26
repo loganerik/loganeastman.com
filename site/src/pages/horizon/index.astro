@@ -11,7 +11,7 @@ const groups = horizon(idx, today());
 const labels: Record<string, string> = { theatrical_limited: 'Limited release', theatrical: 'In theaters', digital: 'Digital', physical: 'Physical', tv: 'On TV', episode: 'Next episode', premiere: 'Premiere' };
 const n = groups.reduce((s, g) => s + g.entries.length, 0);
 ---
-<Section title="Horizon" count={n} description="What's coming, under its next confirmed release.">
+<Section quiet title="Horizon" count={n} description="What's coming, under its next confirmed release.">
   {n === 0 && <p class="muted">Nothing on the horizon yet.</p>}
   {groups.map((g) => (
     <section class="month">

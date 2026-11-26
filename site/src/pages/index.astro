@@ -9,11 +9,9 @@ const tiles = wallCandidates(idx);
 ---
 <Base>
   <div class="wrap home">
-    <p class="home__tag mono muted">{identity.site.tagline}</p>
     {tiles.length === 0 ? <p class="muted">The wall is empty. Capture something.</p> : <Wall tiles={tiles} />}
   </div>
 </Base>
 <style>
   .home { padding-top: var(--space-5); }
-  .home__tag { margin-bottom: var(--space-4); }
 </style>
