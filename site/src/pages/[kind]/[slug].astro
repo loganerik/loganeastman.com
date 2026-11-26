@@ -49,6 +49,7 @@ const description = d.synopsis ?? r.excerpt ?? `${identity.kinds[d.kind]?.label 
   {r.html && <div class="prose" data-article set:html={r.html} />}
   <div class="after-wrap">
     {(d.kind === 'film' || d.kind === 'tv') && <ReleaseDates dates={d.release_dates} />}
+    {(d.kind === 'film' || d.kind === 'tv') && d.tmdb_id && <p class="mono faint credit">Film data and artwork from <a href={`https://www.themoviedb.org/${d.kind === 'tv' ? 'tv' : 'movie'}/${d.tmdb_id}`} rel="noopener">TMDB</a></p>}
     {reviews.length > 0 && (
       <section class="after">
         <div class="rule-label"><span>Review</span></div>
@@ -74,5 +75,6 @@ const description = d.synopsis ?? r.excerpt ?? `${identity.kinds[d.kind]?.label 
   .after { margin-top: var(--space-5); max-width: var(--measure); }
   .plain { list-style: none; padding: 0; margin: var(--space-3) 0 0; display: grid; gap: var(--space-2); }
   .tags { margin-top: var(--space-5); display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .credit { margin-top: var(--space-5); }
   .tags a { text-decoration: none; }
 </style>
