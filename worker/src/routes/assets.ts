@@ -2,6 +2,7 @@
 // Two shapes: an inline image for a piece (returns an Obsidian embed) or a photo record for the wall.
 import { Hono } from 'hono';
 import type { AppEnv, Env } from '../env';
+import { clipProvider } from '../media/clip';
 import { requireOwner } from '../auth/access';
 import { requireScopes } from '../auth/tokens';
 import { newId, itemSlug, itemPath, serializeNote, slugify } from '@lem/vault-core';
@@ -78,7 +79,7 @@ assets.post('/api/photos', requireOwner, async (c) => {
   await patchMediaIndex(c.env, vaultPath, { media: s.media_id, record: id, variants: { thumb: { url: s.thumb.url, w: s.thumb.w, h: s.thumb.h }, full: { url: s.full.url, w: s.full.w, h: s.full.h } } });
   const fresh = await vaultFor(c.env).readFile(path);
   if (fresh) await indexFile(c.env, path, fresh.text, fresh.sha);
-  if (treatment === 'cutout') await enqueue(c.env, 'derive_clip', s.media_id, `clip:${s.media_id}:1`, { record_path: path, media_id: s.media_id, provider: c.env.REPLICATE_TOKEN ? 'replicate' : 'local' });
+  if (treatment === 'cutout') await enqueue(c.env, 'derive_clip', s.media_id, `clip:${s.media_id}:1`, { record_path: path, media_id: s.media_id, provider: clipProvider(c.env) });
   return c.json({ id, path: path.replace(/\.md$/, ''), media_id: s.media_id, thumb: s.thumb, full: s.full, approved: false, edit: `/private/edit/?id=${id}` }, 201);
 });
 
@@ -161,7 +162,7 @@ assets.post('/api/media/:id/variants/clip/regenerate', requireScopes('media:writ
   if (!m) return c.json({ error: 'not found' }, 404);
   const body = (await c.req.json().catch(() => ({}))) as { provider?: 'replicate' | 'local'; params?: Record<string, unknown>; mode?: 'cutout' | 'trim' };
   if (body.mode === 'trim') body.params = { ...(body.params ?? {}), mode: 'trim' };
-  const provider = body.params?.mode === 'trim' ? 'local' : body.provider ?? (c.env.REPLICATE_TOKEN ? 'replicate' : 'local');
+  const provider = body.params?.mode === 'trim' ? 'local' : body.provider ?? (clipProvider(c.env));
   const rec = m.record_id ? await one<{ path: string }>(c.env.DB, 'SELECT path FROM records WHERE id = ?', m.record_id) : null;
   const n = ((await one<{ n: number }>(c.env.DB, "SELECT COUNT(*) AS n FROM jobs WHERE kind = 'derive_clip' AND subject_id = ?", id))?.n ?? 0) + 1;
   await run(c.env.DB, "INSERT OR REPLACE INTO media_variants (media_id, variant, status, provider, params_json, updated_at) VALUES (?, 'clip', 'pending', ?, ?, ?)", id, provider, JSON.stringify(body.params ?? {}), now());

@@ -1,6 +1,7 @@
 // Cache provider artwork (posters, logos) into R2 as content-hashed derivatives and write the public
 // URLs back into the record's frontmatter. Owner photos and cutouts join in Stage 4.
 import type { Env } from '../env';
+import { clipProvider } from './clip';
 import { Tmdb, OpenLibrary, MusicBrainz } from '@lem/providers';
 import { newId } from '@lem/vault-core';
 import { one, run, now } from '../db';
@@ -133,7 +134,7 @@ export async function deriveProviderArtwork(env: Env, recordId: string, job: Der
     const recKind = (await one<{ kind: string | null }>(env.DB, 'SELECT kind FROM records WHERE id = ?', recordId))?.kind;
     const art = (JSON.parse(recRow?.frontmatter_json ?? '{}') as { artwork?: { treatment?: string } }).artwork ?? {};
     if (!['book', 'album', 'film', 'tv'].includes(recKind ?? '') && (!foundSource || foundSource === 'found-og') && (!art.treatment || art.treatment === 'paper' || art.treatment === 'cutout')) {
-      const provider = env.REPLICATE_TOKEN ? 'replicate' : 'local';
+      const provider = clipProvider(env);
       await run(env.DB, "INSERT OR REPLACE INTO media_variants (media_id, variant, status, provider, params_json, updated_at) VALUES (?, 'clip', 'pending', ?, '{}', ?)", media.id, provider, now());
       await enqueue(env, 'derive_clip', media.id, `clip:${media.id}:auto`, { record_path: job.record_path, media_id: media.id, provider, params: {} }, 5_000);
     }

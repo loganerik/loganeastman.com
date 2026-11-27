@@ -6,7 +6,15 @@ import { one, run, now } from '../db';
 import { putVariant, readDims } from './store';
 import { vaultCommit } from '../do/VaultWriter';
 
-export interface ClipJob { record_path: string | null; media_id: string; provider: 'replicate' | 'local'; params?: Record<string, unknown> } // params.mode: 'cutout' (default) | 'trim' (crop white margins, covers)
+export interface ClipJob { record_path: string | null; media_id: string; provider: 'replicate' | 'openai' | 'local'; params?: Record<string, unknown> } // params.mode: 'cutout' (default) | 'trim' (crop white margins, covers)
+
+/** Which eraser does a cutout: Replicate when configured, else OpenAI's image model, else the Mac. Trims are always the Mac. */
+export function clipProvider(env: Env, mode?: string): 'replicate' | 'openai' | 'local' {
+  if (mode === 'trim') return 'local';
+  if (env.REPLICATE_TOKEN) return 'replicate';
+  if (env.OPENAI_API_KEY) return 'openai';
+  return 'local';
+}
 
 const REPLICATE_MODEL = 'men1scus/birefnet'; // background removal; swap via CLIP_MODEL env if you prefer another
 
@@ -33,7 +41,8 @@ export async function runClipJob(env: Env, job: ClipJob, fetchImpl: typeof fetch
       return { status: 'pending' };
     }
   }
-  if (job.provider === 'local' || !env.REPLICATE_TOKEN || job.params?.mode === 'trim') {
+  const provider = job.provider === 'replicate' && !env.REPLICATE_TOKEN ? clipProvider(env) : job.provider === 'openai' && !env.OPENAI_API_KEY ? clipProvider(env) : job.provider;
+  if (provider === 'local' || job.params?.mode === 'trim') {
     await run(env.DB, "INSERT OR REPLACE INTO media_variants (media_id, variant, status, provider, params_json, updated_at) VALUES (?, 'clip', 'pending', 'local', ?, ?)", m.id, JSON.stringify(job.params ?? {}), now());
     return { status: 'pending' };
   }
@@ -42,6 +51,33 @@ export async function runClipJob(env: Env, job: ClipJob, fetchImpl: typeof fetch
   const obj = await env.MEDIA.get(srcKey);
   if (!obj) throw new Error('source object missing');
   const bytes = await obj.arrayBuffer();
+  if (provider === 'openai') {
+    // OpenAI's image model as the eraser: the subject comes back on a transparent background. High input fidelity
+    // keeps lettering and labels as they are. Costs a few cents; on any failure the Mac picks the job up instead.
+    try {
+      const form = new FormData();
+      form.append('model', 'gpt-image-1');
+      form.append('image', new Blob([bytes], { type: obj.httpMetadata?.contentType ?? 'image/png' }), 'source.png');
+      form.append('prompt', 'Remove the background completely so only the main product or subject remains, exactly as photographed: same angle, colours, lettering and details. Nothing added, nothing redrawn. Transparent background.');
+      form.append('background', 'transparent');
+      form.append('output_format', 'png');
+      form.append('quality', 'medium');
+      form.append('input_fidelity', 'high');
+      form.append('size', 'auto');
+      const call = fetchImpl;
+      const res = await call('https://api.openai.com/v1/images/edits', { method: 'POST', headers: { authorization: `Bearer ${env.OPENAI_API_KEY}` }, body: form });
+      if (!res.ok) throw new Error(`openai images ${res.status}: ${(await res.text()).slice(0, 200)}`);
+      const out = (await res.json()) as { data?: Array<{ b64_json?: string }> };
+      const b64 = out.data?.[0]?.b64_json;
+      if (!b64) throw new Error('openai images: no image in the response');
+      const png = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0)).buffer;
+      await finishClip(env, m.id, png, 'openai');
+      return { status: 'ready' };
+    } catch (e) {
+      await run(env.DB, "INSERT OR REPLACE INTO media_variants (media_id, variant, status, provider, params_json, updated_at) VALUES (?, 'clip', 'pending', 'local', ?, ?)", m.id, JSON.stringify({ ...(job.params ?? {}), cloud_error: (e as Error).message.slice(0, 200) }), now());
+      return { status: 'pending' };
+    }
+  }
   // Replicate wants a URL or a data URI; data URIs are fine up to a few MB.
   const dataUri = `data:${obj.httpMetadata?.contentType ?? 'image/jpeg'};base64,${toBase64(bytes)}`;
   const model = env.CLIP_MODEL || REPLICATE_MODEL;
