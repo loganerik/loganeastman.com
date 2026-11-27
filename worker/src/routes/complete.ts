@@ -9,6 +9,9 @@ import { vaultCommit } from '../do/VaultWriter';
 import type { VaultOp } from '../vault/ops';
 import { loadVaultConfig } from '../vault/config';
 import { parseNote, serializeNote, newId, normalizeTarget, reviewPath, formatWikilink } from '@lem/vault-core';
+
+/** `[[lists/x|label]]` → `lists/x` (a bare path passes through). */
+const refPath = (v: unknown) => normalizeTarget(String(v ?? '').replace(/^\[\[|\]\]$/g, '').split('|')[0]!.trim());
 import { afterWrite, afterDelete } from './publish';
 
 export const complete = new Hono<AppEnv>();
@@ -22,8 +25,8 @@ export async function completeEntry(env: Env, ctx: { waitUntil(p: Promise<unknow
   if (!blob) throw new Error('entry file missing');
   const note = parseNote(blob.text);
   const efm = note.frontmatter as Record<string, unknown>;
-  const listPathNoExt = normalizeTarget(String(efm.list ?? ''));
-  const itemPathNoExt = normalizeTarget(String(efm.item ?? ''));
+  const listPathNoExt = refPath(efm.list);
+  const itemPathNoExt = refPath(efm.item);
   const listRow = await one<RecordRow>(env.DB, 'SELECT * FROM records WHERE path = ?', listPathNoExt);
   const itemRow = await one<RecordRow>(env.DB, 'SELECT * FROM records WHERE path = ?', itemPathNoExt);
   const listFm = JSON.parse(listRow?.frontmatter_json ?? '{}') as { list_type?: string };
@@ -111,7 +114,7 @@ complete.post('/api/items/:id/complete', requireOwner, async (c) => {
   const entries = await all<RecordRow>(c.env.DB, "SELECT * FROM records WHERE type = 'list-entry' AND (json_extract(frontmatter_json, '$.item') LIKE ? OR json_extract(frontmatter_json, '$.item') LIKE ?) AND COALESCE(json_extract(frontmatter_json, '$.state'), 'active') = 'active'", `%[[${item.path}]]%`, `%[[${stem}]]%`);
   const results: Outcome[] = [];
   for (const e of entries) {
-    const listPath = normalizeTarget(String((JSON.parse(e.frontmatter_json ?? '{}') as { list?: string }).list ?? ''));
+    const listPath = refPath((JSON.parse(e.frontmatter_json ?? '{}') as { list?: string }).list);
     const listRow = await one<RecordRow>(c.env.DB, 'SELECT * FROM records WHERE path = ?', listPath);
     const lt = cfg.listTypes.find((t) => t.key === (JSON.parse(listRow?.frontmatter_json ?? '{}') as { list_type?: string }).list_type);
     if (lt?.completion) results.push(await completeEntry(c.env, c.executionCtx, e, { ...body, review: body.review && results.length === 0 }));
