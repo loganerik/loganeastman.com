@@ -40,6 +40,7 @@ export function entriesOf(idx: VaultIndex, list: Rec<List>): ResolvedEntry[] {
     sort === 'title' ? a.item.data.title.localeCompare(b.item.data.title)
     : sort === 'manual' ? (a.entry.data.order ?? 0) - (b.entry.data.order ?? 0)
     : sort === 'added-asc' ? a.entry.data.added.localeCompare(b.entry.data.added)
+    : sort === 'finished-desc' ? String(b.entry.data.finished ?? b.entry.data.added).localeCompare(String(a.entry.data.finished ?? a.entry.data.added))
     : b.entry.data.added.localeCompare(a.entry.data.added),
   );
   return out;

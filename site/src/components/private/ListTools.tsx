@@ -3,7 +3,7 @@
 // whichever entry or item you pick.
 import { useEffect, useRef, useState } from 'preact/hooks';
 import Editor from './editor/Editor';
-import { getRecord, saveRecord } from './api';
+import { api, getRecord, saveRecord } from './api';
 import VisibilityPill from './ui/VisibilityPill';
 import DeleteButton from './ui/DeleteButton';
 import { deleteWithUndo } from './ui/useDelete';
@@ -14,7 +14,7 @@ export default function ListTools({ listId, listTitle, visibility = 'public' }: 
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const onClick = async (ev: MouseEvent) => {
-      const b = (ev.target as HTMLElement).closest<HTMLButtonElement>('button[data-edit], button[data-remove], button[data-state]');
+      const b = (ev.target as HTMLElement).closest<HTMLButtonElement>('button[data-edit], button[data-remove], button[data-state], button[data-complete]');
       if (!b) return;
       const row = b.closest<HTMLElement>('[data-entry], .entry');
       if (b.dataset.edit) {
@@ -24,6 +24,17 @@ export default function ListTools({ listId, listTitle, visibility = 'public' }: 
       }
       if (b.dataset.remove) {
         deleteWithUndo({ id: b.dataset.remove, title: b.dataset.removeTitle, type: 'list-entry' }, row);
+        return;
+      }
+      if (b.dataset.complete) {
+        const want = b.dataset.review !== undefined;
+        b.disabled = true;
+        try {
+          const r = await api<{ moved: boolean; already?: boolean; review?: { id: string; path: string } }>(`/api/entries/${b.dataset.complete}/complete`, { method: 'POST', body: JSON.stringify({ review: want }) });
+          if (r.moved && row) row.hidden = true; else if (row) { row.classList.add('entry--done'); row.dataset.state = 'done'; }
+          toast(r.already ? 'Already finished' : r.moved ? `Finished · “${b.dataset.completeTitle}” is on its done list after the next build` : 'Marked finished');
+          if (r.review) { setEdit({ id: r.review.id, title: `Review · ${b.dataset.completeTitle}` }); setTimeout(() => box.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50); }
+        } catch (e) { b.disabled = false; toast('Could not finish it: ' + (e as Error).message); }
         return;
       }
       if (b.dataset.state) {

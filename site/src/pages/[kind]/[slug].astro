@@ -5,6 +5,7 @@ import ItemHeader from '../../components/section/ItemHeader.astro';
 import ReleaseDates from '../../components/section/ReleaseDates.astro';
 import OwnerOnly from '../../components/private/OwnerOnly.astro';
 import InlineEdit from '../../components/private/editor/InlineEdit';
+import CompleteButton from '../../components/private/CompleteButton';
 import '../../styles/editor.css';
 import { index, listsContaining, reviewsOf, type Rec } from '../../lib/content';
 import { renderRecord } from '../../lib/render';
@@ -33,6 +34,7 @@ const description = d.synopsis ?? r.excerpt ?? `${identity.kinds[d.kind]?.label 
   <ItemHeader item={item}>
     <OwnerOnly>
       <InlineEdit client:only="preact" recordId={d.id} title={d.title} type="item" extra={[{ label: 'Write a review', compose: 'review', item: item.path, itemTitle: d.title, itemKind: d.kind }, { label: 'Add to a list', compose: 'list-entry', item: item.path, itemTitle: d.title, itemKind: d.kind }]} />
+      <CompleteButton client:only="preact" itemId={d.id} kind={d.kind} title={d.title} finished={d.finished as string | undefined} />
     </OwnerOnly>
   </ItemHeader>
   {lists.length > 0 && (

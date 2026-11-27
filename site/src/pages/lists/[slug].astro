@@ -6,7 +6,8 @@ import OwnerOnly from '../../components/private/OwnerOnly.astro';
 import ListTools from '../../components/private/ListTools';
 import '../../styles/editor.css';
 import { slugOf } from '../../lib/urls';
-import { index, entriesOf, listType, type Rec } from '../../lib/content';
+import { index, entriesOf, listType, reviewsOf, type Rec } from '../../lib/content';
+import { urlFor } from '../../lib/urls';
 import { renderRecord } from '../../lib/render';
 import { groupByCategory } from '../../lib/lists';
 import type { List } from '@lem/vault-core';
@@ -23,6 +24,9 @@ const intro = await renderRecord(list, idx);
 const active = entries.filter((e) => e.entry.data.state !== 'done');
 const done = entries.filter((e) => e.entry.data.state === 'done');
 const queue = t?.queue ?? false;
+const doneList = !!t?.done;
+const complete = t?.completion ? { label: t.completion.label ?? 'Mark done' } : undefined;
+const reviewFor = (e: (typeof entries)[number]) => { const r = reviewsOf(idx, e.item)[0]; return r ? { href: urlFor(r, idx), title: 'Review' } : undefined; };
 const groups = queue ? [] : groupByCategory(idx, active);
 const categories = groups.map((g) => g.key);
 let i = 0;
@@ -33,7 +37,7 @@ let i = 0;
   <OwnerOnly><ListTools client:only="preact" listId={list.data.id} listTitle={list.data.title} visibility="public" /></OwnerOnly>
   {entries.length === 0 && <p class="muted">Nothing here yet.</p>}
   {queue ? (
-    <SectionGrid variant="rows">{active.map((e) => <ListEntry e={e} />)}</SectionGrid>
+    <SectionGrid variant="rows">{active.map((e) => <ListEntry e={e} complete={complete} doneList={doneList} review={reviewFor(e)} />)}</SectionGrid>
   ) : (
     <div class="wishlist" data-wishlist>
       <div class="wishlist__bar">

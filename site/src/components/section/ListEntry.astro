@@ -8,8 +8,8 @@ import { fmtDate } from '../../lib/dates';
 import { fmtPrice, hostOf } from '../../lib/format';
 import Clip from '../art/Clip.astro';
 import OwnerOnly from '../private/OwnerOnly.astro';
-interface Props { e: ResolvedEntry; showArt?: boolean; index?: number }
-const { e, showArt = true, index } = Astro.props;
+interface Props { e: ResolvedEntry; showArt?: boolean; index?: number; complete?: { label: string }; doneList?: boolean; review?: { href: string; title: string } }
+const { e, showArt = true, index, complete, doneList = false, review } = Astro.props;
 const href = urlFor(e.item);
 const d = e.item.data as typeof e.item.data & { brand?: string; subtype?: string; price?: number; currency?: string; details?: string; category?: string };
 const isProduct = d.kind === 'product' || d.kind === 'link';
@@ -17,6 +17,8 @@ const credit = d.director?.join(', ') ?? d.authors?.join(', ') ?? d.artist ?? d.
 const priceText = isProduct || d.price != null ? fmtPrice(d.price, d.currency) : '';
 const host = hostOf(d.url);
 const done = e.entry.data.state === 'done';
+const finished = e.entry.data.finished as string | undefined;
+const from = e.entry.data.from ? String(e.entry.data.from).replace(/^\[\[|\]\]$/g, '').split('/').pop() : undefined;
 const kicker = d.subtype ?? (isProduct ? d.category : kickerFor(e.item));
 ---
 <li class={`entry card ${done ? 'entry--done' : ''}`} style={`--angle:${restingAngle(e.item.data.id, 'cover')}deg`}
@@ -32,12 +34,18 @@ const kicker = d.subtype ?? (isProduct ? d.category : kickerFor(e.item));
     {(credit || priceText) && <p class="entry__credit">{credit}{credit && priceText ? ' · ' : ''}{priceText && <span class="entry__price">{priceText}</span>}</p>}
     {d.details && <p class="mono muted entry__details">{d.details}</p>}
     {e.why && <p class="entry__why">{e.why}</p>}
+    {doneList && finished && <p class="mono muted entry__finished">{fmtDate(finished)}{from && ` · from ${from.replace(/-/g, ' ')}`}{review && <> · <a href={review.href}>{review.title}</a></>}</p>}
     <p class="mono faint entry__added">Added {fmtDate(e.entry.data.added)}{host && <> · <a href={d.url} rel="noopener" target="_blank">{host}</a></>}</p>
     <OwnerOnly>
       <p class="chips owner-row entry__tools">
         <button type="button" class="btn btn--soft btn--small" data-edit={d.id} data-edit-title={d.title}>Edit item</button>
         <button type="button" class="btn btn--soft btn--small" data-edit={e.entry.data.id} data-edit-title={`Note · ${d.title}`}>Edit note</button>
-        {done ? <button type="button" class="btn btn--soft btn--small" data-state={e.entry.data.id} data-state-to="active">Put back</button> : <button type="button" class="btn btn--soft btn--small" data-state={e.entry.data.id} data-state-to="done">Done</button>}
+        {complete && !done ? (<>
+          <button type="button" class="btn btn--soft btn--small" data-complete={e.entry.data.id} data-complete-title={d.title}>{complete.label}</button>
+          {!review && <button type="button" class="btn btn--soft btn--small" data-complete={e.entry.data.id} data-complete-title={d.title} data-review>…and review it</button>}
+        </>) : doneList ? (
+          !review && <button type="button" class="btn btn--soft btn--small" data-compose="review" data-item={e.item.path} data-item-title={d.title} data-item-kind={d.kind}>Write a review</button>
+        ) : done ? <button type="button" class="btn btn--soft btn--small" data-state={e.entry.data.id} data-state-to="active">Put back</button> : <button type="button" class="btn btn--soft btn--small" data-state={e.entry.data.id} data-state-to="done">Done</button>}
         <button type="button" class="btn btn--soft btn--small" data-remove={e.entry.data.id} data-remove-title={d.title}>Remove</button>
       </p>
     </OwnerOnly>
@@ -56,6 +64,8 @@ const kicker = d.subtype ?? (isProduct ? d.category : kickerFor(e.item));
   .entry__price { color: var(--ink); }
   .entry__details { text-transform: none; letter-spacing: 0.02em; margin-top: 0.2rem; }
   .entry__why { margin-top: var(--space-2); max-width: 56ch; }
+  .entry__finished { margin-top: var(--space-2); text-transform: none; }
+  .entry__finished a { text-decoration: none; }
   .entry__added { margin-top: var(--space-2); }
   .entry__added a { text-decoration: none; }
   .entry__added a:hover { text-decoration: underline; }

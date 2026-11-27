@@ -113,13 +113,16 @@ export const itemSchema = z.looseObject({
 export type Item = z.infer<typeof itemSchema>;
 
 // ---------- lists ----------
+export const listForm = z.enum(['seal', 'arch', 'stepped', 'slip']);
+export type ListForm = z.infer<typeof listForm>;
 export const listSchema = z.looseObject({
   ...base,
   type: z.literal('list'),
   list_type: z.string(),
   title: z.string(),
-  sort: z.enum(['added-desc', 'added-asc', 'title', 'manual']).default('added-desc'),
+  sort: z.enum(['added-desc', 'added-asc', 'finished-desc', 'title', 'manual']).default('added-desc'),
   summary: z.string().optional(),
+  form: listForm.optional(), // shape on the home wall; the wall chooses when unset
 });
 export type List = z.infer<typeof listSchema>;
 
@@ -130,6 +133,8 @@ export const listEntrySchema = z.looseObject({
   item: ref,
   added: isoDate,
   state: z.enum(['active', 'done', 'removed']).default('active'),
+  finished: isoDate.optional(), // when it was watched / read / listened
+  from: ref.optional(), // the list it moved from on completion (Watched ← Watchlist 1950s)
   for: ref.optional(), // gifts: recipient, never public
   capture: z.string().optional(),
   order: z.number().optional(),
@@ -208,6 +213,9 @@ export const listTypeDef = z.looseObject({
   add_label: z.string().optional(),
   private_default: z.boolean().default(false),
   allow_for: z.boolean().default(false), // gifts: entries may carry `for:`
+  form: listForm.optional(), // default shape on the wall for lists of this type
+  done: z.boolean().default(false), // holds finished things (Watched, Read, Listened)
+  completion: z.looseObject({ list: z.string(), label: z.string().optional() }).optional(), // finishing moves an entry to this list type's list
 });
 export const siteConfigSchema = z.looseObject({
   type: z.literal('config'),
