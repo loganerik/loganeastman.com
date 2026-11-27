@@ -1,0 +1,40 @@
+---
+// Under a thought or a piece: share the link (the preview shows this post), and for the owner, save a 4:5 image
+// for Instagram. On a phone both open the share sheet; elsewhere the link is copied and the image downloads.
+import OwnerOnly from '../private/OwnerOnly.astro';
+interface Props { url: string; title: string; image: string }
+const { url, title, image } = Astro.props;
+const abs = new URL(url, Astro.site).toString();
+const file = image.split('/').pop()!;
+---
+<div class="sharebar mono" data-share data-url={abs} data-title={title} data-image={image} data-file={file}>
+  <button type="button" class="btn btn--soft btn--small" data-share-link>Share</button>
+  <OwnerOnly><button type="button" class="btn btn--soft btn--small" data-share-image>Image for Instagram</button></OwnerOnly>
+  <span class="sharebar__note muted" data-share-note aria-live="polite"></span>
+</div>
+<script>
+  const note = (bar: HTMLElement, t: string) => { const n = bar.querySelector<HTMLElement>('[data-share-note]'); if (n) { n.textContent = t; setTimeout(() => { if (n.textContent === t) n.textContent = ''; }, 3000); } };
+  document.addEventListener('click', async (e) => {
+    const t = e.target as HTMLElement;
+    const bar = t.closest<HTMLElement>('[data-share]');
+    if (!bar) return;
+    const { url = '', title = '', image = '', file = 'share.png' } = bar.dataset;
+    if (t.closest('[data-share-link]')) {
+      if (navigator.share) { try { await navigator.share({ url, title }); } catch { /* dismissed */ } return; }
+      await navigator.clipboard?.writeText(url); note(bar, 'Link copied');
+    }
+    if (t.closest('[data-share-image]')) {
+      note(bar, 'Making the image…');
+      const blob = await fetch(image).then((r) => (r.ok ? r.blob() : Promise.reject(new Error(String(r.status))))).catch(() => null);
+      if (!blob) { note(bar, 'The image appears after the next build'); return; }
+      const f = new File([blob], file, { type: 'image/png' });
+      if (navigator.canShare?.({ files: [f] })) { try { await navigator.share({ files: [f] }); note(bar, ''); } catch { note(bar, ''); } return; }
+      const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: file });
+      a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); note(bar, 'Saved to downloads');
+    }
+  });
+</script>
+<style>
+  .sharebar { display: flex; gap: var(--space-2); align-items: center; justify-content: center; flex-wrap: wrap; margin: var(--space-6) auto 0; max-width: var(--measure); font-size: 0.8rem; }
+  .sharebar__note { font-size: 0.75rem; }
+</style>

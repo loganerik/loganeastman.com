@@ -3,10 +3,11 @@
 import Base from './Base.astro';
 import '../styles/prose.css';
 import '../styles/editor.css';
-interface Props { title: string; description?: string; image?: string; kicker?: string; meta?: string[]; noindex?: boolean; wide?: boolean; feeds?: Array<{ title: string; href: string }> }
-const { title, description, image, kicker, meta = [], noindex, wide = false, feeds } = Astro.props;
+interface Props { title: string; description?: string; image?: string; kicker?: string; meta?: string[]; noindex?: boolean; wide?: boolean; feeds?: Array<{ title: string; href: string }>; minimal?: boolean; share?: { url: string; title: string; image: string } }
+const { title, description, image, kicker, meta = [], noindex, wide = false, feeds, minimal = false, share } = Astro.props;
+import ShareBar from '../components/site/ShareBar.astro';
 ---
-<Base title={title} description={description} image={image} type="article" noindex={noindex} feeds={feeds}>
+<Base title={title} description={description} image={image} type="article" noindex={noindex} feeds={feeds} minimal={minimal}>
   <article class={`reading wrap ${wide ? 'reading--wide' : ''}`}>
     <header class="reading__head">
       <slot name="art" />
@@ -22,6 +23,7 @@ const { title, description, image, kicker, meta = [], noindex, wide = false, fee
     <div class="reading__body prose" data-article>
       <slot />
     </div>
+    {share && <ShareBar {...share} />}
     <div data-article><slot name="after" /></div>
   </article>
 </Base>

@@ -20,6 +20,8 @@
     "@codemirror/view": "^6.44.2",
     "@fontsource-variable/newsreader": "^5.3.0",
     "@fontsource-variable/sometype-mono": "^5.3.0",
+    "@fontsource/newsreader": "^5.3.0",
+    "@fontsource/sometype-mono": "^5.3.0",
     "@lem/vault-core": "*",
     "@lezer/highlight": "^1.2.5",
     "@milkdown/kit": "^7.23.0",
@@ -37,6 +39,7 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "remark-smartypants": "^3.0.3",
+    "satori": "^0.12.2",
     "unified": "^11.0.5",
     "unist-util-visit": "^5.2.0",
     "zod": "^4.6.7"

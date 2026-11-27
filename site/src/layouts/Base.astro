@@ -3,8 +3,8 @@ import Head from '../components/site/Head.astro';
 import Nav from '../components/site/Nav.astro';
 import Footer from '../components/site/Footer.astro';
 import OwnerTools from '../components/private/OwnerTools.astro';
-interface Props { title?: string; description?: string; image?: string; type?: 'website' | 'article'; feeds?: Array<{ title: string; href: string }>; noindex?: boolean; class?: string; preset?: { mode?: 'thought' | 'link' | 'piece' | 'list' | 'entry' | 'review'; list?: string; collection?: string; item?: string; itemKind?: string; itemTitle?: string }; noFab?: boolean }
-const { class: cls = '', preset, noFab = false, ...head } = Astro.props;
+interface Props { title?: string; description?: string; image?: string; type?: 'website' | 'article'; feeds?: Array<{ title: string; href: string }>; noindex?: boolean; class?: string; preset?: { mode?: 'thought' | 'link' | 'piece' | 'list' | 'entry' | 'review'; list?: string; collection?: string; item?: string; itemKind?: string; itemTitle?: string }; noFab?: boolean; minimal?: boolean }
+const { class: cls = '', preset, noFab = false, minimal = false, ...head } = Astro.props;
 ---
 <!doctype html>
 <html lang="en">
@@ -12,7 +12,7 @@ const { class: cls = '', preset, noFab = false, ...head } = Astro.props;
     <Head {...head} />
   </head>
   <body class={cls}>
-    <Nav />
+    <Nav minimal={minimal} />
     <main id="main" tabindex="-1">
       <slot />
     </main>

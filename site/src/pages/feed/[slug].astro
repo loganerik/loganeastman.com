@@ -8,6 +8,8 @@ import '../../styles/prose.css';
 import { index, feedPosts, type Rec } from '../../lib/content';
 import { renderRecord } from '../../lib/render';
 import { urlFor, slugOf } from '../../lib/urls';
+import ShareBar from '../../components/site/ShareBar.astro';
+import { plain } from '../../lib/share/data';
 import type { Feed } from '@lem/vault-core';
 export async function getStaticPaths() {
   const idx = await index();
@@ -22,10 +24,11 @@ const i = posts.findIndex((p) => p.path === post.path);
 const newer = posts[i - 1];
 const older = posts[i + 1];
 ---
-<Base title={post.data.title ?? r.excerpt.slice(0, 60)} description={r.excerpt} type="article">
+<Base title={post.data.title ?? plain(post.body).slice(0, 70)} description={about?.public ? `${plain(post.body)} · ${(about.data as { title?: string }).title ?? ''}` : r.excerpt} type="article" image={`/og/feed/${slugOf(post)}.png`} minimal>
   <div class="wrap one">
     <div data-article><FeedSlip post={post} link={false} /></div>
     {about?.public && about.type !== 'item' && <p class="mono muted">About <a href={urlFor(about)}>{(about.data as { title?: string }).title}</a></p>}
+    <ShareBar url={Astro.url.pathname} title={plain(post.body).slice(0, 70)} image={`/og/feed/${slugOf(post)}-instagram.png`} />
     <OwnerOnly><InlineEdit client:only="preact" recordId={post.data.id} title={post.data.title ?? r.excerpt.slice(0, 40)} type="feed" /></OwnerOnly>
     <nav class="mono muted pager" aria-label="Feed navigation">
       {older && <a href={urlFor(older)}>← Older</a>}
@@ -35,7 +38,7 @@ const older = posts[i + 1];
   </div>
 </Base>
 <style>
-  .one { padding-top: var(--space-6); display: grid; gap: var(--space-4); justify-items: start; }
+  .one { padding-top: var(--space-6); display: grid; gap: var(--space-4); justify-items: center; }
   .pager { display: flex; gap: var(--space-4); margin-top: var(--space-5); }
   .pager a { text-decoration: none; }
 </style>
