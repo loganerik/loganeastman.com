@@ -9,7 +9,7 @@ async function probe(url: string, source: FoundImage['source'], fetchImpl: typeo
     const res = await fetchImpl(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; loganeastman-capture/1.0)', accept: 'image/*' }, redirect: 'follow' });
     if (!res.ok) return null;
     const ct = res.headers.get('content-type') ?? '';
-    if (!/^image\//.test(ct)) return null;
+    if (!/^image\/(png|jpe?g|webp|avif|gif)/.test(ct)) return null; // no icons, no svg: they don't read as artwork
     const bytes = await res.arrayBuffer();
     if (bytes.byteLength < 1500) return null; // tiny favicons are not worth showing
     return { url, source, bytes, contentType: ct };
@@ -27,7 +27,6 @@ export async function findImage(pageUrl: string, fetchImpl: typeof fetch = (i, o
     [abs(facts?.image), 'og'],
     [abs(facts?.icon), 'icon'],
     [`https://logo.clearbit.com/${host}?size=512`, 'logo'],
-    [`https://icons.duckduckgo.com/ip3/${host}.ico`, 'favicon'],
   ];
   for (const [u, source] of candidates) {
     if (!u) continue;
