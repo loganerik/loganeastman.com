@@ -1,0 +1,21 @@
+---
+// "← Back to Feed": returns to where the reader came from on this site (keeping the wall's or list's scroll),
+// else goes to the section.
+interface Props { href: string; label: string }
+const { href, label } = Astro.props;
+---
+<a class="backlink mono" href={href} data-back>← Back to {label}</a>
+<script>
+  document.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('[data-back]');
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    try {
+      const ref = document.referrer ? new URL(document.referrer) : null;
+      if (ref && ref.origin === location.origin && ref.pathname !== location.pathname && history.length > 1) { e.preventDefault(); history.back(); }
+    } catch { /* follow the link */ }
+  });
+</script>
+<style>
+  .backlink { display: inline-block; text-decoration: none; font-size: 0.85rem; color: var(--ink); }
+  .backlink:hover { color: var(--green); text-decoration: underline; }
+</style>

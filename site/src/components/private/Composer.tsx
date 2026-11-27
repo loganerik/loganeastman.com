@@ -13,7 +13,7 @@ import { toast } from './ui/toast';
 import { extractMentions, ensurePeople } from './editor/mentions';
 
 type Kind = 'feed' | 'writing' | 'review' | 'list' | 'list-entry' | 'item' | 'person';
-const KINDS: Array<[Kind, string]> = [['feed', 'Thought'], ['writing', 'Piece'], ['review', 'Review'], ['list', 'List'], ['list-entry', 'On a list'], ['item', 'Thing'], ['person', 'Person']];
+const KINDS: Array<[Kind, string]> = [['feed', 'Note'], ['writing', 'Piece'], ['review', 'Review'], ['list', 'List'], ['list-entry', 'On a list'], ['item', 'Thing'], ['person', 'Person']];
 export interface Preset { mode?: string; list?: string; collection?: string; item?: string; itemKind?: string; itemTitle?: string; listTitle?: string }
 type Intent = '' | 'writing' | 'feed' | 'list' | 'review';
 
@@ -140,7 +140,7 @@ export default function Composer({ preset, page = false }: { preset?: Preset; pa
             onPaste={(e) => { const files = [...(e.clipboardData?.files ?? [])].filter((f) => /^image\//.test(f.type)); if (files.length) { e.preventDefault(); setPhotos((p) => [...p, ...files]); } }} />
           {capture ? (
             <div class="fields">
-              <div class="chips"><span class="mono muted">File as</span>{([['', 'Let the agent decide'], ['list', 'A list'], ['feed', 'Thought'], ['review', 'Review'], ['writing', 'Piece']] as Array<[Intent, string]>).map(([v, l]) => <button type="button" class="chip chip--small" aria-pressed={intent === v} onClick={() => setIntent(v)}>{l}</button>)}
+              <div class="chips"><span class="mono muted">File as</span>{([['', 'Let the agent decide'], ['list', 'A list'], ['feed', 'Note'], ['review', 'Review'], ['writing', 'Piece']] as Array<[Intent, string]>).map(([v, l]) => <button type="button" class="chip chip--small" aria-pressed={intent === v} onClick={() => setIntent(v)}>{l}</button>)}
                 {intent === 'list' && lists.length > 0 && <select class="sheet__select" value={listHint} onChange={(e) => setListHint((e.target as HTMLSelectElement).value)} aria-label="Which list"><option value="">Agent picks the list</option>{lists.map((l) => <option value={l.path.split('/').pop()!}>{l.title ?? l.path}</option>)}</select>}
               </div>
             </div>

@@ -77,7 +77,7 @@ export function humanKind(r: { type: string; kind?: string | null; collection?: 
     case 'writing': return cfg?.collections.find((c) => c.key === r.collection)?.title ?? (r.collection ?? 'Writing');
     case 'item': return KIND_LABELS[r.kind ?? ''] ?? 'Thing';
     case 'list': return cfg?.listTypes.find((t) => t.key === r.list_type)?.title ?? 'List';
-    case 'feed': return 'Thought';
+    case 'feed': return 'Note';
     case 'review': return 'Review';
     case 'list-entry': return 'On a list';
     case 'person': return 'Person';

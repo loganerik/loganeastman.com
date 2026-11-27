@@ -10,7 +10,7 @@ import { index, feedPosts } from '../../lib/content';
 const idx = await index();
 const posts = feedPosts(idx);
 ---
-<Section quiet preset={{ mode: 'thought' }} title="Feed" description="Short thoughts, in order." feeds={[{ title: 'Feed', href: '/feed/rss.xml' }]} action={{ label: 'New thought', compose: 'feed' }}>
+<Section quiet preset={{ mode: 'thought' }} title="Feed" description="Short notes, in order." feeds={[{ title: 'Feed', href: '/feed/rss.xml' }]} action={{ label: 'New note', compose: 'feed' }}>
   {posts.length === 0 && <p class="muted">Quiet so far.</p>}
   <OwnerOnly><PrivateShelf client:only="preact" type="feed" /></OwnerOnly>
   <div data-shelf-static>

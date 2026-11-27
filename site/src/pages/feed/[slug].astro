@@ -9,6 +9,7 @@ import { index, feedPosts, type Rec } from '../../lib/content';
 import { renderRecord } from '../../lib/render';
 import { urlFor, slugOf } from '../../lib/urls';
 import ShareBar from '../../components/site/ShareBar.astro';
+import BackLink from '../../components/site/BackLink.astro';
 import { plain } from '../../lib/share/data';
 import type { Feed } from '@lem/vault-core';
 export async function getStaticPaths() {
@@ -30,9 +31,10 @@ const older = posts[i + 1];
     {about?.public && about.type !== 'item' && <p class="mono muted">About <a href={urlFor(about)}>{(about.data as { title?: string }).title}</a></p>}
     <ShareBar url={Astro.url.pathname} title={plain(post.body).slice(0, 70)} image={`/og/feed/${slugOf(post)}-instagram.png`} />
     <OwnerOnly><InlineEdit client:only="preact" recordId={post.data.id} title={post.data.title ?? r.excerpt.slice(0, 40)} type="feed" /></OwnerOnly>
+    <BackLink href="/feed/" label="Feed" />
     <nav class="mono muted pager" aria-label="Feed navigation">
       {older && <a href={urlFor(older)}>← Older</a>}
-      <a href="/feed/">All thoughts</a>
+      <a href="/feed/">All notes</a>
       {newer && <a href={urlFor(newer)}>Newer →</a>}
     </nav>
   </div>

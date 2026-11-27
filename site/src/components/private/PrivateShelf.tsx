@@ -15,7 +15,7 @@ export default function PrivateShelf({ type, label }: { type: 'writing' | 'feed'
     if (view === 'public') { setRows(null); return; }
     listRecords({ type, ...(view === 'private' ? { visibility: 'private' } : { status: 'draft' }), limit: 200 }).then((d) => setRows(d.records)).catch(() => setRows([]));
   }, [view, type]);
-  const noun = label ?? (type === 'feed' ? 'thoughts' : type === 'writing' ? 'pieces' : type === 'list' ? 'lists' : 'reviews');
+  const noun = label ?? (type === 'feed' ? 'notes' : type === 'writing' ? 'pieces' : type === 'list' ? 'lists' : 'reviews');
   return (
     <div class="shelf">
       <p class="chips shelf__bar">

@@ -41,7 +41,7 @@ export default function AttachField({ value, label, onChange }: { value: unknown
           {!url && <RecordPicker type="item" placeholder="…or pick a film, book, thing" onChange={(p) => { if (p) { setTitle(p.title); onChange(`[[${p.path}]]`); } }} />}
         </>
       )}
-      <span class="field__hint mono muted">Shows under the thought as a card. The picture is cut out on its own; change that on the link's page.</span>
+      <span class="field__hint mono muted">Shows under the note as a card. The picture is cut out on its own; change that on the link's page.</span>
     </div>
   );
 }

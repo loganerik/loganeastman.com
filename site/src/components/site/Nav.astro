@@ -8,7 +8,7 @@ const { minimal = false } = Astro.props as { minimal?: boolean };
 {minimal ? (
 <header class="masthead masthead--min wrap">
   <a class="skip" href="#main">Skip to content</a>
-  <a class="brand brand--min" href="/" aria-label={`${identity.site.name} — home`} title={identity.site.name}>{pets.map((p) => <Pet who={p} size="s" class="brand__pet" />)}</a>
+  <a class="brand brand--min" href="/" aria-label={`${identity.site.name} — home`} >{pets.map((p) => <Pet who={p} size="s" class="brand__pet" />)}<span class="brand__hover" aria-hidden="true">{identity.site.name}</span></a>
   <div class="masthead__actions" data-owner-slot></div>
 </header>
 ) : (
@@ -49,6 +49,10 @@ const { minimal = false } = Astro.props as { minimal?: boolean };
   .masthead--min { display: flex; justify-content: center; position: relative; padding-top: var(--space-4); }
   .masthead--min .masthead__actions { position: absolute; right: 0; top: var(--space-4); }
   .brand--min .brand__pet :global(img) { height: 56px; }
+  .brand--min { position: relative; flex-direction: column; gap: 0.35rem; }
+  .brand__hover { font-family: var(--font-display); font-size: var(--step-0); white-space: nowrap; opacity: 0; transform: translateY(-4px); transition: opacity var(--motion-fast), transform var(--motion-fast); pointer-events: none; position: absolute; top: 100%; left: 50%; translate: -50% 0; }
+  .brand--min:hover .brand__hover, .brand--min:focus-visible .brand__hover { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .brand__hover { transition: none; } }
   .masthead__actions { min-width: 2.5rem; min-height: 1px; }
   /* phones: the sections stay on one line and scroll sideways if an owner link pushes them past the edge */
   @media (max-width: 599px) {

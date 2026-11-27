@@ -4,7 +4,8 @@ import OwnerOnly from '../../../components/private/OwnerOnly.astro';
 import InlineEdit from '../../../components/private/editor/InlineEdit';
 import { index, writingIn, type Rec } from '../../../lib/content';
 import { renderRecord } from '../../../lib/render';
-import { slugOf } from '../../../lib/urls';
+import { slugOf, urlFor } from '../../../lib/urls';
+import BackLink from '../../../components/site/BackLink.astro';
 import { fmtDate } from '../../../lib/dates';
 import identity from '@theme/identity';
 import type { Writing } from '@lem/vault-core';
@@ -20,13 +21,24 @@ const piece = idx.byPath.get(Astro.props.path) as Rec<Writing>;
 const c = idx.config.collections.find((x) => x.key === piece.data.collection);
 const r = await renderRecord(piece, idx);
 const tags = publicTags(piece.data.tags);
+const siblings = writingIn(idx, piece.data.collection);
+const at = siblings.findIndex((w) => w.path === piece.path);
+const newer = siblings[at - 1];
+const older = siblings[at + 1];
 ---
 <Reading title={piece.data.title} description={piece.data.summary ?? r.excerpt} kicker={c?.title} meta={[fmtDate(piece.data.date), `${r.wordCount} words`]} image={`/og/writing/${piece.data.collection}/${slugOf(piece)}.png`} minimal share={{ url: Astro.url.pathname, title: piece.data.title, image: `/og/writing/${piece.data.collection}/${slugOf(piece)}-instagram.png` }}>
   <OwnerOnly slot="controls"><InlineEdit client:only="preact" recordId={piece.data.id} title={piece.data.title} type="writing" /></OwnerOnly>
   <Fragment set:html={r.html} />
-  <Fragment slot="after">{tags.length > 0 && <p class="mono muted tags">{tags.map((t) => <a href={`/tags/${t}/`}>#{t}</a>)}</p>}</Fragment>
+  <Fragment slot="after">{tags.length > 0 && <p class="mono muted tags">{tags.map((t) => <a href={`/tags/${t}/`}>#{t}</a>)}</p>}
+    <nav class="mono muted pager" aria-label="Writing navigation">
+      <BackLink href="/writing/" label="Writing" />
+      <span class="pager__row">{older && <a href={urlFor(older)}>← Older</a>}<a href={`/writing/${piece.data.collection}/`}>All {c?.title ?? 'writing'}</a>{newer && <a href={urlFor(newer)}>Newer →</a>}</span>
+    </nav></Fragment>
 </Reading>
 <style>
   .tags { margin-top: var(--space-5); display: flex; gap: var(--space-3); flex-wrap: wrap; }
   .tags a { text-decoration: none; }
+  .pager { display: grid; justify-items: center; gap: var(--space-3); margin-top: var(--space-6); }
+  .pager__row { display: flex; gap: var(--space-4); flex-wrap: wrap; justify-content: center; }
+  .pager a { text-decoration: none; }
 </style>

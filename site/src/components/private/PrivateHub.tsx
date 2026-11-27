@@ -126,7 +126,7 @@ function Rows({ records, cfg, empty }: { records: RecordSummary[]; cfg: Cfg | nu
   );
 }
 
-const TYPE_CHIPS: Array<[string, string]> = [['', 'Everything'], ['writing', 'Writing'], ['feed', 'Thoughts'], ['list', 'Lists'], ['item', 'Things'], ['review', 'Reviews'], ['person', 'People'], ['tag', 'Tags']];
+const TYPE_CHIPS: Array<[string, string]> = [['', 'Everything'], ['writing', 'Writing'], ['feed', 'Notes'], ['list', 'Lists'], ['item', 'Things'], ['review', 'Reviews'], ['person', 'People'], ['tag', 'Tags']];
 function Library({ cfg, fixed = {}, empty = 'Nothing here.' }: { cfg: Cfg | null; fixed?: Record<string, string>; empty?: string }) {
   const [q, setQ] = useState('');
   const [type, setType] = useState('');
