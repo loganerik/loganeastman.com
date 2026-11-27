@@ -133,8 +133,9 @@ assets.post('/api/media/:id/variants/clip/regenerate', requireScopes('media:writ
   const id = c.req.param('id');
   const m = await one<{ id: string; record_id: string | null }>(c.env.DB, 'SELECT id, record_id FROM media WHERE id = ?', id);
   if (!m) return c.json({ error: 'not found' }, 404);
-  const body = (await c.req.json().catch(() => ({}))) as { provider?: 'replicate' | 'local'; params?: Record<string, unknown> };
-  const provider = body.provider ?? (c.env.REPLICATE_TOKEN ? 'replicate' : 'local');
+  const body = (await c.req.json().catch(() => ({}))) as { provider?: 'replicate' | 'local'; params?: Record<string, unknown>; mode?: 'cutout' | 'trim' };
+  if (body.mode === 'trim') body.params = { ...(body.params ?? {}), mode: 'trim' };
+  const provider = body.params?.mode === 'trim' ? 'local' : body.provider ?? (c.env.REPLICATE_TOKEN ? 'replicate' : 'local');
   const rec = m.record_id ? await one<{ path: string }>(c.env.DB, 'SELECT path FROM records WHERE id = ?', m.record_id) : null;
   const n = ((await one<{ n: number }>(c.env.DB, "SELECT COUNT(*) AS n FROM jobs WHERE kind = 'derive_clip' AND subject_id = ?", id))?.n ?? 0) + 1;
   await run(c.env.DB, "INSERT OR REPLACE INTO media_variants (media_id, variant, status, provider, params_json, updated_at) VALUES (?, 'clip', 'pending', ?, ?, ?)", id, provider, JSON.stringify(body.params ?? {}), now());

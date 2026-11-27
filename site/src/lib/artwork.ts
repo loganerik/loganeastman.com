@@ -61,6 +61,7 @@ export function clipFor(r: VaultRecord, context: ClipContext, opts: { tone?: 'pa
     case 'poster':
       return pic('poster', context === 'page' ? art.full ?? art.thumb : art.thumb ?? art.full, context === 'page' ? art.full_size ?? art.thumb_size : art.thumb_size ?? art.full_size, 2 / 3);
     case 'cover':
+      if (art.clip) return pic('cover', art.clip, art.clip_size, 2 / 3); // a trimmed cover (white margins cropped)
       return pic('cover', context === 'page' ? art.full ?? art.thumb : art.thumb ?? art.full, context === 'page' ? art.full_size ?? art.thumb_size : art.thumb_size ?? art.full_size, 2 / 3);
     case 'cutout':
       if (art.clip) return pic('cutout', art.clip, art.clip_size, 1);

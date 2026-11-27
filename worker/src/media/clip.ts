@@ -6,7 +6,7 @@ import { one, run, now } from '../db';
 import { putVariant, readDims } from './store';
 import { vaultCommit } from '../do/VaultWriter';
 
-export interface ClipJob { record_path: string | null; media_id: string; provider: 'replicate' | 'local'; params?: Record<string, unknown> }
+export interface ClipJob { record_path: string | null; media_id: string; provider: 'replicate' | 'local'; params?: Record<string, unknown> } // params.mode: 'cutout' (default) | 'trim' (crop white margins, covers)
 
 const REPLICATE_MODEL = 'men1scus/birefnet'; // background removal; swap via CLIP_MODEL env if you prefer another
 
@@ -19,12 +19,12 @@ export async function runClipJob(env: Env, job: ClipJob, fetchImpl: typeof fetch
   if (m.record_id) {
     const rec = await one<{ kind: string | null; frontmatter_json: string | null }>(env.DB, 'SELECT kind, frontmatter_json FROM records WHERE id = ?', m.record_id);
     const treatment = (JSON.parse(rec?.frontmatter_json ?? '{}') as { artwork?: { treatment?: string } }).artwork?.treatment;
-    if (rec && ['book', 'album', 'film', 'tv'].includes(rec.kind ?? '') && treatment !== 'cutout') {
+    if (rec && ['book', 'album', 'film', 'tv'].includes(rec.kind ?? '') && treatment !== 'cutout' && job.params?.mode !== 'trim') {
       await run(env.DB, "UPDATE media_variants SET status = 'failed', params_json = ?, updated_at = ? WHERE media_id = ? AND variant = 'clip'", JSON.stringify({ reason: 'covers and title art are not cut out' }), now(), m.id);
       return { status: 'pending' };
     }
   }
-  if (job.provider === 'local' || !env.REPLICATE_TOKEN) {
+  if (job.provider === 'local' || !env.REPLICATE_TOKEN || job.params?.mode === 'trim') {
     await run(env.DB, "INSERT OR REPLACE INTO media_variants (media_id, variant, status, provider, params_json, updated_at) VALUES (?, 'clip', 'pending', 'local', ?, ?)", m.id, JSON.stringify(job.params ?? {}), now());
     return { status: 'pending' };
   }
