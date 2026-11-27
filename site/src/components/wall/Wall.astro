@@ -27,8 +27,9 @@ const units = tiles.reduce((s, t) => s + t.span.c * t.span.r, 0);
   .tile__link { display: grid; place-items: center; width: 100%; height: 100%; text-decoration: none; color: inherit; transform: translate(var(--dx, 0%), var(--dy, 0%)) rotate(var(--angle, 0deg)); transition: transform var(--motion-fast) var(--ease-lift); will-change: transform; }
   .tile__link:hover, .tile__link:focus-visible { transform: translate(var(--dx, 0%), calc(var(--dy, 0%) - 1.5%)) rotate(calc(var(--angle, 0deg) * 0.4)) scale(1.03); }
   .tile__link:focus-visible { outline: 2px solid var(--focus); outline-offset: 6px; }
-  .tile__link { grid-template-rows: minmax(0, 1fr); overflow: visible; }
-  .tile .clip { width: auto; height: auto; max-width: 84%; max-height: 84%; aspect-ratio: var(--ar, 1); margin: auto; }
+  .tile__link { grid-template-rows: minmax(0, 1fr); overflow: visible; container-type: size; }
+  /* Picture clips: fit the cell on whichever axis binds, keeping the image's own aspect ratio (cqw/cqh = the link box). */
+  .tile .clip:has(> img) { position: relative; width: min(84cqw, calc(84cqh * var(--ar, 1))); height: auto; aspect-ratio: var(--ar, 1); margin: auto; }
   .tile .clip--typeset, .tile .clip--logo { aspect-ratio: auto; width: 84%; height: 84%; }
   .tile .clip > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
   .clip--shape { display: grid; place-items: center; aspect-ratio: auto; height: 100%; width: 100%; }
@@ -50,7 +51,7 @@ const units = tiles.reduce((s, t) => s + t.span.c * t.span.r, 0);
   .tile__frame-title { font-size: clamp(1.1rem, 3cqw, 1.7rem); line-height: 1.08; text-wrap: balance; }
   .tile__cap { position: absolute; left: 50%; bottom: 0.2rem; transform: translate(-50%, 0); white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; font-size: 0.65rem; color: var(--fg-muted); opacity: 0; transition: opacity var(--motion-fast); pointer-events: none; }
   .tile__link:hover .tile__cap, .tile__link:focus-visible .tile__cap { opacity: 1; }
-  @media (hover: none) { .tile__cap { opacity: 1; position: static; transform: none; white-space: normal; text-align: center; margin-top: 0.3rem; } .tile__link { grid-template-rows: 1fr auto; } }
+  @media (hover: none) { .tile__cap { opacity: 1; position: static; transform: none; white-space: normal; text-align: center; margin-top: 0.3rem; } .tile__link { grid-template-rows: minmax(0, 1fr) auto; } .tile .clip:has(> img) { width: min(84cqw, calc(72cqh * var(--ar, 1))); } }
   .wall__pet { grid-column: span 1; grid-row: span 1; display: grid; place-items: center; transform: translate(var(--dx, 0%), var(--dy, 0%)) rotate(var(--angle, 0deg)); }
   .wall__pet .pet img { height: auto; width: 85%; max-height: 100%; object-fit: contain; }
   .wall__pet[data-side='right'] { justify-self: end; }
