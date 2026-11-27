@@ -66,9 +66,11 @@ export function wallCandidates(idx: VaultIndex): WallTile[] {
   }
   // thoughts
   for (const p of idx.ofType<Feed>('feed').sort((a, b) => String(b.data.date).localeCompare(String(a.data.date))).slice(0, 20)) {
-    const text = p.body.replace(/[#>*_`\[\]!]/g, '').replace(/\s+/g, ' ').trim();
-    const words = text.split(' ').length;
+    // a post with a title and no body (older captures) shows its title; one with neither has nothing to show
+    const text = (p.body.replace(/[#>*_`\[\]!]/g, '').replace(/\s+/g, ' ').trim() || String(p.data.title ?? '').trim());
     const hasArt = !!(p.data.artwork?.clip || p.data.artwork?.thumb);
+    if (!text && !hasArt) continue;
+    const words = text.split(' ').length;
     push({ id: p.data.id, kind: hasArt ? 'photo' : 'thought', href: urlFor(p, idx), title: p.data.title ?? text.slice(0, 60), caption: String(p.data.date).length > 10 ? fmtDate(p.data.date, { month: 'short', day: 'numeric' }) + ' · ' + fmtDate(p.data.date, { hour: 'numeric', minute: '2-digit' }) : fmtDate(p.data.date), record: p, shape: hasArt ? undefined : words <= 6 ? 'stepped' : 'slip', text: text.length > 140 ? text.slice(0, 137).trimEnd() + '…' : text, words, score: 0.9 * recency(p.data.date, 30) });
   }
   // lists: every list is on the wall in one of four forms (seal, arch, stepped frame, slip), chosen by the list's
@@ -91,7 +93,7 @@ export function wallCandidates(idx: VaultIndex): WallTile[] {
     const tone: WallTile['tone'] = form === 'slip' ? 'ink' : hash32(l.data.id) & 1 ? 'pink' : 'green';
     const hasArt = (e: ResolvedEntry) => { const a = (e.item.data as { artwork?: { clip?: string; thumb?: string; full?: string } }).artwork; return !!(a?.clip || a?.thumb || a?.full); };
     const picks = baked.filter(hasArt).slice(0, 3).map((e) => e.item as VaultRecord);
-    if (entries.length) push({ id: l.data.id, kind: 'queue', href: urlFor(l, idx), title: l.data.title, caption: `${lt?.title ?? 'List'} · ${entries.length}`, record: l, shape: form, tone, picks, count: entries.length, score: 0.75 * recency(entries[0]?.entry.data.finished ?? entries[0]?.entry.data.added) });
+    if (entries.length) push({ id: l.data.id, kind: 'queue', href: urlFor(l, idx), title: l.data.title, caption: lt?.title ?? 'List', record: l, shape: form, tone, picks, count: entries.length, score: 0.75 * recency(entries[0]?.entry.data.finished ?? entries[0]?.entry.data.added) });
     for (const e of baked) {
       const isGift = lt?.key === 'gifts';
       push({ id: e.entry.data.id, kind: isGift ? 'gift' : 'pick', href: urlFor(e.item, idx), title: e.item.data.title, caption: isGift ? 'Gift idea' : `from ${l.data.title}`, record: e.item, listId: l.data.id, score: 0.8 * (0.5 + 0.5 * recency(e.entry.data.added)) });

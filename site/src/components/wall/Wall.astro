@@ -83,6 +83,5 @@ const units = Math.round(shown * (1 + 1 / identity.wall.petRatio));
   .wall__pet .pet img { height: auto; width: 85%; max-height: 100%; object-fit: contain; }
   .wall__pet[data-side='right'] { justify-self: end; }
   .wall__pet[hidden] { display: none; }
-  @media (max-width: 699px) { .wall__pet { display: none; } .wall__pet[data-first]:not([hidden]) { display: grid; } }
   @media (prefers-reduced-motion: reduce) { .tile__link { transition: none; } .tile__link:hover { transform: translate(var(--dx, 0%), var(--dy, 0%)) rotate(var(--angle, 0deg)); } }
 </style>
