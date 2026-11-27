@@ -2,7 +2,7 @@
 // Each step's output is stored in job_steps so a retry resumes instead of redoing (and never duplicates).
 import { z } from 'zod';
 import type { Env } from '../env';
-import { fetchPageFacts, hintFromUrl, titleYearFrom, judge, Tmdb, OpenLibrary, MusicBrainz, type PageFacts, type Match } from '@lem/providers';
+import { fetchPageFacts, hintFromUrl, titleYearFrom, judge, Tmdb, OpenLibrary, MusicBrainz, apparelSubtype, type PageFacts, type Match } from '@lem/providers';
 import type { Identity } from './enrich';
 import { ITEM_KINDS, newId } from '@lem/vault-core';
 import { one, run, now, json } from '../db';
@@ -177,7 +177,7 @@ export async function runOrganize(env: Env, job: { id: string; subject_id: strin
     }
     if ((kind === 'film' || kind === 'tv' || kind === 'book' || kind === 'album') && !identity) throw new NeedsOwner(`I could not find "${identified.title ?? capture.url}" at the provider. Paste a direct link (TMDB, IMDb, Open Library, MusicBrainz), or tell me the exact title and year.`);
     if (!fileAs.length) fileAs = [{ target: 'feed' }];
-    const og = facts && !identity ? { og_image: facts.image, site_name: facts.site_name, description: facts.description } : {};
+    const og = facts && !identity ? { og_image: facts.image, site_name: facts.site_name, description: facts.description, product: facts.product || facts.title ? { ...(facts.product ?? {}), subtype: facts.product?.category === 'Apparel' ? apparelSubtype(facts.title ?? '') : undefined } : undefined } : {};
     return { kind: kind ?? 'none', identity, title: identified.title ?? facts?.title ?? undefined, year: identified.year ?? undefined, url: capture.url ?? undefined, ...og, file_as: fileAs, visibility: capture.visibility as 'public' | 'private', confidence: resolved.match === 'confident' ? 0.95 : 0.7, connections: [] };
   });
 

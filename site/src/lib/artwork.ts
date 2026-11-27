@@ -22,6 +22,10 @@ export interface ClipSpec {
 
 function treatmentFor(r: VaultRecord): Treatment {
   const art = (r.data as { artwork?: Artwork }).artwork;
+  const kind = r.type === 'item' ? (r.data as Item).kind : undefined;
+  // covers and title art are shown whole: a cutout treatment on these kinds is ignored unless a clip exists and was asked for
+  if (kind === 'book' || kind === 'album') return art?.treatment === 'cutout' && art.clip ? 'cutout' : 'cover';
+  if (kind === 'film' || kind === 'tv') return art?.treatment === 'poster' ? 'poster' : 'lettering';
   if (art?.treatment) return art.treatment;
   if (r.type === 'item') return (identity.kinds[(r.data as Item).kind]?.treatment ?? 'typeset') as Treatment;
   return 'typeset';

@@ -4,6 +4,7 @@ import SectionGrid from '../../components/section/SectionGrid.astro';
 import ListEntry from '../../components/section/ListEntry.astro';
 import { index, entriesOf, listType, type Rec } from '../../lib/content';
 import { renderRecord } from '../../lib/render';
+import { groupByCategory } from '../../lib/lists';
 import type { List } from '@lem/vault-core';
 
 export async function getStaticPaths() {
@@ -17,14 +18,45 @@ const t = listType(idx, list.data.list_type);
 const intro = await renderRecord(list, idx);
 const active = entries.filter((e) => e.entry.data.state !== 'done');
 const done = entries.filter((e) => e.entry.data.state === 'done');
+const queue = t?.queue ?? false;
+const groups = queue ? [] : groupByCategory(idx, active);
+const categories = groups.map((g) => g.key);
+let i = 0;
 ---
 <Section preset={{ mode: 'entry', list: list.stem }} title={list.data.title} kicker={t?.title} count={entries.length} description={intro.excerpt || `${list.data.title} · ${entries.length} entries`}
-  action={{ label: t?.add_label ?? 'Add', href: `/private/new/?kind=list-entry&list=${list.data.id}` }}>
+  action={{ label: t?.add_label ?? 'Add', href: `/private/new/?type=list-entry&list=${list.data.id}` }}>
   {intro.html && <div class="prose intro" slot="intro" set:html={intro.html} />}
   {entries.length === 0 && <p class="muted">Nothing here yet.</p>}
-  <SectionGrid variant="rows">
-    {active.map((e) => <ListEntry e={e} />)}
-  </SectionGrid>
+  {queue ? (
+    <SectionGrid variant="rows">{active.map((e) => <ListEntry e={e} />)}</SectionGrid>
+  ) : (
+    <div class="wishlist" data-wishlist>
+      <div class="wishlist__bar">
+        <div class="chips" data-cats>
+          <button type="button" class="chip" aria-pressed="true" data-cat="">All <span class="muted" data-count>{active.length}</span></button>
+          {categories.map((c) => <button type="button" class="chip" aria-pressed="false" data-cat={c}>{c}</button>)}
+        </div>
+        <div class="wishlist__tools">
+          <label class="mono"><span class="vh">Sort</span><select data-sort class="wishlist__select">
+            <option value="newest">Newest</option><option value="list">List order</option><option value="price-desc">Price high → low</option><option value="price-asc">Price low → high</option><option value="title">A–Z</option><option value="brand">Brand</option>
+          </select></label>
+          <span class="seg" role="radiogroup" aria-label="View">
+            <button type="button" class="seg__b" data-view="gallery" aria-pressed="true">Gallery</button>
+            <button type="button" class="seg__b" data-view="list" aria-pressed="false">Christmas list</button>
+          </span>
+          <label class="mono wishlist__pics" data-pics-wrap hidden><input type="checkbox" data-pics checked /> Pictures</label>
+          <button type="button" class="btn" data-share hidden>Share</button>
+        </div>
+      </div>
+      {groups.map((g) => (
+        <section class="group" data-group={g.key}>
+          <div class="rule-label"><span>{g.title} <span class="muted" data-group-count>{g.entries.length}</span></span></div>
+          <SectionGrid variant="rows">{g.entries.map((e) => <ListEntry e={e} index={i++} />)}</SectionGrid>
+        </section>
+      ))}
+      <p class="muted" data-empty hidden>Nothing matches.</p>
+    </div>
+  )}
   {done.length > 0 && (
     <section class="done">
       <div class="rule-label"><span>Finished</span></div>
@@ -32,7 +64,87 @@ const done = entries.filter((e) => e.entry.data.state === 'done');
     </section>
   )}
 </Section>
+<script>
+  const root = document.querySelector<HTMLElement>('[data-wishlist]');
+  if (root) {
+    const params = new URLSearchParams(location.search);
+    const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-cats] button')];
+    const sortSel = root.querySelector<HTMLSelectElement>('[data-sort]')!;
+    const views = [...root.querySelectorAll<HTMLButtonElement>('[data-view]')];
+    const pics = root.querySelector<HTMLInputElement>('[data-pics]')!;
+    const picsWrap = root.querySelector<HTMLElement>('[data-pics-wrap]')!;
+    const share = root.querySelector<HTMLButtonElement>('[data-share]')!;
+    const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+    const state = { cat: params.get('cat') ?? '', sort: params.get('sort') ?? 'newest', view: params.get('view') === 'list' ? 'list' : 'gallery', pics: params.get('pictures') !== 'off' };
+    const entries = () => [...root.querySelectorAll<HTMLElement>('[data-entry]')];
+    const apply = () => {
+      // filter
+      let shown = 0;
+      for (const el of entries()) { const on = !state.cat || el.dataset.category === state.cat; el.hidden = !on; if (on) shown++; }
+      chips.forEach((c) => c.setAttribute('aria-pressed', String((c.dataset.cat ?? '') === state.cat)));
+      root.querySelector('[data-count]')!.textContent = String(shown);
+      for (const g of root.querySelectorAll<HTMLElement>('[data-group]')) { const n = [...g.querySelectorAll<HTMLElement>('[data-entry]')].filter((e) => !e.hidden).length; g.hidden = n === 0; g.querySelector('[data-group-count]')!.textContent = String(n); }
+      empty.hidden = shown > 0;
+      // sort within each group (list order = original index)
+      const key = state.sort;
+      for (const g of root.querySelectorAll<HTMLElement>('[data-group]')) {
+        const ul = g.querySelector('ul')!;
+        const items = [...ul.querySelectorAll<HTMLElement>('[data-entry]')];
+        const num = (v: string | undefined) => (v === '' || v === undefined ? NaN : Number(v));
+        items.sort((a, b) => {
+          const pa = num(a.dataset.price), pb = num(b.dataset.price);
+          switch (key) {
+            case 'price-desc': return (isNaN(pb) ? -1 : pb) - (isNaN(pa) ? -1 : pa);
+            case 'price-asc': return (isNaN(pa) ? 1e12 : pa) - (isNaN(pb) ? 1e12 : pb);
+            case 'title': return (a.dataset.title ?? '').localeCompare(b.dataset.title ?? '');
+            case 'brand': return (a.dataset.brand ?? '').localeCompare(b.dataset.brand ?? '') || (a.dataset.title ?? '').localeCompare(b.dataset.title ?? '');
+            case 'list': return Number(a.dataset.index) - Number(b.dataset.index);
+            default: return (b.dataset.added ?? '').localeCompare(a.dataset.added ?? '') || Number(a.dataset.index) - Number(b.dataset.index);
+          }
+        });
+        items.forEach((el) => ul.appendChild(el));
+      }
+      sortSel.value = key;
+      // view
+      root.classList.toggle('list--compact', state.view === 'list');
+      root.classList.toggle('list--nopics', state.view === 'list' && !state.pics);
+      views.forEach((v) => v.setAttribute('aria-pressed', String(v.dataset.view === state.view)));
+      picsWrap.hidden = state.view !== 'list';
+      pics.checked = state.pics;
+      // url
+      const u = new URL(location.href);
+      state.cat ? u.searchParams.set('cat', state.cat) : u.searchParams.delete('cat');
+      state.sort !== 'newest' ? u.searchParams.set('sort', state.sort) : u.searchParams.delete('sort');
+      state.view === 'list' ? u.searchParams.set('view', 'list') : u.searchParams.delete('view');
+      state.view === 'list' && !state.pics ? u.searchParams.set('pictures', 'off') : u.searchParams.delete('pictures');
+      history.replaceState(history.state, '', u.toString());
+    };
+    chips.forEach((c) => c.addEventListener('click', () => { state.cat = c.dataset.cat ?? ''; apply(); }));
+    sortSel.addEventListener('change', () => { state.sort = sortSel.value; apply(); });
+    views.forEach((v) => v.addEventListener('click', () => { state.view = v.dataset.view as 'gallery' | 'list'; apply(); }));
+    pics.addEventListener('change', () => { state.pics = pics.checked; apply(); });
+    if ('share' in navigator || 'clipboard' in navigator) {
+      share.hidden = false;
+      share.addEventListener('click', async () => {
+        const data = { title: document.title, url: location.href };
+        try { if (navigator.share) await navigator.share(data); else { await navigator.clipboard.writeText(location.href); share.textContent = 'Link copied'; setTimeout(() => (share.textContent = 'Share'), 1500); } } catch { /* cancelled */ }
+      });
+    }
+    apply();
+  }
+</script>
 <style>
   .intro { margin-top: var(--space-3); color: var(--fg-muted); }
+  .intro :global(h2) { font-size: var(--step-0); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: var(--mono-tracking); margin-top: var(--space-3); }
   .done { margin-top: var(--space-6); }
+  .wishlist__bar { display: grid; gap: var(--space-3); margin-bottom: var(--space-4); }
+  .wishlist__tools { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; }
+  .wishlist__select { font: inherit; font-family: var(--font-mono); font-size: 0.85rem; padding: 0.5rem 0.9rem; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); }
+  .wishlist__pics { display: inline-flex; gap: 0.4rem; align-items: center; text-transform: none; }
+  .group { margin-top: var(--space-5); }
+  .group .grid { margin-top: var(--space-2); }
+  .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; }
+  .seg__b { font-family: var(--font-mono); font-size: 0.85rem; padding: 0.5rem 0.9rem; border: 0; background: var(--paper); cursor: pointer; color: var(--ink); }
+  .seg__b[aria-pressed='true'] { background: var(--green); color: var(--on-dark); }
+  @media print { .wishlist__bar, :global(.fab), :global(.masthead nav), :global(.footer) { display: none !important; } }
 </style>

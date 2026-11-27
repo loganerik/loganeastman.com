@@ -1,30 +1,35 @@
 ---
-// One row in a list. Queue lists show full artwork; the title and note never move, only the art does.
+// One row in a list. Queue lists show full artwork; ordinary lists show the clipping, subtype, brand · price,
+// details, your note, and the shop. The text never moves; only the art does.
 import type { ResolvedEntry } from '../../lib/content';
 import { urlFor } from '../../lib/urls';
 import { restingAngle, kickerFor } from '../../lib/artwork';
 import { fmtDate } from '../../lib/dates';
+import { fmtPrice, hostOf } from '../../lib/format';
 import Clip from '../art/Clip.astro';
-interface Props { e: ResolvedEntry; showArt?: boolean }
-const { e, showArt = true } = Astro.props;
+interface Props { e: ResolvedEntry; showArt?: boolean; index?: number }
+const { e, showArt = true, index } = Astro.props;
 const href = urlFor(e.item);
-const d = e.item.data;
-const credit = d.director?.join(', ') ?? d.authors?.join(', ') ?? d.artist ?? (d as { brand?: string }).brand ?? d.site_name ?? '';
-const price = (d as { price?: number | string }).price;
-const priceText = price != null && price !== '' ? (typeof price === 'number' ? `$${price % 1 === 0 ? price : price.toFixed(2)}` : String(price)) : '';
-const host = (() => { try { const h = new URL(d.url ?? '').hostname; return h.startsWith('www.') ? h.slice(4) : h; } catch { return ''; } })();
+const d = e.item.data as typeof e.item.data & { brand?: string; subtype?: string; price?: number; currency?: string; details?: string; category?: string };
+const isProduct = d.kind === 'product' || d.kind === 'link';
+const credit = d.director?.join(', ') ?? d.authors?.join(', ') ?? d.artist ?? d.brand ?? d.site_name ?? '';
+const priceText = isProduct || d.price != null ? fmtPrice(d.price, d.currency) : '';
+const host = hostOf(d.url);
 const done = e.entry.data.state === 'done';
+const kicker = d.subtype ?? (isProduct ? d.category : kickerFor(e.item));
 ---
-<li class={`entry card ${done ? 'entry--done' : ''}`} style={`--angle:${restingAngle(e.item.data.id, 'cover')}deg`}>
+<li class={`entry card ${done ? 'entry--done' : ''}`} style={`--angle:${restingAngle(e.item.data.id, 'cover')}deg`}
+  data-entry data-category={d.category ?? ''} data-brand={credit} data-price={d.price ?? ''} data-title={d.title} data-added={e.entry.data.added} data-index={index}>
   {showArt && (
     <a class="entry__art" href={href} tabindex="-1" aria-hidden="true">
       <Clip record={e.item} context="list" decorative />
     </a>
   )}
   <div class="entry__text">
-    <p class="mono muted">{kickerFor(e.item)}{done && ' · finished'}</p>
+    <p class="mono muted entry__kicker">{index !== undefined && <span class="entry__n">{index + 1}. </span>}{kicker}{done && ' · finished'}</p>
     <h3 class="entry__title"><a href={href}>{d.title}</a></h3>
-    {(credit || priceText) && <p class="muted entry__credit">{credit}{credit && priceText ? ' · ' : ''}{priceText}</p>}
+    {(credit || priceText) && <p class="entry__credit">{credit}{credit && priceText ? ' · ' : ''}{priceText && <span class="entry__price">{priceText}</span>}</p>}
+    {d.details && <p class="mono muted entry__details">{d.details}</p>}
     {e.why && <p class="entry__why">{e.why}</p>}
     <p class="mono faint entry__added">Added {fmtDate(e.entry.data.added)}{host && <> · <a href={d.url} rel="noopener" target="_blank">{host}</a></>}</p>
   </div>
@@ -33,10 +38,26 @@ const done = e.entry.data.state === 'done';
   .entry { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: var(--space-4); padding: var(--space-4) 0; border-bottom: 1px solid var(--rule-soft); list-style: none; }
   @media (min-width: 720px) { .entry { grid-template-columns: 150px minmax(0, 1fr); } }
   .entry__art { display: block; text-decoration: none; }
+  .entry__kicker { text-transform: uppercase; }
+  .entry__n { display: none; }
   .entry__title { font-size: var(--step-1); font-weight: 500; margin: var(--space-1) 0; }
   .entry__title a { text-decoration: none; }
   .entry__title a:hover { text-decoration: underline; }
+  .entry__credit { color: var(--fg-muted); }
+  .entry__price { color: var(--ink); }
+  .entry__details { text-transform: none; letter-spacing: 0.02em; margin-top: 0.2rem; }
   .entry__why { margin-top: var(--space-2); max-width: 56ch; }
   .entry__added { margin-top: var(--space-2); }
+  .entry__added a { text-decoration: none; }
+  .entry__added a:hover { text-decoration: underline; }
   .entry--done .entry__title { color: var(--fg-muted); }
+  /* compact "Christmas list" view */
+  :global(.list--compact) .entry { grid-template-columns: 48px minmax(0, 1fr); gap: var(--space-3); padding: var(--space-2) 0; }
+  :global(.list--compact) .entry__n { display: inline; }
+  :global(.list--compact) .entry__title { font-size: var(--step-0); margin: 0; }
+  :global(.list--compact) .entry__why, :global(.list--compact) .entry__details { display: none; }
+  :global(.list--compact) .entry__added { margin-top: 0.1rem; }
+  :global(.list--compact.list--nopics) .entry { grid-template-columns: minmax(0, 1fr); }
+  :global(.list--compact.list--nopics) .entry__art { display: none; }
+  @media print { .entry { break-inside: avoid; } }
 </style>

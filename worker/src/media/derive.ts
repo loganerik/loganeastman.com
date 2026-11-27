@@ -6,6 +6,7 @@ import { newId } from '@lem/vault-core';
 import { one, run, now } from '../db';
 import { vaultCommit } from '../do/VaultWriter';
 import { hash8, readDims } from './store';
+import { findImage } from './find-image';
 
 function providerUrl(ref: string, imageBase?: string): string | null {
   if (ref.startsWith('tmdb:')) return Tmdb.posterUrl(ref.slice(5), 'w780', imageBase);
@@ -25,13 +26,24 @@ export async function deriveProviderArtwork(env: Env, recordId: string, job: Der
     await run(env.DB, "INSERT INTO media (id, kind, provider_ref, record_id, approved, created_at) VALUES (?, 'artwork', ?, ?, 1, ?)", media.id, job.poster ?? job.logo ?? null, recordId, now());
   }
   const sets: Array<{ at: string[]; value: unknown }> = [{ at: ['artwork', 'media'], value: media.id }];
+  let foundSource: string | undefined;
   const put = async (variant: 'full' | 'thumb' | 'clip', ref: string, width?: number) => {
-    const src = ref.startsWith('url:') ? ref.slice(4) : providerUrl(ref, env.TMDB_IMAGE_URL || undefined);
-    if (!src) return;
-    const res = await fetchImpl(src, { headers: { 'user-agent': 'loganeastman-worker' } });
-    if (!res.ok) throw new Error(`artwork ${res.status} ${src}`);
-    let buf = await res.arrayBuffer();
-    let ext = (res.headers.get('content-type') ?? '').includes('png') ? 'png' : 'jpg';
+    let buf: ArrayBuffer;
+    let ext: string;
+    if (ref.startsWith('find:')) {
+      const found = await findImage(ref.slice(5), fetchImpl, env.PAGE_PROXY_URL || undefined);
+      if (!found) throw new Error(`no image found for ${ref.slice(5)}`);
+      buf = found.bytes;
+      ext = found.contentType.includes('png') ? 'png' : found.contentType.includes('svg') ? 'svg' : found.contentType.includes('webp') ? 'webp' : found.contentType.includes('icon') ? 'ico' : 'jpg';
+      foundSource = `found-${found.source}`;
+    } else {
+      const src = ref.startsWith('url:') ? ref.slice(4) : providerUrl(ref, env.TMDB_IMAGE_URL || undefined);
+      if (!src) return;
+      const res = await fetchImpl(src, { headers: { 'user-agent': 'loganeastman-worker' } });
+      if (!res.ok) throw new Error(`artwork ${res.status} ${src}`);
+      buf = await res.arrayBuffer();
+      ext = (res.headers.get('content-type') ?? '').includes('png') ? 'png' : 'jpg';
+    }
     let dims = readDims(buf);
     if (width && env.IMAGES && dims && dims[0] > width) {
       try {
@@ -61,6 +73,7 @@ export async function deriveProviderArtwork(env: Env, recordId: string, job: Der
   if (job.og) {
     await put('full', job.og);
     await put('thumb', job.og, 400);
+    if (foundSource) { sets.push({ at: ['artwork', 'source'], value: foundSource }); if (foundSource !== 'found-og') sets.push({ at: ['artwork', 'treatment'], value: 'cover' }); }
   }
   if (job.logo) await put('clip', job.logo);
   await vaultCommit(env, { message: `agent: artwork for ${job.record_path.split('/').pop()?.replace(/\.md$/, '')}`, ops: [{ op: 'setIn', path: job.record_path, sets }], jobId: `media:${recordId}` });

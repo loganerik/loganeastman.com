@@ -93,6 +93,13 @@ export const itemSchema = z.looseObject({
   // product / place / link
   url: z.string().optional(),
   site_name: z.string().optional(),
+  brand: z.string().optional(),
+  category: z.string().optional(), // shared vocabulary: Apparel, Books & Magazines, Home, …
+  subtype: z.string().optional(), // T-shirts, Socks, Subscription
+  price: z.number().optional(),
+  currency: z.string().default('USD'),
+  details: z.string().optional(), // size, colour, format
+  source_image: z.string().optional(),
   og_title: z.string().optional(),
   og_description: z.string().optional(),
   address: z.string().optional(),
@@ -211,6 +218,7 @@ export const siteConfigSchema = z.looseObject({
   horizon: z.looseObject({ kinds: z.array(itemKind).default(['film', 'tv']), window_days: z.number().default(365) }).default({ kinds: ['film', 'tv'], window_days: 365 }),
   connection_auto_threshold: z.number().default(0.8),
   rating_scale: z.number().default(5),
+  categories: z.array(z.looseObject({ key: z.string(), title: z.string().optional() })).default([]),
 });
 export const collectionsConfigSchema = z.looseObject({ type: z.literal('config'), collections: z.array(collectionDef) });
 export const listTypesConfigSchema = z.looseObject({ type: z.literal('config'), list_types: z.array(listTypeDef) });
