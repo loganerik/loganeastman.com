@@ -22,6 +22,10 @@ export class NonRetryable extends Error {}
 
 type Steps = Record<string, unknown>;
 
+/** Titles a bot wall serves instead of the page: nothing on such a page is a fact about the thing. */
+const CHALLENGE = /security checkpoint|just a moment|access denied|attention required|are you a human|verify you are|bot verification|captcha|request blocked|pardon our interruption/i;
+const isChallenge = (f: PageFacts | null | undefined) => !!f && (CHALLENGE.test(f.title ?? '') || CHALLENGE.test(f.html_title ?? '') || (f.description ?? '').startsWith('fetch failed'));
+
 async function step<T>(env: Env, jobId: string, name: string, steps: Steps, fn: () => Promise<T>): Promise<T> {
   if (name in steps) return steps[name] as T;
   const out = await fn();
@@ -80,6 +84,31 @@ export async function runOrganize(env: Env, job: { id: string; subject_id: strin
     if (/^(book|music\.album)$/.test(facts?.type ?? '') && ty) return { kind: facts!.type === 'book' ? 'book' : 'album', title: ty.title, year: ty.year ?? null, creator: null, reasoning: 'og:type' };
     const og = facts?.type ?? '';
     if (/video\.(movie|tv_show)/.test(og) && ty) return { kind: og.includes('tv') ? 'tv' : 'film', title: ty.title, year: ty.year ?? null, creator: null, reasoning: 'og:type' };
+    // a shop page or an ordinary web page that already says what it is needs no model: product facts (price, brand,
+    // og:type product, JSON-LD Product) make it a product; any other page with a title is a link
+    const blocked = !facts || CHALLENGE.test(facts.title ?? '') || CHALLENGE.test(facts.html_title ?? '') || (facts.description ?? '').startsWith('fetch failed');
+    const pageTitle = (() => {
+      if (blocked) return null;
+      const t = (facts?.title ?? facts?.html_title ?? '').trim();
+      if (!t) return null;
+      const site = facts?.site_name?.trim();
+      return site && t.toLowerCase().endsWith(site.toLowerCase()) ? t.slice(0, t.length - site.length).replace(/\s*[|–—:-]\s*$/, '').trim() || t : t;
+    })();
+    const ldProduct = (facts?.jsonld ?? []).some((x) => x && typeof x === 'object' && /Product/.test(String((x as { '@type'?: unknown })['@type'] ?? '')));
+    const looksProduct = !!(facts?.product?.price || facts?.product?.brand || /product/i.test(facts?.type ?? '') || ldProduct);
+    if (pageTitle && looksProduct && !hint?.provider) return { kind: 'product', title: pageTitle, year: null, creator: facts?.product?.brand ?? null, reasoning: 'page facts: product' };
+    if (pageTitle && capture.url && !hint?.provider && (capture.intent === 'list' || !llm)) return { kind: 'link', title: pageTitle, year: null, creator: null, reasoning: 'page facts: link' };
+    // the shop refused us (a bot wall) and there is nothing to read: go by the address alone rather than fail or guess
+    if (capture.url && blocked && !hint?.provider) {
+      const u = new URL(capture.url);
+      const seg = u.pathname.split('/').filter(Boolean);
+      const last = (seg[seg.length - 1] ?? '').replace(/\.[a-z]+$/i, '').replace(/^[0-9a-f-]{16,}$/i, '');
+      const words = last.split(/[-_+]+/).filter((w) => w && !/^\d+$/.test(w)).map((w) => w[0]!.toUpperCase() + w.slice(1));
+      const title = words.length ? words.join(' ').replace(/\bMens\b/, "Men's").replace(/\bWomens\b/, "Women's") : u.hostname.replace(/^www\./, '');
+      const brand = u.hostname.replace(/^www\./, '').split('.')[0]!.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+      const shopPath = /\/(products?|p|item|items|dp|shop|store)\//i.test(u.pathname + '/');
+      return { kind: shopPath ? 'product' : 'link', title, year: null, creator: shopPath ? brand : null, reasoning: 'page blocked; from the url' };
+    }
     if (!llm) {
       if (!capture.url) return { kind: 'none', title: null, year: null, creator: null, reasoning: 'no url, no model' };
       return { kind: 'link', title: ty?.title ?? null, year: null, creator: null, reasoning: 'no model configured; filed as link' };
@@ -177,8 +206,12 @@ export async function runOrganize(env: Env, job: { id: string; subject_id: strin
     }
     if ((kind === 'film' || kind === 'tv' || kind === 'book' || kind === 'album') && !identity) throw new NeedsOwner(`I could not find "${identified.title ?? capture.url}" at the provider. Paste a direct link (TMDB, IMDb, Open Library, MusicBrainz), or tell me the exact title and year.`);
     if (!fileAs.length) fileAs = [{ target: 'feed' }];
-    const og = facts && !identity ? { og_image: facts.image, site_name: facts.site_name, description: facts.description, product: facts.product || facts.title ? { ...(facts.product ?? {}), subtype: facts.product?.category === 'Apparel' ? apparelSubtype(facts.title ?? '') : undefined } : undefined } : {};
-    return { kind: kind ?? 'none', identity, title: identified.title ?? facts?.title ?? undefined, year: identified.year ?? undefined, url: capture.url ?? undefined, ...og, file_as: fileAs, visibility: capture.visibility as 'public' | 'private', confidence: resolved.match === 'confident' ? 0.95 : 0.7, connections: [] };
+    const usable = facts && !isChallenge(facts) ? facts : null;
+    const brandGuess = kind === 'product' ? identified.creator ?? undefined : undefined;
+    const og = !identity && (usable || brandGuess)
+      ? { og_image: usable?.image, site_name: usable?.site_name, description: usable?.description, product: usable?.product || usable?.title || brandGuess ? { ...(usable?.product ?? {}), brand: usable?.product?.brand ?? brandGuess, subtype: usable?.product?.category === 'Apparel' ? apparelSubtype(usable?.title ?? '') : undefined } : undefined }
+      : {};
+    return { kind: kind ?? 'none', identity, title: identified.title ?? usable?.title ?? undefined, year: identified.year ?? undefined, url: capture.url ?? undefined, ...og, file_as: fileAs, visibility: capture.visibility as 'public' | 'private', confidence: resolved.match === 'confident' ? 0.95 : 0.7, connections: [] };
   });
 
   // 5+6. enrich + commit happen inside capture_organize (the same tool an external agent would call)
