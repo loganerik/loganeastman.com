@@ -1,5 +1,5 @@
 ---
-// Every list as a small collage of what is on it: watchlists on a green plate with white title lettering,
+// Every list as a small collage of what is on it: watchlists as a row of posters on a green plate,
 // other lists as loose cutouts on the paper. The type is the kicker, the title sits beneath.
 import Section from '../../layouts/Section.astro';
 import Clip from '../../components/art/Clip.astro';
@@ -28,7 +28,7 @@ const lists = idx.ofType<List>('list').map((l) => {
             ) : (
               picks.map((e) => (
                 <span class="list-card__cell">
-                  <Clip record={e.item} context="wall" tone={t?.queue ? 'dark' : 'paper'} decorative sizes="(max-width: 600px) 40vw, 180px" />
+                  <Clip record={e.item} context={t?.queue ? 'list' : 'wall'} decorative sizes="(max-width: 600px) 40vw, 180px" />
                 </span>
               ))
             )}
@@ -46,7 +46,8 @@ const lists = idx.ofType<List>('list').map((l) => {
   .list-card { position: relative; }
   .list-card__link { display: block; text-decoration: none; color: inherit; }
   .list-card__panel { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 6%; padding: 7%; aspect-ratio: 3 / 2; margin-bottom: var(--space-3); transition: transform var(--motion-fast) var(--ease-lift); }
-  .list-card__panel--plate { background: var(--green); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--on-dark) 35%, var(--green)); }
+  /* queue lists: a row of four posters on the green plate, the same picture for every film */
+  .list-card__panel--plate { background: var(--green); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--on-dark) 35%, var(--green)); grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr; gap: 5%; padding: 7% 6%; }
   .list-card__panel--paper { padding: 4%; gap: 4%; }
   .list-card__panel--empty { place-items: center; grid-template-columns: 1fr; grid-template-rows: 1fr; color: var(--pink-ink); background: var(--pill-bg); }
   .list-card__link:hover .list-card__panel, .list-card__link:focus-visible .list-card__panel { transform: translateY(var(--lift)); }
@@ -54,7 +55,6 @@ const lists = idx.ofType<List>('list').map((l) => {
   .list-card__cell { display: grid; place-items: center; min-width: 0; min-height: 0; container-type: size; }
   /* each clipping fits its cell on whichever axis binds, keeping its own shape */
   .list-card__cell :global(.clip) { width: min(100cqw, calc(100cqh * var(--ar, 1))); height: auto; }
-  .list-card__panel--plate .list-card__cell :global(.clip--logo > img) { padding: 2%; }
   .list-card__kicker { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; }
   .list-card__title { display: block; font-family: var(--font-display); font-size: var(--step-2); line-height: 1.1; margin-top: 0.15em; }
   .list-card__edit { position: absolute; top: 0.6rem; right: 0.6rem; }

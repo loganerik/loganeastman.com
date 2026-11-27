@@ -54,7 +54,7 @@ export function clipFor(r: VaultRecord, context: ClipContext, opts: { tone?: 'pa
     case 'lettering':
     case 'logo': {
       // official transparent title treatment when we have one, else typeset; full poster only inside queue lists
-      if (context === 'list' && art.full) return pic('poster', art.full, art.full_size, 2 / 3);
+      if (context === 'list' && (art.thumb || art.full)) return pic('poster', art.thumb ?? art.full, art.thumb_size ?? art.full_size, 2 / 3);
       if (art.clip) return pic('logo', art.clip, art.clip_size, 1.6);
       return typeset(context === 'horizon' ? 2.2 : 1.4);
     }
