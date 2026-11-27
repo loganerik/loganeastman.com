@@ -24,28 +24,58 @@ if (grid) {
   }
   const tiles = all.filter((t) => !t.hidden);
   const order = arrangeOrder(tiles.length, seed, Number(grid.dataset.perturbation ?? 6));
-  const frag = document.createDocumentFragment();
-  for (const i of order) {
-    const t = tiles[i]!;
+  const arranged = order.map((i) => tiles[i]!);
+  for (const t of arranged) {
     const pl = placementFor(t.dataset.tile!, (t.dataset.band as 'text' | 'cover' | 'cutout') ?? 'cover', seed);
     t.style.setProperty('--angle', `${pl.angle}deg`);
     t.style.setProperty('--dx', `${pl.dx}%`);
     t.style.setProperty('--dy', `${pl.dy}%`);
     t.style.setProperty('--s', String(pl.scale));
-    frag.appendChild(t);
   }
-  const pets = [...grid.querySelectorAll<HTMLElement>('[data-pet-after]')];
-  grid.appendChild(frag);
-  // pets are spread evenly through the arranged order, with a little jitter
-  const visible = [...grid.querySelectorAll<HTMLElement>('[data-tile]')].filter((t) => !t.hidden);
+  // pets: never more than one per `petRatio` content tiles (the wall should not be mostly pets while the pool is small)
+  const allPets = [...grid.querySelectorAll<HTMLElement>('[data-pet-after]')];
+  const petRatio = Number(grid.dataset.petRatio ?? 3);
+  const petCount = Math.min(allPets.length, Math.max(1, Math.round(arranged.length / petRatio)));
+  const pets = allPets.map((el) => ({ el, k: rng() })).sort((a, b) => a.k - b.k).map((p) => p.el);
   pets.forEach((p, i) => {
+    p.hidden = i >= petCount;
     const pl = placementFor('pet:' + i, 'cutout', seed);
     p.style.setProperty('--angle', `${pl.angle}deg`);
     p.style.setProperty('--dx', `${pl.dx}%`);
     p.style.setProperty('--dy', `${pl.dy}%`);
-    const slot = Math.round(((i + 1) * visible.length) / (pets.length + 1) + (rng() - 0.5) * 2);
-    const ref = visible[Math.max(0, Math.min(visible.length - 1, slot))];
-    if (ref) ref.after(p); else grid.appendChild(p);
   });
+  // one sequence: pets spread evenly through the arranged tiles, with a little jitter
+  const seq: HTMLElement[] = [...arranged];
+  pets.slice(0, petCount).forEach((p, i) => {
+    const slot = Math.round(((i + 1) * arranged.length) / (petCount + 1) + (rng() - 0.5) * 2) + i;
+    seq.splice(Math.max(0, Math.min(seq.length, slot)), 0, p);
+  });
+  // variety: no two tiles of the same family side by side, nor (roughly) one above the other
+  const family = (el: HTMLElement): string => {
+    if (el.dataset.petAfter !== undefined) return 'pet';
+    const c = el.querySelector('.clip');
+    if (!c) return 'text';
+    if (c.classList.contains('clip--shape')) return el.classList.contains('tile--queue') ? 'seal' : 'text';
+    if (c.classList.contains('clip--typeset')) return 'typeset';
+    if (c.classList.contains('clip--cover') || c.classList.contains('clip--lettering') || c.classList.contains('clip--poster')) return 'cover';
+    return 'cutout';
+  };
+  const cols = Number(getComputedStyle(grid).getPropertyValue('--cols')) || 2;
+  const fam = seq.map(family);
+  const clash = (i: number, f: string) => (i > 0 && fam[i - 1] === f) || (i >= cols && fam[i - cols] === f);
+  for (let i = 1; i < seq.length; i++) {
+    if (!clash(i, fam[i]!)) continue;
+    for (let j = i + 1; j < Math.min(seq.length, i + 8); j++) {
+      if (!clash(i, fam[j]!)) {
+        [seq[i], seq[j]] = [seq[j]!, seq[i]!];
+        [fam[i], fam[j]] = [fam[j]!, fam[i]!];
+        break;
+      }
+    }
+  }
+  const frag = document.createDocumentFragment();
+  for (const el of seq) frag.appendChild(el);
+  for (const p of pets.slice(petCount)) frag.appendChild(p);
+  grid.appendChild(frag);
   grid.dataset.arranged = String(seed);
 }

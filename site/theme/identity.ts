@@ -9,7 +9,7 @@ export interface Identity {
   footer: { about: { label: string; href: string } };
   writing: { rootCollections: string[] };
   kinds: Record<string, { route: string; label: string; plural: string; treatment: string }>;
-  wall: { maxTiles: number; quotas: Record<string, number>; perturbation: number; picksPerList: [number, number] };
+  wall: { maxTiles: number; quotas: Record<string, number>; perturbation: number; picksPerList: [number, number]; petRatio: number };
 }
 
 const identity: Identity = {
@@ -61,6 +61,6 @@ const identity: Identity = {
     link: { route: 'links', label: 'Link', plural: 'Links', treatment: 'typeset' },
     photo: { route: 'photos', label: 'Photo', plural: 'Photos', treatment: 'cutout' },
   },
-  wall: { maxTiles: 64, quotas: { photo: 12, piece: 10, thought: 8, pick: 32, queue: 8, review: 4, gift: 8 }, perturbation: 14, picksPerList: [3, 5] },
+  wall: { maxTiles: 64, quotas: { photo: 12, piece: 10, thought: 8, pick: 32, queue: 8, review: 4, gift: 8 }, perturbation: 14, picksPerList: [3, 5], petRatio: 3 },
 };
 export default identity;

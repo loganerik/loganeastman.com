@@ -8,7 +8,7 @@ interface Props { tiles: WallTile[] }
 const { tiles } = Astro.props;
 const units = tiles.reduce((s, t) => s + t.span.c * t.span.r, 0);
 ---
-<ul class="wall" data-wall data-perturbation={identity.wall.perturbation} data-picks-min={identity.wall.picksPerList[0]} data-picks-max={identity.wall.picksPerList[1]} style={`--units:${units}`} aria-label="Recent things">
+<ul class="wall" data-wall data-perturbation={identity.wall.perturbation} data-picks-min={identity.wall.picksPerList[0]} data-picks-max={identity.wall.picksPerList[1]} data-pet-ratio={identity.wall.petRatio} style={`--units:${units}`} aria-label="Recent things">
   {tiles.map((t) => <WallTile tile={t} />)}
   {identity.placements.wall.map((p, i) => (
     <li class="wall__pet" data-pet-after={p.after} data-side={p.side} data-first={i === 0 ? '' : undefined} aria-hidden="true" style={`--angle:${(i % 2 ? -1 : 1) * (1 + (i % 3))}deg`}><Pet who={p.who} size="l" flip={p.side === 'left'} /></li>
