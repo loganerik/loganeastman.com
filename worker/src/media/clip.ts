@@ -75,7 +75,8 @@ function toBase64(buf: ArrayBuffer): string {
 export async function finishClip(env: Env, mediaId: string, png: ArrayBuffer, provider: string): Promise<{ url: string; w: number; h: number }> {
   const dims = readDims(png);
   if (!dims) throw new Error('clip must be a PNG');
-  const v = await putVariant(env, mediaId, 'clip', png, 'png', { provider });
+  // cutouts come back at catalogue resolution; 1200px on the width is plenty for the wall, lists and item pages
+  const v = await putVariant(env, mediaId, 'clip', png, 'png', { provider, width: 1200, format: 'png' });
   const m = await one<{ record_id: string | null }>(env.DB, 'SELECT record_id FROM media WHERE id = ?', mediaId);
   const rec = m?.record_id ? await one<{ path: string; frontmatter_json: string | null }>(env.DB, 'SELECT path, frontmatter_json FROM records WHERE id = ?', m.record_id) : null;
   if (rec) {
