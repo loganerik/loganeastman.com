@@ -2,12 +2,12 @@
 // Under a thought or a piece: share the link (the preview shows this post), and for the owner, save a 4:5 image
 // for Instagram. On a phone both open the share sheet; elsewhere the link is copied and the image downloads.
 import OwnerOnly from '../private/OwnerOnly.astro';
-interface Props { url: string; title: string; image: string }
-const { url, title, image } = Astro.props;
+interface Props { url: string; title: string; image: string; compact?: boolean }
+const { url, title, image, compact = false } = Astro.props;
 const abs = new URL(url, Astro.site).toString();
 const file = image.split('/').pop()!;
 ---
-<div class="sharebar mono" data-share data-url={abs} data-title={title} data-image={image} data-file={file}>
+<div class={`sharebar mono ${compact ? 'sharebar--compact' : ''}`} data-share data-url={abs} data-title={title} data-image={image} data-file={file}>
   <button type="button" class="btn btn--soft btn--small" data-share-link>Share</button>
   <OwnerOnly><button type="button" class="btn btn--soft btn--small" data-share-image>Image for Instagram</button></OwnerOnly>
   <span class="sharebar__note muted" data-share-note aria-live="polite"></span>
@@ -36,5 +36,6 @@ const file = image.split('/').pop()!;
 </script>
 <style>
   .sharebar { display: flex; gap: var(--space-2); align-items: center; justify-content: center; flex-wrap: wrap; margin: var(--space-6) auto 0; max-width: var(--measure); font-size: 0.8rem; }
+  .sharebar--compact { margin-top: var(--space-4); }
   .sharebar__note { font-size: 0.75rem; }
 </style>

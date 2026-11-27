@@ -16,6 +16,7 @@ import ShareBar from '../components/site/ShareBar.astro';
           {kicker && <p class="mono muted reading__kicker">{kicker}</p>}
           <h1 class="reading__title">{title}</h1>
           {meta.length > 0 && <p class="mono muted reading__meta">{meta.map((m, i) => <><span>{m}</span>{i < meta.length - 1 && <span class="sep"> · </span>}</>)}</p>}
+          {share && <ShareBar {...share} compact />}
         </div>
         <slot name="controls" />
       </div>
@@ -23,7 +24,6 @@ import ShareBar from '../components/site/ShareBar.astro';
     <div class="reading__body prose" data-article>
       <slot />
     </div>
-    {share && <ShareBar {...share} />}
     <div data-article><slot name="after" /></div>
   </article>
 </Base>
