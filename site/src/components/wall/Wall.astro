@@ -51,8 +51,8 @@ const units = Math.round(shown * (1 + 1 / identity.wall.petRatio));
   .tile__seal.seal--green { border-color: color-mix(in oklab, var(--on-dark) 55%, var(--green)); outline-color: color-mix(in oklab, var(--on-dark) 45%, var(--green)); color: var(--on-dark); }
   .tile__seal.seal--green .tile__seal-orn { color: var(--on-dark); }
   /* a list's arch: its things peek out of the window */
-  .tile .tile__arch--list { width: 86%; height: auto; aspect-ratio: auto; grid-template-rows: auto auto; }
-  .tile .tile__arch--list .tile__arch-window { height: 54cqh; min-height: 0; }
+  .tile .tile__arch--list { width: 86%; height: auto; aspect-ratio: auto; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; }
+  .tile .tile__arch--list .tile__arch-window { width: 100%; height: 54cqh; min-height: 0; }
   .tile__arch-window--picks { position: relative; background: color-mix(in oklab, var(--on-dark) 12%, var(--green)); }
   .tile__peek { position: absolute; left: 50%; bottom: -4%; width: 46%; aspect-ratio: 2 / 3; transform: translateX(calc(-50% + (var(--i) - (var(--n) - 1) / 2) * 34%)) rotate(calc((var(--i) - (var(--n) - 1) / 2) * 7deg)); transform-origin: 50% 100%; }
   .tile .tile__peek .clip:has(> img) { width: 100%; height: auto; margin: 0; }
