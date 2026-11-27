@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { defineTool, ToolError } from './registry';
+import { reindexAll } from '../routes/github';
 import { one, all, run, now, json } from '../db';
 import { vaultFor } from '../vault/github';
 import { parseNote, formatWikilink, normalizeTarget } from '@lem/vault-core';
@@ -25,7 +26,7 @@ export const recordsSearch = defineTool({
     const binds: unknown[] = [];
     if (type) { where.push('type = ?'); binds.push(type); }
     if (kind) { where.push('kind = ?'); binds.push(kind); }
-    if (q) { where.push('(title LIKE ? OR path LIKE ? OR body_excerpt LIKE ?)'); binds.push(`%${q}%`, `%${q}%`, `%${q}%`); }
+    if (q) { where.push('(instr(lower(title), ?) > 0 OR instr(path, ?) > 0 OR instr(lower(body_excerpt), ?) > 0)'); binds.push(q.toLowerCase(), q.toLowerCase(), q.toLowerCase()); }
     const rows = await all<RecordRow>(env.DB, `SELECT * FROM records ${where.length ? 'WHERE ' + where.join(' AND ') : ''} ORDER BY indexed_at DESC LIMIT ?`, ...binds, limit);
     return { records: rows.map(slim) };
   },
@@ -147,5 +148,15 @@ export const itemIdentify = defineTool({
     const commit = await vaultCommit(env, { message: `agent: identify ${row.title ?? row.path}`, ops: [{ op: 'setIn', path: `${row.path}.md`, sets }] });
     if (e.artwork.cover || e.artwork.poster || e.artwork.logo) await enqueue(env, 'derive_media', row.id, `media:${row.id}:${Date.now()}`, { record_path: `${row.path}.md`, poster: e.artwork.poster, logo: e.artwork.logo, cover: e.artwork.cover });
     return { status: 'identified', identity, updated: commit.results[0]?.status, facts: Object.keys(e.keys), artwork: e.artwork };
+  },
+});
+
+export const recordsReindex = defineTool({
+  name: 'records_reindex',
+  description: 'Rebuild the records index from every file in the vault (after a bulk import or when something looks missing).',
+  input: z.object({}),
+  scopes: ['records:write'],
+  async handler({ env }) {
+    return reindexAll(env);
   },
 });

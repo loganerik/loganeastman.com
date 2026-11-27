@@ -89,15 +89,32 @@ github.post('/api/github/webhook', async (c) => {
   const event = c.req.header('x-github-event');
   if (event === 'ping') return c.json({ ok: true });
   if (event !== 'push') return c.json({ ok: true, ignored: event });
-  const payload = JSON.parse(body) as { ref: string; commits: Array<{ added: string[]; modified: string[]; removed: string[]; message: string }>; repository: { full_name: string } };
+  const payload = JSON.parse(body) as { ref: string; before?: string; after?: string; commits: Array<{ added: string[]; modified: string[]; removed: string[]; message: string }>; repository: { full_name: string } };
   if (payload.ref !== `refs/heads/${c.env.VAULT_BRANCH}` || payload.repository.full_name !== c.env.VAULT_REPO) return c.json({ ok: true, ignored: payload.ref });
   const changed = new Set<string>(), removed = new Set<string>();
+  let listed = 0;
   for (const cm of payload.commits) {
+    listed += cm.added.length + cm.modified.length + cm.removed.length;
     for (const p of [...cm.added, ...cm.modified]) if (p.endsWith('.md')) { changed.add(p); removed.delete(p); }
     for (const p of cm.removed) if (p.endsWith('.md')) { removed.add(p); changed.delete(p); }
   }
+  // GitHub truncates a push payload's file lists on big pushes (an import, a bulk edit): ask the compare API for the real diff
+  let full = false;
+  if (listed >= 20 && payload.before && payload.after && !/^0+$/.test(payload.before)) {
+    try {
+      const cmp = await vaultFor(c.env).rest<{ files?: Array<{ filename: string; status: string; previous_filename?: string }> }>(`/repos/${c.env.VAULT_REPO}/compare/${payload.before}...${payload.after}`);
+      if (cmp.files && cmp.files.length < 300) {
+        changed.clear(); removed.clear();
+        for (const f of cmp.files) {
+          if (f.status === 'removed') { if (f.filename.endsWith('.md')) removed.add(f.filename); continue; }
+          if (f.status === 'renamed' && f.previous_filename?.endsWith('.md')) removed.add(f.previous_filename);
+          if (f.filename.endsWith('.md')) changed.add(f.filename);
+        }
+      } else full = true; // more than the compare API lists: reindex everything
+    } catch { full = true; }
+  }
   c.executionCtx.waitUntil((async () => {
-    const r = await reindexPaths(c.env, [...changed], [...removed]);
+    const r = full ? { ...(await reindexAll(c.env)), flipped: [] as string[] } : await reindexPaths(c.env, [...changed], [...removed]);
     await c.env.KV.delete(`vault-config:${c.env.VAULT_BRANCH}`).catch(() => {});
     await dispatchBuild(c.env, 'vault push').catch(() => {});
     if (r.flipped.length) {

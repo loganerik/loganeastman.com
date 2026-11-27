@@ -30,7 +30,7 @@ records.get('/api/records', requireOwner, async (c) => {
   if (q.status === 'draft') where.push("json_extract(frontmatter_json, '$.draft') = 1");
   if (q.status === 'published') where.push("visibility = 'public' AND (json_extract(frontmatter_json, '$.draft') IS NULL OR json_extract(frontmatter_json, '$.draft') = 0)");
   if (q.conflict === '1') where.push('conflict = 1');
-  if (q.q) { where.push('(title LIKE ? OR path LIKE ? OR body_excerpt LIKE ?)'); binds.push(`%${q.q}%`, `%${q.q}%`, `%${q.q}%`); }
+  if (q.q) { where.push('(instr(lower(title), ?) > 0 OR instr(path, ?) > 0 OR instr(lower(body_excerpt), ?) > 0)'); binds.push(q.q.toLowerCase(), q.q.toLowerCase(), q.q.toLowerCase()); }
   const limit = Math.min(Number(q.limit ?? 100), 500);
   const rows = await all<RecordRow>(c.env.DB, `SELECT * FROM records ${where.length ? 'WHERE ' + where.join(' AND ') : ''} ORDER BY COALESCE(json_extract(frontmatter_json, '$.date'), json_extract(frontmatter_json, '$.created'), indexed_at) DESC LIMIT ?`, ...binds, limit);
   return c.json({ records: rows.map(slim) });
