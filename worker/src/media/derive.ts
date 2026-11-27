@@ -131,9 +131,12 @@ export async function deriveProviderArtwork(env: Env, recordId: string, job: Der
     }
     if (foundSource) { sets.push({ at: ['artwork', 'source'], value: foundSource }); if (foundSource !== 'found-og') sets.push({ at: ['artwork', 'treatment'], value: 'cover' }); }
     // a product shot or page picture gets cut out like an upload would (a found logo or icon stays a cover)
-    const recKind = (await one<{ kind: string | null }>(env.DB, 'SELECT kind FROM records WHERE id = ?', recordId))?.kind;
+    const recMeta = await one<{ kind: string | null; type: string | null }>(env.DB, 'SELECT kind, type FROM records WHERE id = ?', recordId);
+    const recKind = recMeta?.kind;
     const art = (JSON.parse(recRow?.frontmatter_json ?? '{}') as { artwork?: { treatment?: string } }).artwork ?? {};
-    if (!['book', 'album', 'film', 'tv'].includes(recKind ?? '') && (!foundSource || foundSource === 'found-og') && (!art.treatment || art.treatment === 'paper' || art.treatment === 'cutout')) {
+    // a piece's or a post's picture stays whole, on cut paper
+    if (recMeta?.type !== 'item' && !art.treatment) sets.push({ at: ['artwork', 'treatment'], value: 'paper' });
+    if (recMeta?.type === 'item' && !['book', 'album', 'film', 'tv'].includes(recKind ?? '') && (!foundSource || foundSource === 'found-og') && (!art.treatment || art.treatment === 'paper' || art.treatment === 'cutout')) {
       const provider = clipProvider(env);
       await run(env.DB, "INSERT OR REPLACE INTO media_variants (media_id, variant, status, provider, params_json, updated_at) VALUES (?, 'clip', 'pending', ?, '{}', ?)", media.id, provider, now());
       await enqueue(env, 'derive_clip', media.id, `clip:${media.id}:auto`, { record_path: job.record_path, media_id: media.id, provider, params: {} }, 5_000);

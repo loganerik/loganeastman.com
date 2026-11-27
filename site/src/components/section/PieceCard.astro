@@ -31,8 +31,9 @@ const hasArt = !!(d.artwork?.clip || d.artwork?.thumb || d.artwork?.full);
 </a>
 <style>
   .piece { display: grid; gap: var(--space-3); text-decoration: none; align-content: start; }
-  .piece__art { display: block; aspect-ratio: 1; display: grid; place-items: center; }
-  .piece__art .clip { width: 88%; transition: transform var(--motion-fast) var(--ease-lift); transform: rotate(var(--angle)); }
+  .piece__art { display: grid; place-items: center; width: 100%; aspect-ratio: 1; container-type: size; }
+  /* the picture fits the square on whichever axis binds, keeping its own aspect ratio (cqw/cqh = the square) */
+  .piece__art .clip { width: min(88cqw, calc(88cqh * var(--ar, 1))); transition: transform var(--motion-fast) var(--ease-lift); transform: rotate(var(--angle)); }
   .piece:hover .piece__art .clip, .piece:focus-visible .piece__art .clip { transform: rotate(calc(var(--angle) * 0.4)) translateY(var(--lift)); }
   .piece__kicker { text-transform: uppercase; }
   .piece__title { font-size: var(--step-1); line-height: 1.15; text-wrap: balance; }
