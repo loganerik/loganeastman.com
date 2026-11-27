@@ -55,21 +55,36 @@ export async function runClipJob(env: Env, job: ClipJob, fetchImpl: typeof fetch
     // OpenAI's image model as the eraser: the subject comes back on a transparent background. High input fidelity
     // keeps lettering and labels as they are. Costs a few cents; on any failure the Mac picks the job up instead.
     try {
-      const form = new FormData();
-      form.append('model', 'gpt-image-1');
-      form.append('image', new Blob([bytes], { type: obj.httpMetadata?.contentType ?? 'image/png' }), 'source.png');
-      form.append('prompt', 'Remove the background completely so only the main product or subject remains, exactly as photographed: same angle, colours, lettering and details. Nothing added, nothing redrawn. Transparent background.');
-      form.append('background', 'transparent');
-      form.append('output_format', 'png');
-      form.append('quality', 'medium');
-      form.append('input_fidelity', 'high');
-      form.append('size', 'auto');
+      // the preferred model first (OPENAI_IMAGE_MODEL, default gpt-image-1); if the account cannot use it yet
+      // (unverified organisation, restricted project) the mini model is tried before giving the job to the Mac
+      const preferred = env.OPENAI_IMAGE_MODEL || 'gpt-image-1';
+      const models = preferred === 'gpt-image-1-mini' ? [preferred] : [preferred, 'gpt-image-1-mini'];
       const call = fetchImpl;
-      const res = await call('https://api.openai.com/v1/images/edits', { method: 'POST', headers: { authorization: `Bearer ${env.OPENAI_API_KEY}` }, body: form });
-      if (!res.ok) throw new Error(`openai images ${res.status}: ${(await res.text()).slice(0, 200)}`);
-      const out = (await res.json()) as { data?: Array<{ b64_json?: string }> };
-      const b64 = out.data?.[0]?.b64_json;
-      if (!b64) throw new Error('openai images: no image in the response');
+      let b64: string | undefined;
+      let lastErr = '';
+      for (const model of models) {
+        const form = new FormData();
+        form.append('model', model);
+        form.append('image', new Blob([bytes], { type: obj.httpMetadata?.contentType ?? 'image/png' }), 'source.png');
+        form.append('prompt', 'Remove the background completely so only the main product or subject remains, exactly as photographed: same angle, colours, lettering and details. Nothing added, nothing redrawn. Transparent background.');
+        form.append('background', 'transparent');
+        form.append('output_format', 'png');
+        form.append('quality', 'medium');
+        if (model === 'gpt-image-1') form.append('input_fidelity', 'high');
+        form.append('size', 'auto');
+        const res = await call('https://api.openai.com/v1/images/edits', { method: 'POST', headers: { authorization: `Bearer ${env.OPENAI_API_KEY}` }, body: form });
+        if (res.ok) {
+          const out = (await res.json()) as { data?: Array<{ b64_json?: string }> };
+          b64 = out.data?.[0]?.b64_json;
+          if (b64) break;
+          lastErr = `openai images (${model}): no image in the response`;
+          continue;
+        }
+        const text = (await res.text()).slice(0, 300);
+        lastErr = `openai images ${res.status} (${model}): ${text}`;
+        if (!/does not exist|not found|not available|verif/i.test(text)) break; // a real error: don't try the other model
+      }
+      if (!b64) throw new Error(lastErr || 'openai images: nothing returned');
       const png = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0)).buffer;
       await finishClip(env, m.id, png, 'openai');
       return { status: 'ready' };

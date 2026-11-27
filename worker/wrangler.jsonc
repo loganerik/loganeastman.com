@@ -37,6 +37,7 @@
     "OWNER_EMAIL": "logan.eastman@gmail.com",
     "LLM_PROVIDER": "openai",
     "OPENAI_MODEL": "gpt-5.1",
+    "OPENAI_IMAGE_MODEL": "gpt-image-1",
     "BUILTIN_FALLBACK_AFTER_MIN": "20"
   }
 }

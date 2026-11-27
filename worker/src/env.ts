@@ -15,6 +15,7 @@ export interface Env {
   OWNER_EMAIL: string;
   LLM_PROVIDER: string;
   OPENAI_MODEL: string;
+  OPENAI_IMAGE_MODEL?: string;
   BUILTIN_FALLBACK_AFTER_MIN: string;
   // secrets
   DEV_BYPASS_ACCESS?: string;
