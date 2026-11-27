@@ -68,5 +68,7 @@ main { flex: 1; }
 .btn--small { font-size: 0.72rem; padding: 0.35rem 0.75rem; }
 .btn--solid:hover { color: var(--on-dark); }
 .chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-.clip--logo.on-paper > img, .clip--logo.on-dark > img { filter: none; }
+/* logos keep their own colours; on paper a hairline of ink keeps white and cream lettering readable */
+.clip--logo.on-paper > img { filter: drop-shadow(0 0 0.6px var(--ink)) drop-shadow(0 0 0.6px var(--ink)); }
+.clip--logo.on-dark > img { filter: none; }
 .clip--logo.ink > img { filter: brightness(0); }
