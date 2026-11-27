@@ -6,7 +6,13 @@ import { fmtDate } from '../dates';
 import type { ShareInput } from './card';
 
 type Art = { clip?: string; thumb?: string; full?: string; treatment?: string };
-const pick = (a?: Art) => (a ? { picture: a.clip ?? a.full ?? a.thumb, cutout: !!a.clip && a.treatment !== 'paper' } : {});
+// the picture as the site shows it: the cutout when that is the treatment, else the whole picture
+const pick = (a?: Art) => {
+  if (!a) return {};
+  const cut = !!a.clip && (a.treatment === 'cutout' || !a.treatment);
+  const whole = [a.full, a.thumb].filter(Boolean) as string[];
+  return { picture: cut ? [a.clip!, ...whole] : whole, cutout: cut };
+};
 
 const smart = (t: string) => t.replace(/(^|[\s(\[])"/g, '$1\u201c').replace(/"/g, '\u201d').replace(/(^|[\s(\[])'/g, '$1\u2018').replace(/'/g, '\u2019');
 export const plain = (md: string) => smart(rawPlain(md));

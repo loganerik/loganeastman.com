@@ -24,6 +24,10 @@ const C = { paper: '#f4ecdf', deep: '#ebe1cf', ink: '#1a1a18', soft: '#4a4843', 
 
 /** An image as a PNG data URI satori can draw, or null when it cannot be had (not yet published, offline). */
 const imgCache = new Map<string, Promise<{ uri: string; w: number; h: number } | null>>();
+export async function firstPicture(src: string | string[] | undefined, max = 900): Promise<{ uri: string; w: number; h: number } | null> {
+  for (const one of Array.isArray(src) ? src : [src]) { const p = await picture(one, max); if (p) return p; }
+  return null;
+}
 export function picture(src: string | undefined, max = 900): Promise<{ uri: string; w: number; h: number } | null> {
   if (!src) return Promise.resolve(null);
   if (!imgCache.has(src)) imgCache.set(src, (async () => {
@@ -57,7 +61,7 @@ export interface ShareInput {
   kicker?: string; // "Columns", "Nov 27, 2026"
   sub?: string; // a piece's summary, or an attached link's title
   subKicker?: string; // the attached link's site
-  picture?: string; // /m/… or https://…
+  picture?: string | string[]; // /m/… or https://…; a list tries each in turn
   cutout?: boolean; // the picture is a cutout (drawn without a frame)
 }
 
@@ -101,7 +105,7 @@ const frame = (w: number, hh: number, pad: number, ...children: El[]): El =>
 
 /** Link preview: words on the left, the picture on the right. */
 export async function linkCard(s: ShareInput): Promise<Buffer> {
-  const pic = await picture(s.picture);
+  const pic = await firstPicture(s.picture);
   const body = h('div', { flex: 1, gap: 40, alignItems: 'center' },
     h('div', { flex: 1, flexDirection: 'column', justifyContent: 'center' }, words(s, sizeFor(s.text, s.kind === 'piece' ? 76 : 50))),
     pic && h('div', { width: 400, height: 400, alignItems: 'center', justifyContent: 'center' }, img(pic, 400, 400, s.cutout ? {} : { border: `2px solid ${C.rule}` })));
@@ -110,7 +114,7 @@ export async function linkCard(s: ShareInput): Promise<Buffer> {
 
 /** Instagram post (4:5): the picture above, the words below. */
 export async function instagramCard(s: ShareInput): Promise<Buffer> {
-  const pic = await picture(s.picture, 1000);
+  const pic = await firstPicture(s.picture, 1000);
   const body = h('div', { flex: 1, flexDirection: 'column', gap: 40, justifyContent: 'center', alignItems: 'stretch' },
     pic && h('div', { justifyContent: 'center' }, img(pic, 820, s.text.length > 120 ? 460 : 620, s.cutout ? {} : { border: `2px solid ${C.rule}` })),
     words(s, sizeFor(s.text, s.kind === 'piece' ? 96 : pic ? 52 : 68)));
