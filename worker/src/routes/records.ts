@@ -31,8 +31,11 @@ records.get('/api/records', requireOwner, async (c) => {
   if (q.status === 'published') where.push("visibility = 'public' AND (json_extract(frontmatter_json, '$.draft') IS NULL OR json_extract(frontmatter_json, '$.draft') = 0)");
   if (q.conflict === '1') where.push('conflict = 1');
   if (q.q) { where.push('(instr(lower(title), ?) > 0 OR instr(path, ?) > 0 OR instr(lower(body_excerpt), ?) > 0)'); binds.push(q.q.toLowerCase(), q.q.toLowerCase(), q.q.toLowerCase()); }
+  if (q.list) { where.push("(path LIKE ? OR json_extract(frontmatter_json, '$.list') LIKE ?)"); binds.push(`lists/${q.list.split('/').pop()}/%`, `%[[${q.list.replace(/^\[\[|\]\]$/g, '')}]]%`); }
+  if (q.ids) { const ids = q.ids.split(',').filter(Boolean).slice(0, 100); if (ids.length) { where.push(`id IN (${ids.map(() => '?').join(',')})`); binds.push(...ids); } }
   const limit = Math.min(Number(q.limit ?? 100), 500);
-  const rows = await all<RecordRow>(c.env.DB, `SELECT * FROM records ${where.length ? 'WHERE ' + where.join(' AND ') : ''} ORDER BY COALESCE(json_extract(frontmatter_json, '$.date'), json_extract(frontmatter_json, '$.created'), indexed_at) DESC LIMIT ?`, ...binds, limit);
+  const offset = Math.max(0, Number(q.offset ?? 0));
+  const rows = await all<RecordRow>(c.env.DB, `SELECT * FROM records ${where.length ? 'WHERE ' + where.join(' AND ') : ''} ORDER BY COALESCE(json_extract(frontmatter_json, '$.date'), json_extract(frontmatter_json, '$.created'), indexed_at) DESC LIMIT ? OFFSET ?`, ...binds, limit, offset);
   return c.json({ records: rows.map(slim) });
 });
 
@@ -46,6 +49,21 @@ records.get('/api/index/:what', requireOwner, async (c) => {
   if (what === 'people') return c.json({ people: (await all<RecordRow>(c.env.DB, "SELECT * FROM records WHERE type = 'person' ORDER BY title")).map(slim) });
   if (what === 'lists') return c.json({ lists: (await all<RecordRow>(c.env.DB, "SELECT * FROM records WHERE type = 'list' ORDER BY title")).map(slim) });
   return c.json({ error: 'unknown index' }, 404);
+});
+
+/** Numbers for the private home: what needs you, what is in progress, what there is. */
+records.get('/api/counts', requireOwner, async (c) => {
+  const n = async (sql: string, ...b: unknown[]) => (await one<{ n: number }>(c.env.DB, sql, ...b))?.n ?? 0;
+  const [inbox, questions, drafts, priv, conflicts, suggestions, byType] = await Promise.all([
+    n("SELECT COUNT(*) AS n FROM captures WHERE status NOT IN ('done', 'cancelled')"),
+    n("SELECT COUNT(*) AS n FROM questions WHERE status = 'open'"),
+    n("SELECT COUNT(*) AS n FROM records WHERE json_extract(frontmatter_json, '$.draft') = 1"),
+    n("SELECT COUNT(*) AS n FROM records WHERE visibility = 'private' AND type != 'person'"),
+    n('SELECT COUNT(*) AS n FROM records WHERE conflict = 1'),
+    n("SELECT COUNT(*) AS n FROM suggestions WHERE status = 'open'"),
+    all<{ type: string; n: number }>(c.env.DB, 'SELECT type, COUNT(*) AS n FROM records GROUP BY type'),
+  ]);
+  return c.json({ inbox, questions, drafts, private: priv, conflicts, suggestions, by_type: Object.fromEntries(byType.map((r) => [r.type, r.n])) });
 });
 
 records.get('/api/config', requireOwner, async (c) => c.json(await loadVaultConfig(c.env, { fresh: c.req.query('fresh') === '1' })));

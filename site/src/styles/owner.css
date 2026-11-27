@@ -146,3 +146,29 @@ details.more > .fields { margin-top: var(--space-2); padding: var(--space-3); bo
 .cfg__spacer { flex: 1; }
 .cfg__more { padding: 0.6rem 0 0.2rem; }
 .config-page { max-width: 60rem; padding-top: var(--space-5); }
+/* hub */
+.hub__title { font-size: var(--step-3); font-weight: 400; margin: 0; }
+.hub__more { position: relative; }
+.hub__more > summary { list-style: none; cursor: pointer; border: 1px solid var(--rule); border-radius: 999px; padding: 0.45rem 0.9rem; font-size: 0.85rem; color: var(--ink); }
+.hub__more > summary::-webkit-details-marker { display: none; }
+.hub__more > summary[aria-current] { background: var(--green); color: var(--on-dark); border-color: var(--green); }
+.hub__more-list { position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; display: grid; gap: 0.3rem; padding: 0.5rem; background: var(--paper); border: 1px solid var(--rule); border-radius: 1rem; box-shadow: var(--shadow-contact); min-width: 11rem; }
+.hub__more-list button { text-align: left; }
+.home { display: grid; gap: var(--space-5); }
+.home__tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-3); }
+.home__tile { width: 100%; display: grid; gap: 0.2rem; place-items: center; padding: var(--space-4) var(--space-3); cursor: pointer; font: inherit; color: var(--ink); background: var(--paper); border: 0; }
+.home__tile:hover { background: var(--paper-deep); }
+.home__tile--warn { background: var(--pink); }
+.home__n { font-family: var(--font-display); font-size: var(--step-4); line-height: 1; }
+.home__label { font-size: 0.72rem; text-transform: none; }
+.home__block { display: grid; gap: var(--space-3); }
+.home__totals { text-transform: none; }
+.recs li { display: flex; justify-content: space-between; gap: var(--space-3); align-items: center; flex-wrap: wrap; }
+.recs__main { display: grid; gap: 0.15rem; min-width: 0; }
+.recs__tools { gap: 0.4rem; }
+.library { display: grid; gap: var(--space-3); }
+.library__chips { align-items: center; }
+.library__group { display: grid; gap: var(--space-2); }
+.settings { display: grid; gap: var(--space-4); }
+.settings__rule { margin-top: var(--space-4); }
+.search { border-radius: 999px; padding: 0.7rem 1.1rem; background: var(--paper-deep); margin-bottom: 0; }

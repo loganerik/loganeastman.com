@@ -3,6 +3,6 @@ import Base from '../../layouts/Base.astro';
 import PrivateHub from '../../components/private/PrivateHub';
 import '../../styles/owner.css';
 ---
-<Base title="Private" noindex noFab>
+<Base title="Private" noindex>
   <div class="wrap"><PrivateHub client:only="preact" /></div>
 </Base>

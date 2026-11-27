@@ -1,59 +1,203 @@
+// The private area: a small home with what needs you, the inbox, your drafts and people up front, the whole
+// library behind a search, and settings as forms. The back-end bits (conflicts, suggestions, agents, raw YAML)
+// sit under More.
 import { useEffect, useState } from 'preact/hooks';
-import { api, when, publicUrl, type Capture, type RecordSummary, type Question } from './api';
+import { api, when, publicUrl, humanKind, getConfig, listRecords, type Capture, type RecordSummary, type Question, type Config as Cfg } from './api';
+import VisibilityPill from './ui/VisibilityPill';
+import DeleteButton from './ui/DeleteButton';
+import { toast } from './ui/toast';
+import CollectionsForm from './config/CollectionsForm';
+import ListTypesForm from './config/ListTypesForm';
+import SiteForm from './config/SiteForm';
 
-type Tab = 'inbox' | 'drafts' | 'published' | 'search' | 'people' | 'conflicts' | 'suggestions' | 'tokens' | 'config';
-const TABS: Array<[Tab, string]> = [['inbox', 'Inbox'], ['drafts', 'Drafts'], ['published', 'Published'], ['search', 'Search'], ['people', 'People & tags'], ['conflicts', 'Conflicts'], ['suggestions', 'Suggestions'], ['tokens', 'Agents'], ['config', 'Collections & lists']];
+type Tab = 'home' | 'inbox' | 'drafts' | 'people' | 'library' | 'settings' | 'conflicts' | 'suggestions' | 'tokens' | 'config';
+const MAIN: Array<[Tab, string]> = [['home', 'Home'], ['inbox', 'Inbox'], ['drafts', 'Drafts'], ['people', 'People'], ['library', 'Library']];
+const MORE: Array<[Tab, string]> = [['settings', 'Settings'], ['conflicts', 'Conflicts'], ['suggestions', 'Suggestions'], ['tokens', 'Agents'], ['config', 'Advanced']];
+const TITLES: Record<Tab, string> = { home: 'Private', inbox: 'Inbox', drafts: 'Drafts', people: 'People & tags', library: 'Library', settings: 'Settings', conflicts: 'Conflicts', suggestions: 'Suggestions', tokens: 'Agents', config: 'Advanced' };
+export interface Counts { inbox: number; questions: number; drafts: number; private: number; conflicts: number; suggestions: number; by_type: Record<string, number> }
 
-export default function PrivateHub({ initialTab = 'inbox' }: { initialTab?: Tab }) {
+export default function PrivateHub({ initialTab = 'home' }: { initialTab?: Tab }) {
   useEffect(() => { try { localStorage.setItem('ownerHint', '1'); sessionStorage.removeItem('owner'); } catch { /* ignore */ } }, []);
   const [tab, setTab] = useState<Tab>(() => (new URLSearchParams(location.search).get('tab') as Tab) || initialTab);
-  const [counts, setCounts] = useState<{ inbox: number; conflicts: number; suggestions: number }>({ inbox: 0, conflicts: 0, suggestions: 0 });
+  const [counts, setCounts] = useState<Counts | null>(null);
+  const [cfg, setCfg] = useState<Cfg | null>(null);
+  useEffect(() => { getConfig().then(setCfg).catch(() => {}); }, []);
   useEffect(() => {
     const u = new URL(location.href);
-    if (tab === 'inbox') u.searchParams.delete('tab'); else u.searchParams.set('tab', tab);
+    if (tab === 'home') u.searchParams.delete('tab'); else u.searchParams.set('tab', tab);
     history.replaceState(history.state, '', u.toString());
   }, [tab]);
   useEffect(() => {
     let alive = true;
-    const tick = async () => {
-      try {
-        const [{ captures }, { records }, { suggestions }] = await Promise.all([
-          api<{ captures: Capture[] }>('/api/captures?status=all&limit=100'),
-          api<{ records: RecordSummary[] }>('/api/records?conflict=1'),
-          api<{ suggestions: unknown[] }>('/api/suggestions'),
-        ]);
-        if (alive) setCounts({ inbox: captures.filter((c) => !['done', 'cancelled'].includes(c.status)).length, conflicts: records.length, suggestions: suggestions.length });
-      } catch { /* ignore */ }
-    };
+    const tick = () => api<Counts>('/api/counts').then((c) => alive && setCounts(c)).catch(() => {});
     tick();
     const t = setInterval(() => document.visibilityState === 'visible' && tick(), 15000);
     return () => { alive = false; clearInterval(t); };
   }, [tab]);
+  const inMore = MORE.some(([k]) => k === tab);
   return (
     <div class="hub">
       <header class="hub__head">
         <div class="hub__top">
-          <p class="mono muted">Private</p>
-          <button type="button" class="btn" onClick={() => { try { localStorage.removeItem('ownerHint'); sessionStorage.removeItem('owner'); } catch { /* ignore */ } location.href = '/cdn-cgi/access/logout'; }}>Sign out</button>
+          <h1 class="hub__title">{TITLES[tab]}</h1>
+          <span class="chips">
+            <button type="button" class="btn btn--soft" data-compose="feed">+ New</button>
+            <button type="button" class="btn" onClick={() => { try { localStorage.removeItem('ownerHint'); sessionStorage.removeItem('owner'); } catch { /* ignore */ } location.href = '/cdn-cgi/access/logout'; }}>Sign out</button>
+          </span>
         </div>
-        <h1>{TABS.find(([k]) => k === tab)?.[1]}</h1>
         <nav class="mono hub__tabs" aria-label="Private sections">
-          {TABS.map(([k, label]) => (
+          {MAIN.map(([k, label]) => (
             <button type="button" aria-current={tab === k ? 'page' : undefined} onClick={() => setTab(k)}>
-              {label}{k === 'inbox' && counts.inbox > 0 && <sup> {counts.inbox}</sup>}{k === 'conflicts' && counts.conflicts > 0 && <sup class="warn"> {counts.conflicts}</sup>}{k === 'suggestions' && counts.suggestions > 0 && <sup> {counts.suggestions}</sup>}
+              {label}{k === 'inbox' && counts && counts.inbox + counts.questions > 0 && <sup> {counts.inbox + counts.questions}</sup>}{k === 'drafts' && counts && counts.drafts > 0 && <sup> {counts.drafts}</sup>}
             </button>
           ))}
+          <details class="hub__more" open={inMore || undefined}>
+            <summary aria-current={inMore ? 'page' : undefined}>More{counts && counts.conflicts > 0 && <sup class="warn"> {counts.conflicts}</sup>}</summary>
+            <div class="hub__more-list">{MORE.map(([k, label]) => <button type="button" aria-current={tab === k ? 'page' : undefined} onClick={() => setTab(k)}>{label}{k === 'conflicts' && counts && counts.conflicts > 0 && <sup class="warn"> {counts.conflicts}</sup>}{k === 'suggestions' && counts && counts.suggestions > 0 && <sup> {counts.suggestions}</sup>}</button>)}</div>
+          </details>
         </nav>
       </header>
+      {tab === 'home' && <Home counts={counts} cfg={cfg} go={setTab} />}
       {tab === 'inbox' && <Inbox />}
-      {(tab === 'drafts' || tab === 'published') && <Records status={tab} />}
-      {tab === 'search' && <Search />}
-      {tab === 'people' && <PeopleTags />}
+      {tab === 'drafts' && <Library cfg={cfg} fixed={{ status: 'draft' }} empty="No drafts. Everything you have written is out there." />}
+      {tab === 'people' && <People cfg={cfg} />}
+      {tab === 'library' && <Library cfg={cfg} />}
+      {tab === 'settings' && <Settings />}
       {tab === 'conflicts' && <Conflicts />}
       {tab === 'suggestions' && <Suggestions />}
       {tab === 'tokens' && <Tokens />}
       {tab === 'config' && <Config />}
     </div>
+  );
+}
+
+function Home({ counts, cfg, go }: { counts: Counts | null; cfg: Cfg | null; go: (t: Tab) => void }) {
+  const { data: recent } = useLoader(() => listRecords({ limit: 8 }), []);
+  const { data: qs, reload } = useLoader(() => api<{ questions: Question[] }>('/api/questions'), [], 15000);
+  const tiles: Array<[string, number | undefined, Tab, string?]> = [
+    ['In the inbox', counts?.inbox, 'inbox'], ['Questions for you', counts?.questions, 'inbox', 'warn'], ['Drafts', counts?.drafts, 'drafts'],
+    ['Private', counts?.private, 'library'], ['Conflicts', counts?.conflicts, 'conflicts', 'warn'], ['Suggestions', counts?.suggestions, 'suggestions'],
+  ];
+  return (
+    <section class="home">
+      <ul class="home__tiles">
+        {tiles.map(([label, n, t, tone]) => (
+          <li key={label}><button type="button" class={`stepped home__tile ${tone && n ? 'home__tile--warn' : ''}`} onClick={() => go(t)}><span class="home__n">{n ?? '…'}</span><span class="mono muted home__label">{label}</span></button></li>
+        ))}
+      </ul>
+      {qs && qs.questions.length > 0 && (
+        <div class="home__block"><div class="rule-label"><span>Waiting on you</span></div>{qs.questions.map((q) => <Ask key={q.id} q={q} onDone={reload} />)}</div>
+      )}
+      <div class="home__block">
+        <div class="rule-label"><span>Recently touched</span></div>
+        {recent && <Rows records={recent.records} cfg={cfg} empty="Nothing yet." />}
+      </div>
+      {counts && (
+        <p class="mono muted home__totals">{Object.entries(counts.by_type).filter(([t]) => t !== 'list-entry').map(([t, n]) => `${n} ${humanKind({ type: t }, cfg).toLowerCase()}${n === 1 ? '' : 's'}`).join(' · ')}</p>
+      )}
+    </section>
+  );
+}
+
+/** One record, the way the owner thinks of it: title, what it is, when, who sees it, edit, delete. */
+function Rows({ records, cfg, empty }: { records: RecordSummary[]; cfg: Cfg | null; empty: string }) {
+  if (!records.length) return <p class="muted">{empty}</p>;
+  return (
+    <ul class="recs">
+      {records.map((r) => {
+        const url = r.visibility === 'public' && !r.draft ? publicUrl(r) : null;
+        return (
+          <li key={r.id} data-article={r.id}>
+            <div class="recs__main">
+              <a class="recs__title" href={`/private/edit/?id=${r.id}`}>{r.title ?? (r.type === 'feed' && r.excerpt ? r.excerpt.slice(0, 70) + (r.excerpt.length > 70 ? '…' : '') : r.path.split('/').pop())}</a>
+              <span class="mono muted">{humanKind(r, cfg)}{r.draft ? ' · draft' : ''}{r.conflict ? ' · conflict' : ''}{r.date ? ' · ' + when(String(r.date), { year: 'numeric', month: 'short', day: 'numeric' }) : ''}</span>
+            </div>
+            <div class="chips recs__tools">
+              <VisibilityPill id={r.id} value={r.visibility ?? 'public'} type={r.type} />
+              {url && <a class="btn btn--small" href={url}>View</a>}
+              <a class="btn btn--soft btn--small" href={`/private/edit/?id=${r.id}`}>Edit</a>
+              <DeleteButton rec={{ id: r.id, title: r.title, type: r.type }} />
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+const TYPE_CHIPS: Array<[string, string]> = [['', 'Everything'], ['writing', 'Writing'], ['feed', 'Thoughts'], ['list', 'Lists'], ['item', 'Things'], ['review', 'Reviews'], ['person', 'People'], ['tag', 'Tags']];
+function Library({ cfg, fixed = {}, empty = 'Nothing here.' }: { cfg: Cfg | null; fixed?: Record<string, string>; empty?: string }) {
+  const [q, setQ] = useState('');
+  const [type, setType] = useState('');
+  const [vis, setVis] = useState<'' | 'public' | 'private' | 'draft'>('');
+  const [page, setPage] = useState(0);
+  const [rows, setRows] = useState<RecordSummary[]>([]);
+  const [more, setMore] = useState(false);
+  const PAGE = 50;
+  useEffect(() => { setPage(0); }, [q, type, vis]);
+  useEffect(() => {
+    let alive = true;
+    const t = setTimeout(() => {
+      listRecords({ q: q.trim() || undefined, type: type || undefined, visibility: vis === 'public' || vis === 'private' ? vis : undefined, status: vis === 'draft' ? 'draft' : undefined, limit: PAGE, offset: page * PAGE, ...fixed })
+        .then((d) => { if (!alive) return; setRows((r) => (page ? [...r, ...d.records] : d.records)); setMore(d.records.length === PAGE); })
+        .catch(() => {});
+    }, 150);
+    return () => { alive = false; clearTimeout(t); };
+  }, [q, type, vis, page]);
+  const grouped = new Map<string, RecordSummary[]>();
+  for (const r of rows) { const k = humanKind(r, cfg); grouped.set(k, [...(grouped.get(k) ?? []), r]); }
+  return (
+    <section class="library">
+      <input class="search" placeholder="Search titles and text…" value={q} onInput={(e) => setQ((e.target as HTMLInputElement).value)} />
+      <div class="chips library__chips">
+        {!fixed.type && TYPE_CHIPS.map(([v, l]) => <button type="button" class="chip chip--small" aria-pressed={type === v} onClick={() => setType(v)}>{l}</button>)}
+        {!fixed.status && (
+          <span class="seg seg--small">
+            {([['', 'All'], ['public', 'Public'], ['private', 'Private'], ['draft', 'Drafts']] as const).map(([v, l]) => <button type="button" class="seg__b" aria-pressed={vis === v} onClick={() => setVis(v)}>{l}</button>)}
+          </span>
+        )}
+      </div>
+      {rows.length === 0 && <p class="muted">{empty}</p>}
+      {[...grouped.entries()].map(([k, rs]) => (
+        <div class="library__group" key={k}>
+          {grouped.size > 1 && <div class="rule-label"><span>{k} · {rs.length}</span></div>}
+          <Rows records={rs} cfg={cfg} empty="" />
+        </div>
+      ))}
+      {more && <p><button type="button" class="btn" onClick={() => setPage((p) => p + 1)}>Show more</button></p>}
+    </section>
+  );
+}
+
+function People({ cfg }: { cfg: Cfg | null }) {
+  const { data } = useLoader(async () => { const [{ people }, { tags }] = await Promise.all([api<{ people: RecordSummary[] }>('/api/index/people'), api<{ tags: Array<{ tag: string; count: number; private: boolean }> }>('/api/index/tags')]); return { people, tags }; });
+  return (
+    <section class="two">
+      <div>
+        <div class="rule-label"><span>People</span></div>
+        <p class="muted">People you mention. Private unless you make one public; the site shows names, aliases or nothing per your settings.</p>
+        {data && <Rows records={data.people} cfg={cfg} empty="No people yet. Type @Name in anything you write." />}
+        <p class="chips"><button type="button" class="btn btn--soft" data-compose="person">+ Add a person</button></p>
+      </div>
+      <div>
+        <div class="rule-label"><span>Tags</span></div>
+        <ul class="tags">{data?.tags.map((t) => <li key={t.tag}><a href={t.private ? '#' : `/tags/${t.tag}/`} class={t.private ? 'muted' : ''}>{t.private ? '🔒 ' : '#'}{t.tag.replace(/^private\//, '')}</a> <span class="mono muted">{t.count}</span></li>)}</ul>
+        {data && data.tags.length === 0 && <p class="muted">No tags yet. Type #tag in anything you write.</p>}
+      </div>
+    </section>
+  );
+}
+
+function Settings() {
+  return (
+    <section class="settings">
+      <div class="rule-label"><span>Writing collections</span></div>
+      <CollectionsForm />
+      <div class="rule-label settings__rule"><span>Kinds of lists</span></div>
+      <ListTypesForm />
+      <div class="rule-label settings__rule"><span>Site</span></div>
+      <SiteForm />
+    </section>
   );
 }
 
@@ -142,64 +286,6 @@ function Ask({ q, onDone }: { q: Question; onDone: () => void }) {
   );
 }
 
-function RecordList({ records, empty, onDiscard }: { records: RecordSummary[]; empty: string; onDiscard?: (r: RecordSummary) => void }) {
-  if (!records.length) return <p class="muted">{empty}</p>;
-  return (
-    <ul class="recs">
-      {records.map((r) => (
-        <li key={r.id}>
-          {onDiscard && <button type="button" class="btn btn--soft btn--small" onClick={() => onDiscard(r)}>Discard</button>}
-          <span class="mono muted recs__type">{r.type}{r.kind ? `/${r.kind}` : ''}{r.collection ? `/${r.collection}` : ''}</span>
-          <a class="recs__title" href={`/private/edit/?id=${r.id}`}>{r.title ?? r.path}</a>
-          <span class="mono muted">{r.visibility}{r.draft ? ' · draft' : ''}{r.conflict ? ' · CONFLICT' : ''}{r.date ? ' · ' + when(String(r.date), { year: 'numeric', month: 'short', day: 'numeric' }) : ''}</span>
-          {r.visibility === 'public' && !r.draft && publicUrl(r) && <a class="mono" href={publicUrl(r)!}>view</a>}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function Records({ status }: { status: 'drafts' | 'published' }) {
-  const { data, err } = useLoader(() => api<{ records: RecordSummary[] }>(`/api/records?status=${status === 'drafts' ? 'draft' : 'published'}&limit=200`), [status]);
-  const [gone, setGone] = useState<Set<string>>(new Set());
-  const [priv, setPriv] = useState<RecordSummary[] | null>(null);
-  const discard = async (r: RecordSummary) => {
-    if (!confirm(`Discard "${r.title ?? r.path}"? The file is deleted from the vault.`)) return;
-    await api(`/api/records/${r.id}`, { method: 'DELETE' });
-    setGone((g) => new Set([...g, r.id]));
-  };
-  useEffect(() => { if (status === 'published') api<{ records: RecordSummary[] }>('/api/records?visibility=private&limit=200').then((d) => setPriv(d.records)).catch(() => {}); }, [status]);
-  return (
-    <section>
-      <p class="mono hub__actions"><a class="btn" href="/private/new/?type=writing">New piece</a> <a class="btn" href="/private/new/?type=feed">New thought</a> <a class="btn" href="/private/new/?type=list">New list</a> <a class="btn" href="/private/new/?type=review">New review</a></p>
-      {err && <p class="err mono">{err}</p>}
-      {data && <RecordList records={data.records.filter((r) => !gone.has(r.id))} empty={status === 'drafts' ? 'No drafts.' : 'Nothing published yet.'} onDiscard={status === 'drafts' ? discard : undefined} />}
-      {status === 'published' && priv && priv.length > 0 && (<><div class="rule-label" style="margin-top:2rem"><span>Private</span></div><RecordList records={priv} empty="" /></>)}
-    </section>
-  );
-}
-
-function Search() {
-  const [q, setQ] = useState('');
-  const { data } = useLoader(() => (q.trim() ? api<{ records: RecordSummary[] }>(`/api/records?q=${encodeURIComponent(q.trim())}&limit=100`) : Promise.resolve({ records: [] })), [q]);
-  return (
-    <section>
-      <input class="search" placeholder="Search titles, paths, text…" value={q} onInput={(e) => setQ((e.target as HTMLInputElement).value)} autofocus />
-      {data && q.trim() && <RecordList records={data.records} empty="No matches." />}
-    </section>
-  );
-}
-
-function PeopleTags() {
-  const { data } = useLoader(async () => { const [{ people }, { tags }] = await Promise.all([api<{ people: RecordSummary[] }>('/api/index/people'), api<{ tags: Array<{ tag: string; count: number; private: boolean }> }>('/api/index/tags')]); return { people, tags }; });
-  return (
-    <section class="two">
-      <div><div class="rule-label"><span>People</span></div>{data && <RecordList records={data.people} empty="No people yet." />}<p class="mono"><a class="btn" href="/private/new/?type=person">New person</a></p></div>
-      <div><div class="rule-label"><span>Tags</span></div><ul class="tags">{data?.tags.map((t) => <li key={t.tag}><a href={t.private ? '#' : `/tags/${t.tag}/`} class={t.private ? 'muted' : ''}>#{t.tag}</a> <span class="mono muted">{t.count}{t.private ? ' · private' : ''}</span></li>)}</ul></div>
-    </section>
-  );
-}
-
 function Conflicts() {
   const { data, reload } = useLoader(() => api<{ records: RecordSummary[] }>('/api/records?conflict=1'));
   const [open, setOpen] = useState<string | null>(null);
@@ -267,8 +353,8 @@ function Tokens() {
   return (
     <section>
       <p class="mono hub__actions">
-        <button class="btn" type="button" onClick={async () => { setFresh(null); const r = await api<{ indexed: number }>('/api/reindex', { method: 'POST' }); alert(`Reindexed ${r.indexed} records from the vault.`); }}>Reindex vault</button>
-        <button class="btn" type="button" onClick={async () => { await api('/api/rebuild', { method: 'POST' }); alert('Rebuild requested. Live in a couple of minutes.'); }}>Rebuild site</button>
+        <button class="btn" type="button" onClick={async () => { setFresh(null); const r = await api<{ indexed: number }>('/api/reindex', { method: 'POST' }); toast(`Reindexed ${r.indexed} records from the vault`); }}>Reindex vault</button>
+        <button class="btn" type="button" onClick={async () => { await api('/api/rebuild', { method: 'POST' }); toast('Rebuild requested · live in a couple of minutes'); }}>Rebuild site</button>
       </p>
       <p class="muted">Agents connect to <code>{location.origin}/mcp</code> (MCP, Streamable HTTP) or <code>POST /api/tools/&lt;name&gt;</code> with a bearer token.</p>
       <form class="quick" onSubmit={mint}><input placeholder="Token name (e.g. claude)" value={name} onInput={(e) => setName((e.target as HTMLInputElement).value)} /><button class="btn btn--solid">Mint token</button></form>
