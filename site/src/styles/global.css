@@ -35,7 +35,7 @@ main { flex: 1; }
 .clip > img { object-fit: contain; }
 .clip--cutout > img { filter: var(--shadow-clip); padding: 4%; }
 .clip--cover > img { object-fit: contain; box-shadow: none; }
-.clip--cover > img, .clip--poster > img { outline: 1px solid rgb(26 26 24 / 0.2); outline-offset: -1px; filter: drop-shadow(0 1px 1px rgb(26 26 24 / 0.2)) drop-shadow(0 8px 10px rgb(26 26 24 / 0.12)); }
+.clip--cover > img, .clip--poster > img { filter: drop-shadow(0 1px 1px rgb(26 26 24 / 0.18)) drop-shadow(0 10px 14px rgb(26 26 24 / 0.12)); }
 .clip--logo > img { object-fit: contain; padding: 8%; }
 .clip--logo.on-paper > img { filter: brightness(0); }
 .clip--logo.on-dark > img { filter: brightness(0) invert(1) sepia(0.15); }
