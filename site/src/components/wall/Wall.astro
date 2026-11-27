@@ -51,7 +51,8 @@ const units = Math.round(shown * (1 + 1 / identity.wall.petRatio));
   .tile__seal.seal--green { border-color: color-mix(in oklab, var(--on-dark) 55%, var(--green)); outline-color: color-mix(in oklab, var(--on-dark) 45%, var(--green)); color: var(--on-dark); }
   .tile__seal.seal--green .tile__seal-orn { color: var(--on-dark); }
   /* a list's arch: its things peek out of the window */
-  .tile .tile__arch--list { width: 90%; height: 92%; }
+  .tile .tile__arch--list { width: 86%; height: auto; aspect-ratio: 0.84; max-height: 94%; grid-template-rows: minmax(0, 1fr) auto; }
+  .tile .tile__arch--list .tile__arch-window { min-height: 0; }
   .tile__arch-window--picks { position: relative; background: color-mix(in oklab, var(--on-dark) 12%, var(--green)); }
   .tile__peek { position: absolute; left: 50%; bottom: -4%; width: 46%; aspect-ratio: 2 / 3; transform: translateX(calc(-50% + (var(--i) - (var(--n) - 1) / 2) * 34%)) rotate(calc((var(--i) - (var(--n) - 1) / 2) * 7deg)); transform-origin: 50% 100%; }
   .tile .tile__peek .clip:has(> img) { width: 100%; height: auto; margin: 0; }
@@ -67,7 +68,7 @@ const units = Math.round(shown * (1 + 1 / identity.wall.petRatio));
   .tile__frame-orn { display: block; margin: 0 auto 0.2rem; color: var(--green); }
   .tile__seal-title { display: block; font-size: clamp(1.15rem, 12cqw, 2rem); line-height: 1.05; text-wrap: balance; }
   .tile__frame { padding: 1.2rem; }
-  .tile__arch { display: grid; grid-template-rows: 1fr auto; width: 100%; height: 100%; background: var(--green); border-radius: 48% 48% 6px 6px / 40% 40% 6px 6px; padding: 10px; box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--on-dark) 45%, var(--green)), inset 0 0 0 5px var(--green), inset 0 0 0 6px color-mix(in oklab, var(--on-dark) 35%, var(--green)); }
+  .tile__arch { display: grid; grid-template-rows: minmax(0, 1fr) auto; width: 100%; height: 100%; background: var(--green); border-radius: 48% 48% 6px 6px / 40% 40% 6px 6px; padding: 10px; box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--on-dark) 45%, var(--green)), inset 0 0 0 5px var(--green), inset 0 0 0 6px color-mix(in oklab, var(--on-dark) 35%, var(--green)); }
   .tile__arch-window { display: block; border-radius: 46% 46% 0 0 / 40% 40% 0 0; overflow: hidden; }
   .tile__arch-window svg { display: block; width: 100%; height: 100%; }
   .tile__arch-plate { display: grid; place-items: center; background: var(--green); color: var(--on-dark); padding: 0.6rem 0.8rem 0.9rem; text-align: center; }
