@@ -9,6 +9,8 @@ WORK="${TMPDIR:-/tmp}/lem-clip"; mkdir -p "$WORK"
 AUTH=()
 if [[ -n "${CF_ACCESS_CLIENT_ID:-}" ]]; then AUTH=(-H "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" -H "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET"); fi
 if [[ -n "${LEM_COOKIE:-}" ]]; then AUTH+=(-H "Cookie: $LEM_COOKIE"); fi
+if [[ -z "${LEM_TOKEN:-}" && -f "$HOME/.lem-agent-token" ]]; then LEM_TOKEN="$(cat "$HOME/.lem-agent-token")"; fi
+if [[ -n "${LEM_TOKEN:-}" ]]; then AUTH+=(-H "Authorization: Bearer $LEM_TOKEN"); fi
 if [[ ! -x "$WORK/clip" ]]; then swiftc -O -o "$WORK/clip" "$DIR/clip.swift" 2>/dev/null || true; fi
 queue=$(curl -sS "${AUTH[@]}" "$SITE/api/media/clip-queue")
 echo "$queue" | python3 -c '

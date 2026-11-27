@@ -11,6 +11,7 @@ launchctl load ~/Library/LaunchAgents/com.loganeastman.clip-sync.plist
 launchctl load ~/Library/LaunchAgents/com.loganeastman.media-sync.plist
 ```
 
-Auth for the scripts: either a Cloudflare Access **service token** (Zero Trust → Access → Service Auth), exported as
+Auth for the scripts: simplest is an **agent token** minted in /private → Agents, saved to `~/.lem-agent-token`
+(the script reads it automatically). Alternatives: a Cloudflare Access **service token** (Zero Trust → Access → Service Auth), exported as
 `CF_ACCESS_CLIENT_ID` / `CF_ACCESS_CLIENT_SECRET` in the plist's EnvironmentVariables and allowed by the Access policy,
 or `LEM_COOKIE="CF_Authorization=…"` copied from a signed-in browser (expires with the session).

@@ -3,6 +3,7 @@
 import { Hono } from 'hono';
 import type { AppEnv, Env } from '../env';
 import { requireOwner } from '../auth/access';
+import { requireScopes } from '../auth/tokens';
 import { newId, itemSlug, itemPath, serializeNote, slugify } from '@lem/vault-core';
 import { one, all, run, now, json } from '../db';
 import { vaultCommit } from '../do/VaultWriter';
@@ -94,7 +95,7 @@ assets.post('/api/photos/:id/approve', requireOwner, async (c) => {
 });
 
 /** Owner-only: the private original (for the local cutout tool and the editor's cover picker). */
-assets.get('/api/media/:id/original', requireOwner, async (c) => {
+assets.get('/api/media/:id/original', requireScopes('media:write'), async (c) => {
   const m = await one<{ orig_key: string | null; provider_ref: string | null }>(c.env.DB, 'SELECT orig_key, provider_ref FROM media WHERE id = ?', c.req.param('id'));
   if (!m) return c.json({ error: 'not found' }, 404);
   const key = m.orig_key ?? (await one<{ r2_key: string }>(c.env.DB, "SELECT r2_key FROM media_variants WHERE media_id = ? AND variant = 'full' AND status = 'ready'", c.req.param('id')))?.r2_key;
@@ -108,14 +109,14 @@ assets.get('/api/media/:id/original', requireOwner, async (c) => {
 });
 
 /** Media the local tool should cut out, oldest first. */
-assets.get('/api/media/clip-queue', requireOwner, async (c) => {
+assets.get('/api/media/clip-queue', requireScopes('media:write'), async (c) => {
   const rows = await all<{ id: string; kind: string; record_id: string | null; media_id: string; params_json: string | null }>(c.env.DB,
     "SELECT m.id, m.kind, m.record_id, v.media_id, v.params_json FROM media_variants v JOIN media m ON m.id = v.media_id WHERE v.variant = 'clip' AND v.status = 'pending' AND v.provider = 'local' ORDER BY v.updated_at LIMIT 20");
   return c.json({ queue: rows.map((r) => ({ media_id: r.id, record_id: r.record_id, original: `/api/media/${r.id}/original`, upload: `/api/media/${r.id}/variants/clip`, params: json(r.params_json, {}) })) });
 });
 
 /** Upload a finished clip (transparent PNG) for a media id; the record's artwork.clip is patched. */
-assets.post('/api/media/:id/variants/clip', requireOwner, async (c) => {
+assets.post('/api/media/:id/variants/clip', requireScopes('media:write'), async (c) => {
   const id = c.req.param('id');
   const m = await one<{ id: string; record_id: string | null }>(c.env.DB, 'SELECT id, record_id FROM media WHERE id = ?', id);
   if (!m) return c.json({ error: 'not found' }, 404);
@@ -128,7 +129,7 @@ assets.post('/api/media/:id/variants/clip', requireOwner, async (c) => {
 });
 
 /** Ask for a new cutout (a poor extraction can be replaced any time). */
-assets.post('/api/media/:id/variants/clip/regenerate', requireOwner, async (c) => {
+assets.post('/api/media/:id/variants/clip/regenerate', requireScopes('media:write'), async (c) => {
   const id = c.req.param('id');
   const m = await one<{ id: string; record_id: string | null }>(c.env.DB, 'SELECT id, record_id FROM media WHERE id = ?', id);
   if (!m) return c.json({ error: 'not found' }, 404);
@@ -147,7 +148,7 @@ assets.get('/api/media', requireOwner, async (c) => {
 });
 
 /** The vault's _media/index.json (attachment path → public variants), for the editor's cover picker. */
-assets.get('/api/media/index', requireOwner, async (c) => {
+assets.get('/api/media/index', requireScopes('media:write'), async (c) => {
   const blob = await vaultFor(c.env).readFile('_media/index.json');
   return c.json(blob ? JSON.parse(blob.text) : { attachments: {} });
 });
