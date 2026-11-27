@@ -19,8 +19,10 @@ import sys,json
 for q in json.load(sys.stdin).get("queue",[]): print(q["id"], q["upload"], q["url"])' | while read -r fid up url; do
   src="$WORK/$fid.bin"
   fail() { echo "fetch failed for $fid: $1"; curl -sS "${AUTH[@]}" -X POST -H 'content-type: application/json' -d "{\"reason\":\"$1\"}" "$SITE${up}/failed" >/dev/null; rm -f "$src"; }
-  if ! curl -sSL --max-time 60 -o "$src" "$url"; then fail "download error"; continue; fi
+  ctype=$(curl -sSL --compressed --max-time 60 -o "$src" -w '%{content_type}' "$url" || true)
+  [[ -s "$src" ]] || { fail "download error"; continue; }
   mime=$(file -b --mime-type "$src")
+  [[ "$ctype" == text/html* ]] && mime=text/html
   if [[ "$mime" == text/html ]]; then
     # a page, not a picture: take its og:image / twitter:image
     img=$(python3 -c '
@@ -30,7 +32,7 @@ for pat in [r"property=[\"\x27]og:image(?::secure_url)?[\"\x27][^>]*content=[\"\
   m=re.search(pat,t,re.I)
   if m: print(html.unescape(m.group(1))); break' "$src")
     if [[ -z "$img" ]]; then fail "no og:image on page"; continue; fi
-    if ! curl -sSL --max-time 60 -o "$src" "$img"; then fail "image download error"; continue; fi
+    if ! curl -sSL --compressed --max-time 60 -o "$src" "$img"; then fail "image download error"; continue; fi
     mime=$(file -b --mime-type "$src")
   fi
   if [[ "$mime" != image/* ]]; then fail "not an image ($mime)"; continue; fi
