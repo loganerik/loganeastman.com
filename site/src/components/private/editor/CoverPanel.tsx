@@ -48,7 +48,7 @@ export default function CoverPanel({ recordId, type, kind, body, cover, artwork,
     onStatus('Cutout requested · it appears after the next sync and build');
   };
 
-  const treatments = type === 'item' && (kind === 'film' || kind === 'tv') ? ['lettering', 'poster', 'typeset'] : type === 'item' && (kind === 'book' || kind === 'album') ? ['cover', 'typeset'] : ['paper', 'cutout', 'cover', 'typeset'];
+  const treatments = type === 'item' && (kind === 'film' || kind === 'tv') ? ['poster', 'lettering', 'typeset'] : type === 'item' && (kind === 'book' || kind === 'album') ? ['cover', 'typeset'] : ['paper', 'cutout', 'cover', 'typeset'];
   return (
     <div class="cover">
       <div class="cover__row">

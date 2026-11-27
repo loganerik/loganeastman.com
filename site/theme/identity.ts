@@ -52,8 +52,8 @@ const identity: Identity = {
   footer: { about: { label: 'About', href: '/about/' } },
   writing: { rootCollections: ['pages'] },
   kinds: {
-    film: { route: 'film', label: 'Film', plural: 'Films', treatment: 'lettering' },
-    tv: { route: 'tv', label: 'Series', plural: 'Series', treatment: 'lettering' },
+    film: { route: 'film', label: 'Film', plural: 'Films', treatment: 'poster' },
+    tv: { route: 'tv', label: 'Series', plural: 'Series', treatment: 'poster' },
     book: { route: 'books', label: 'Book', plural: 'Books', treatment: 'cover' },
     album: { route: 'albums', label: 'Album', plural: 'Albums', treatment: 'cover' },
     product: { route: 'things', label: 'Thing', plural: 'Things', treatment: 'cutout' },

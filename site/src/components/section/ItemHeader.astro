@@ -50,7 +50,7 @@ const kickerText = `${kind?.label ?? d.kind}${d.year ? ' · ' + d.year : x.publi
     <p class="chips item-head__links">
       {d.url && <a class="btn" href={d.url} rel="noopener" target="_blank">{isProduct ? 'Shop' : 'Open'} · {host}</a>}
       {d.kind === 'book' && d.openlibrary_id && <a class="btn" href={`https://openlibrary.org/works/${d.openlibrary_id}`} rel="noopener" target="_blank">Open Library</a>}
-      {(d.kind === 'film' || d.kind === 'tv') && art.full && <a class="btn" href={art.full} rel="noopener" target="_blank">Full poster</a>}
+      {(d.kind === 'film' || d.kind === 'tv') && art.full && art.treatment === 'lettering' && <a class="btn" href={art.full} rel="noopener" target="_blank">Full poster</a>}
     </p>
     <slot />
   </div>
