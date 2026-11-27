@@ -37,7 +37,9 @@ if trimOnly {
   while left < right && colBg(left) { left += 1 }
   while right > left && colBg(right) { right -= 1 }
   let m = Int(Double(min(w, h)) * 0.01) // keep a hair of margin
-  let crop = CGRect(x: max(0, left - m), y: max(0, top - m), width: min(w, right + m) - max(0, left - m) + 1, height: min(h, bottom + m) - max(0, top - m) + 1)
+  let x0 = max(0, left - m), y0 = max(0, top - m), x1 = min(w - 1, right + m), y1 = min(h - 1, bottom + m)
+  let crop = CGRect(x: x0, y: y0, width: x1 - x0 + 1, height: y1 - y0 + 1)
+  // An image with no margin to trim is still a valid result: the whole picture becomes the clip.
   guard crop.width > 8, crop.height > 8, let cropped = cg0.cropping(to: crop) else { fputs("nothing to trim\n", stderr); exit(3) }
   let rep = NSBitmapImageRep(cgImage: cropped)
   guard let png = rep.representation(using: .png, properties: [:]) else { exit(1) }

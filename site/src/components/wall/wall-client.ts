@@ -63,15 +63,14 @@ if (grid) {
   const cols = Number(getComputedStyle(grid).getPropertyValue('--cols')) || 2;
   const fam = seq.map(family);
   const clash = (i: number, f: string) => (i > 0 && fam[i - 1] === f) || (i >= cols && fam[i - cols] === f);
+  const swap = (i: number, j: number) => { [seq[i], seq[j]] = [seq[j]!, seq[i]!]; [fam[i], fam[j]] = [fam[j]!, fam[i]!]; };
+  const fits = (pos: number, f: string, except: number) => [pos - 1, pos + 1, pos - cols, pos + cols].every((n) => n < 0 || n >= fam.length || n === except || fam[n] !== f);
   for (let i = 1; i < seq.length; i++) {
     if (!clash(i, fam[i]!)) continue;
-    for (let j = i + 1; j < Math.min(seq.length, i + 8); j++) {
-      if (!clash(i, fam[j]!)) {
-        [seq[i], seq[j]] = [seq[j]!, seq[i]!];
-        [fam[i], fam[j]] = [fam[j]!, fam[i]!];
-        break;
-      }
-    }
+    let done = false;
+    for (let j = i + 1; j < Math.min(seq.length, i + 8) && !done; j++) if (!clash(i, fam[j]!)) { swap(i, j); done = true; }
+    // nothing suitable ahead (end of the wall): trade with an earlier tile that fits here, where this one also fits there
+    for (let j = i - 2; j > 0 && !done; j--) if (fam[j] !== fam[i] && fits(i, fam[j]!, j) && fits(j, fam[i]!, i)) { swap(i, j); done = true; }
   }
   const frag = document.createDocumentFragment();
   for (const el of seq) frag.appendChild(el);

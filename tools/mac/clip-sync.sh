@@ -11,7 +11,7 @@ if [[ -n "${CF_ACCESS_CLIENT_ID:-}" ]]; then AUTH=(-H "CF-Access-Client-Id: $CF_
 if [[ -n "${LEM_COOKIE:-}" ]]; then AUTH+=(-H "Cookie: $LEM_COOKIE"); fi
 if [[ -z "${LEM_TOKEN:-}" && -f "$HOME/.lem-agent-token" ]]; then LEM_TOKEN="$(cat "$HOME/.lem-agent-token")"; fi
 if [[ -n "${LEM_TOKEN:-}" ]]; then AUTH+=(-H "Authorization: Bearer $LEM_TOKEN"); fi
-if [[ ! -x "$WORK/clip" ]]; then swiftc -O -o "$WORK/clip" "$DIR/clip.swift" 2>/dev/null || true; fi
+if [[ ! -x "$WORK/clip" || "$DIR/clip.swift" -nt "$WORK/clip" ]]; then rm -f "$WORK/clip"; swiftc -O -o "$WORK/clip" "$DIR/clip.swift" 2>/dev/null || rm -f "$WORK/clip"; fi
 queue=$(curl -sS "${AUTH[@]}" "$SITE/api/media/clip-queue")
 echo "$queue" | python3 -c '
 import sys,json
