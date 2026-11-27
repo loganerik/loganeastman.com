@@ -1,9 +1,14 @@
 ---
-// Mounted on every public page but only stamped into the DOM for the signed-in owner (see OwnerOnly).
+// Mounted on every page but only stamped into the DOM for the signed-in owner (see OwnerOnly): the toast and
+// confirm shell every owner control uses, plus the capture "+" (not on the private pages, which have their own).
 import OwnerOnly from './OwnerOnly.astro';
-import CaptureSheet from './CaptureSheet';
-import '../../styles/sheet.css';
-interface Props { preset?: { mode?: 'thought' | 'link' | 'piece' | 'list' | 'entry'; list?: string; collection?: string } }
-const { preset } = Astro.props;
+import Composer from './Composer';
+import OwnerShell from './ui/OwnerShell';
+import '../../styles/owner.css';
+interface Props { preset?: { mode?: 'thought' | 'link' | 'piece' | 'list' | 'entry' | 'review'; list?: string; collection?: string; item?: string; itemKind?: string; itemTitle?: string }; noFab?: boolean }
+const { preset, noFab = false } = Astro.props;
 ---
-<OwnerOnly><CaptureSheet client:only="preact" preset={preset} /></OwnerOnly>
+<OwnerOnly>
+  <OwnerShell client:only="preact" />
+  {!noFab && <Composer client:only="preact" preset={preset} />}
+</OwnerOnly>

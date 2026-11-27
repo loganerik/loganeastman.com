@@ -17,3 +17,6 @@ export function json<T>(s: string | null | undefined, fallback: T): T {
     return fallback;
   }
 }
+
+/** A row of the records index (D1). */
+export interface RecordRow { id: string; path: string; type: string; kind: string | null; title: string | null; visibility: string | null; blob_sha: string | null; conflict: number; frontmatter_json: string | null; body_excerpt: string | null; indexed_at: string }

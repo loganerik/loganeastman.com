@@ -50,7 +50,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Deploy worker + assets
-        run: npx wrangler deploy
+        run: npx wrangler deploy --var BUILD_ID:${{ github.sha }}
         working-directory: worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

@@ -9,6 +9,7 @@ import { github } from './routes/github';
 import { questions } from './routes/questions';
 import { tokens } from './routes/tokens';
 import { records } from './routes/records';
+import { publish } from './routes/publish';
 import { assets } from './routes/assets';
 import { handleMcp } from './mcp/server';
 import { requireScopes } from './auth/tokens';
@@ -44,6 +45,7 @@ app.get('/api/login', (c) => {
   return c.html(`<!doctype html><meta charset="utf-8"><script>try{localStorage.setItem('ownerHint','1')}catch{}location.replace(${JSON.stringify(next.startsWith('/') ? next : '/private/')})</script>`);
 });
 
+app.route('/', publish);
 app.route('/', media);
 app.route('/', share);
 app.route('/', captures);

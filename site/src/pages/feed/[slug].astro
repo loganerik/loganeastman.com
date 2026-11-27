@@ -26,7 +26,7 @@ const older = posts[i + 1];
   <div class="wrap one">
     <div data-article><FeedSlip post={post} link={false} /></div>
     {about?.public && <p class="mono muted">About <a href={urlFor(about)}>{(about.data as { title?: string }).title}</a></p>}
-    <OwnerOnly><InlineEdit client:only="preact" recordId={post.data.id} /></OwnerOnly>
+    <OwnerOnly><InlineEdit client:only="preact" recordId={post.data.id} title={post.data.title ?? r.excerpt.slice(0, 40)} type="feed" /></OwnerOnly>
     <nav class="mono muted pager" aria-label="Feed navigation">
       {older && <a href={urlFor(older)}>← Older</a>}
       <a href="/feed/">All thoughts</a>

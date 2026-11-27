@@ -9,6 +9,7 @@ export interface Env {
   // vars
   ENVIRONMENT: string;
   SITE_URL: string;
+  BUILD_ID?: string;
   VAULT_REPO: string;
   VAULT_BRANCH: string;
   SITE_REPO: string;

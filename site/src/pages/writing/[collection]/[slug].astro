@@ -22,7 +22,7 @@ const r = await renderRecord(piece, idx);
 const tags = publicTags(piece.data.tags);
 ---
 <Reading title={piece.data.title} description={piece.data.summary ?? r.excerpt} kicker={c?.title} meta={[fmtDate(piece.data.date), `${r.wordCount} words`]} image={piece.data.artwork?.full}>
-  <OwnerOnly slot="controls"><InlineEdit client:only="preact" recordId={piece.data.id} /></OwnerOnly>
+  <OwnerOnly slot="controls"><InlineEdit client:only="preact" recordId={piece.data.id} title={piece.data.title} type="writing" /></OwnerOnly>
   <Fragment set:html={r.html} />
   <Fragment slot="after">{tags.length > 0 && <p class="mono muted tags">{tags.map((t) => <a href={`/tags/${t}/`}>#{t}</a>)}</p>}</Fragment>
 </Reading>

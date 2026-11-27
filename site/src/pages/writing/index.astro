@@ -2,6 +2,7 @@
 import Section from '../../layouts/Section.astro';
 import PieceCard from '../../components/section/PieceCard.astro';
 import OwnerOnly from '../../components/private/OwnerOnly.astro';
+import ConfigSheet from '../../components/private/config/ConfigSheet';
 import { index, writingIn } from '../../lib/content';
 import identity from '@theme/identity';
 const idx = await index();
@@ -14,13 +15,14 @@ const all = collections.flatMap((c) => writingIn(idx, c.key).map((p) => ({ p, c 
     {collections.map((c) => <button type="button" class="chip" aria-pressed="false" data-filter={c.key}>{c.title}</button>)}
   </div>
   <OwnerOnly slot="action">
-    <a class="btn btn--soft" href="/private/new/?type=writing">New piece</a>
-    <a class="btn" href="/private/?tab=config">Manage collections</a>
+    <button type="button" class="btn btn--soft" data-compose="writing">New piece</button>
+    <button type="button" class="btn btn--soft" data-config="collections">Manage collections</button>
   </OwnerOnly>
   {all.length === 0 && <p class="muted">Nothing published yet.</p>}
   <ul class="writing__grid" data-pieces>
     {all.map(({ p, c }) => <li data-collection={c.key}><PieceCard piece={p} form={c.form} kicker={c.title} /></li>)}
   </ul>
+  <OwnerOnly><ConfigSheet client:only="preact" /></OwnerOnly>
   <OwnerOnly>
     <details class="drafts" data-drafts>
       <summary class="mono">Private drafts <span data-drafts-count></span></summary>

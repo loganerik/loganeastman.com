@@ -12,7 +12,7 @@ const idx = await index();
 const c = idx.config.collections.find((x) => x.key === Astro.props.key)!;
 const pieces = writingIn(idx, c.key);
 ---
-<Section title={c.title} kicker="Writing" count={pieces.length} description={`${c.title} by ${identity.site.name}`} action={{ label: 'New piece', href: `/private/new/?kind=writing&collection=${c.key}` }}>
+<Section title={c.title} kicker="Writing" count={pieces.length} description={`${c.title} by ${identity.site.name}`} action={{ label: 'New piece', compose: 'writing' }}>
   {pieces.length === 0 && <p class="muted">Nothing published yet.</p>}
   <ul class="writing__grid">{pieces.map((p) => <li><PieceCard piece={p} form={c.form} kicker={c.title} /></li>)}</ul>
 <style>.writing__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-6) var(--space-5); } @media (min-width: 900px) { .writing__grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-7) var(--space-6); } }</style>

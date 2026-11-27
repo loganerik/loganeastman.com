@@ -2,7 +2,7 @@
 // Section pages: steady text, artwork moves. Orderly grids and rows.
 import Base from './Base.astro';
 import OwnerOnly from '../components/private/OwnerOnly.astro';
-interface Props { title: string; description?: string; kicker?: string; count?: number; action?: { label: string; href: string }; feeds?: Array<{ title: string; href: string }>; noindex?: boolean; preset?: { mode?: 'thought' | 'link' | 'piece' | 'list' | 'entry'; list?: string; collection?: string }; quiet?: boolean; image?: string }
+interface Props { title: string; description?: string; kicker?: string; count?: number; action?: { label: string; href?: string; compose?: string; list?: string; item?: string; itemTitle?: string; itemKind?: string }; feeds?: Array<{ title: string; href: string }>; noindex?: boolean; preset?: { mode?: 'thought' | 'link' | 'piece' | 'list' | 'entry'; list?: string; collection?: string }; quiet?: boolean; image?: string }
 const { title, description, kicker, count, action, feeds, noindex, preset, quiet = false, image } = Astro.props;
 ---
 <Base title={title} description={description} feeds={feeds} noindex={noindex} preset={preset} image={image}>
@@ -14,7 +14,7 @@ const { title, description, kicker, count, action, feeds, noindex, preset, quiet
         <slot name="intro" />
       </div>
       <div class="section__action">
-        {action && <OwnerOnly><a class="btn btn--soft" href={action.href}>{action.label}</a></OwnerOnly>}
+        {action && <OwnerOnly>{action.compose ? <button type="button" class="btn btn--soft" data-compose={action.compose} data-list={action.list} data-item={action.item} data-item-title={action.itemTitle} data-item-kind={action.itemKind}>{action.label}</button> : <a class="btn btn--soft" href={action.href}>{action.label}</a>}</OwnerOnly>}
         <slot name="action" />
       </div>
     </header>

@@ -37,6 +37,7 @@ const kicker = d.subtype ?? (isProduct ? d.category : kickerFor(e.item));
       <p class="chips owner-row entry__tools">
         <button type="button" class="btn btn--soft btn--small" data-edit={d.id} data-edit-title={d.title}>Edit item</button>
         <button type="button" class="btn btn--soft btn--small" data-edit={e.entry.data.id} data-edit-title={`Note · ${d.title}`}>Edit note</button>
+        {done ? <button type="button" class="btn btn--soft btn--small" data-state={e.entry.data.id} data-state-to="active">Put back</button> : <button type="button" class="btn btn--soft btn--small" data-state={e.entry.data.id} data-state-to="done">Done</button>}
         <button type="button" class="btn btn--soft btn--small" data-remove={e.entry.data.id} data-remove-title={d.title}>Remove</button>
       </p>
     </OwnerOnly>

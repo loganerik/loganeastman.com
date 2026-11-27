@@ -1,5 +1,6 @@
-// Markdown editor in the reading layout: CodeMirror for the body (Obsidian syntax saved verbatim),
-// a small form for the frontmatter, draft recovery, and a conflict dialog on 409. The rich mode lands later.
+// The record editor, inline on a reading page or on /private/edit/. Rich text (Milkdown) or Markdown (CodeMirror,
+// Obsidian syntax saved verbatim), the essentials of the frontmatter up front and the rest under More, draft
+// recovery, delete with undo, and a conflict dialog on 409.
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { EditorState } from '@codemirror/state';
 import { EditorView, keymap, placeholder, lineNumbers, highlightActiveLine } from '@codemirror/view';
@@ -8,12 +9,16 @@ import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { syntaxHighlighting, HighlightStyle } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
 import { MergeView } from '@codemirror/merge';
-import { api, ApiError, publicUrl, type RecordSummary } from '../api';
+import { api, ApiError, publicUrl, humanKind, getConfig, type RecordSummary, type Config, type Loaded } from '../api';
+import { fieldsFor } from './fields';
+import FieldRow from './FieldRow';
+import VisibilityPill from '../ui/VisibilityPill';
+import { deleteWithUndo } from '../ui/useDelete';
+import { confirmSheet } from '../ui/confirm';
 import { loadDraft, saveDraft, clearDraft, type Draft } from './drafts';
 import { createRichEditor, isLossy, type RichEditor } from './milkdown';
 import CoverPanel from './CoverPanel';
 
-interface Loaded { id: string; path: string; type: string; frontmatter: Record<string, unknown>; body: string; raw: string; sha: string; conflict: { ours: string; theirs: string } | null }
 
 const theme = EditorView.theme({
   '&': { fontFamily: 'var(--font-display)', fontSize: 'var(--step-0)', lineHeight: '1.62', background: 'transparent' },
@@ -35,39 +40,15 @@ const highlight = HighlightStyle.define([
   { tag: tags.processingInstruction, color: 'var(--ink-faint)' },
 ]);
 
-type Field = { key: string; label: string; kind: 'text' | 'date' | 'datetime' | 'bool' | 'select' | 'tags' | 'number'; options?: string[] };
-function fieldsFor(type: string, cfg: { collections: Array<{ key: string; title: string }>; listTypes: Array<{ key: string; title: string }> } | null): Field[] {
-  const vis: Field = { key: 'visibility', label: 'Visibility', kind: 'select', options: ['public', 'private'] };
-  const tagsF: Field = { key: 'tags', label: 'Tags', kind: 'tags' };
-  const slugF: Field = { key: 'slug', label: 'URL slug', kind: 'text' };
-  switch (type) {
-    case 'writing': return [{ key: 'title', label: 'Title', kind: 'text' }, { key: 'collection', label: 'Collection', kind: 'select', options: cfg?.collections.map((c) => c.key) ?? [] }, { key: 'date', label: 'Date', kind: 'date' }, { key: 'summary', label: 'Summary', kind: 'text' }, slugF, { key: 'draft', label: 'Draft', kind: 'bool' }, vis, tagsF];
-    case 'feed': return [{ key: 'title', label: 'Title (optional)', kind: 'text' }, { key: 'date', label: 'Date & time', kind: 'datetime' }, { key: 'about', label: 'About [[record]]', kind: 'text' }, { key: 'draft', label: 'Draft', kind: 'bool' }, vis, tagsF];
-    case 'review': return [{ key: 'title', label: 'Title (optional)', kind: 'text' }, { key: 'item', label: 'Item [[record]]', kind: 'text' }, { key: 'date', label: 'Date', kind: 'date' }, { key: 'rating', label: 'Rating', kind: 'number' }, { key: 'draft', label: 'Draft', kind: 'bool' }, vis, tagsF];
-    case 'list': return [{ key: 'title', label: 'Title', kind: 'text' }, { key: 'list_type', label: 'List type', kind: 'select', options: cfg?.listTypes.map((c) => c.key) ?? [] }, { key: 'sort', label: 'Sort', kind: 'select', options: ['added-desc', 'added-asc', 'title', 'manual'] }, slugF, vis];
-    case 'list-entry': return [{ key: 'state', label: 'State', kind: 'select', options: ['active', 'done', 'removed'] }, { key: 'added', label: 'Added', kind: 'date' }, { key: 'for', label: 'For [[person]] (gifts)', kind: 'text' }, vis];
-    case 'item': return [{ key: 'title', label: 'Title', kind: 'text' }, { key: 'year', label: 'Year', kind: 'number' }, { key: 'brand', label: 'Brand', kind: 'text' }, { key: 'category', label: 'Category', kind: 'text' }, { key: 'subtype', label: 'Subtype', kind: 'text' }, { key: 'price', label: 'Price (USD)', kind: 'number' }, { key: 'details', label: 'Details (size, colour)', kind: 'text' }, { key: 'finished', label: 'Finished on', kind: 'date' }, { key: 'url', label: 'URL', kind: 'text' }, slugF, vis, tagsF];
-    case 'person': return [{ key: 'name', label: 'Name', kind: 'text' }, { key: 'public_alias', label: 'Public alias', kind: 'text' }, vis];
-    case 'tag': return [{ key: 'name', label: 'Name', kind: 'text' }, { key: 'description', label: 'Description', kind: 'text' }, vis];
-    default: return [vis];
-  }
-}
-
-function toLocalInput(v: unknown): string {
-  if (!v) return '';
-  const str = String(v);
-  const d = new Date(str.length <= 10 ? str + 'T12:00:00' : str);
-  if (Number.isNaN(d.getTime())) return '';
-  const p = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
-}
-
-export default function Editor(props: { id?: string; inline?: boolean; onDone?: (saved: boolean) => void }) {
-  const id = props.id || new URLSearchParams(location.search).get('id') || '';
+export default function Editor(props: { id?: string; inline?: boolean; record?: Loaded; onDone?: (saved: boolean) => void; onDeleted?: () => void }) {
+  const id = props.id || props.record?.id || new URLSearchParams(location.search).get('id') || '';
   const inline = !!props.inline;
   const [savedOnce, setSavedOnce] = useState(false);
   const [rec, setRec] = useState<Loaded | null>(null);
-  const [cfg, setCfg] = useState<{ collections: Array<{ key: string; title: string }>; listTypes: Array<{ key: string; title: string }>; site: { rating_scale: number } } | null>(null);
+  const [cfg, setCfg] = useState<Config | null>(null);
+  const [showCover, setShowCover] = useState(false);
+  const [linkOpen, setLinkOpen] = useState(false);
+  const [linkHref, setLinkHref] = useState('');
   const [fm, setFm] = useState<Record<string, unknown>>({});
   const [body, setBody] = useState('');
   const [sha, setSha] = useState<string | null>(null);
@@ -83,13 +64,12 @@ export default function Editor(props: { id?: string; inline?: boolean; onDone?: 
   const [mode, setMode] = useState<'rich' | 'markdown'>(() => (new URLSearchParams(location.search).get('mode') === 'markdown' ? 'markdown' : 'rich'));
   const [lossy, setLossy] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [showMeta, setShowMeta] = useState(false);
   const bodyRef = useRef(body);
   bodyRef.current = body;
 
   useEffect(() => {
-    Promise.all([api<Loaded>(`/api/records/${id}`), api('/api/config')]).then(async ([r, c]) => {
-      setRec(r); setCfg(c as never); setFm(r.frontmatter); setBody(r.body); setSha(r.sha);
+    Promise.all([props.record ? Promise.resolve(props.record) : api<Loaded>(`/api/records/${id}`), getConfig()]).then(async ([r, c]) => {
+      setRec(r); setCfg(c); setFm(r.frontmatter); setBody(r.body); setSha(r.sha);
       const why = isLossy(r.body) || (r.conflict ? 'conflict markers' : null);
       setLossy(why);
       if (why) setMode('markdown');
@@ -182,9 +162,16 @@ export default function Editor(props: { id?: string; inline?: boolean; onDone?: 
   }
 
   if (!rec) return <p class="muted">{status || 'Loading…'}</p>;
-  const fields = fieldsFor(rec.type, cfg);
+  const fields = fieldsFor(rec.type, cfg, fm.kind as string | undefined);
+  const setField = (key: string, value: unknown) => { setFm((f) => ({ ...f, [key]: value })); setDirty(true); };
+  const hasCover = rec.type === 'item' || rec.type === 'writing' || rec.type === 'feed' || rec.type === 'review' || rec.type === 'list';
+  const del = async () => {
+    const ok = await deleteWithUndo({ id: rec.id, title: (fm.title ?? fm.name ?? rec.path.split('/').pop()) as string, type: rec.type }, null, { onDone: () => { if (!inline) location.href = '/private/'; } });
+    if (ok) { if (inline) props.onDeleted?.(); else setStatus('Deleted · undo from the toast'); }
+  };
   const summary: RecordSummary = { id: rec.id, path: rec.path, type: rec.type, kind: (fm.kind as string) ?? null, title: (fm.title as string) ?? null, visibility: (fm.visibility as string) ?? null, draft: !!fm.draft, date: null, collection: (fm.collection as string) ?? null, list_type: null, year: null, conflict: false, excerpt: null, tags: [] };
-  const url = fm.visibility === 'public' && !fm.draft ? publicUrl(summary) : null;
+  const url = fm.visibility !== 'private' && !fm.draft ? publicUrl(summary) : null;
+  const kindLabel = humanKind({ type: rec.type, kind: fm.kind as string, collection: fm.collection as string, list_type: fm.list_type as string }, cfg);
   return (
     <div class="editor">
       {draft && (
@@ -198,11 +185,13 @@ export default function Editor(props: { id?: string; inline?: boolean; onDone?: 
       {inline ? (
         <div class="toolbar toolbar--inline">
           <div class="chips">
-            <button type="button" class="btn" onClick={() => { if (dirty && !confirm('Discard unsaved changes?')) return; props.onDone?.(savedOnce); }}>Done</button>
-            <button type="button" class="btn btn--solid" onClick={() => save()}>Save changes</button>
+            <button type="button" class="btn" onClick={async () => { if (dirty && !(await confirmSheet({ title: 'Leave without saving?', text: 'Your changes since the last save will be lost.', ok: 'Leave', cancel: 'Keep editing', danger: true }))) return; props.onDone?.(savedOnce); }}>Done</button>
+            <button type="button" class="btn btn--solid" onClick={() => save()}>Save</button>
+            <VisibilityPill value={String(fm.visibility ?? 'public')} onChange={(v) => setField('visibility', v)} />
+            <button type="button" class="btn btn--soft" onClick={del}>Delete</button>
             <button type="button" class="btn" aria-pressed={mode === 'markdown'} disabled={!!lossy && mode === 'markdown'} onClick={() => switchMode(mode === 'rich' ? 'markdown' : 'rich')}>{mode === 'rich' ? 'Markdown' : 'Rich text'}</button>
             <label class="btn"><input type="file" accept="image/*" multiple hidden onChange={(e) => { const files = [...((e.target as HTMLInputElement).files ?? [])]; (e.target as HTMLInputElement).value = ''; const el = richHost.current ?? host.current; if (el && files.length) { const dt = new DataTransfer(); files.forEach((f) => dt.items.add(f)); el.dispatchEvent(new DragEvent('drop', { dataTransfer: dt, bubbles: true, cancelable: true })); } }} />Add photos</label>
-            <button type="button" class="btn" aria-pressed={showMeta} onClick={() => setShowMeta(!showMeta)}>Cover</button>
+            {hasCover && <button type="button" class="btn" aria-pressed={showCover} onClick={() => setShowCover(!showCover)}>Cover</button>}
             <span class="mono muted toolbar__status">{status}{dirty && !status.startsWith('Saving') ? ' · unsaved' : ''}</span>
           </div>
           {mode === 'rich' && (
@@ -211,40 +200,42 @@ export default function Editor(props: { id?: string; inline?: boolean; onDone?: 
               <button type="button" class="btn" onClick={() => rich.current?.cmd('italic')}>Italic</button>
               <button type="button" class="btn" onClick={() => rich.current?.cmd('h2')}>Heading</button>
               <button type="button" class="btn" onClick={() => rich.current?.cmd('text')}>Paragraph</button>
-              <button type="button" class="btn" onClick={() => { const href = prompt('Link URL'); if (href) rich.current?.cmd('link', { href }); }}>Link</button>
+              <button type="button" class="btn" aria-pressed={linkOpen} onClick={() => setLinkOpen(!linkOpen)}>Link</button>
               <button type="button" class="btn" onClick={() => rich.current?.cmd('ul')}>Bullets</button>
               <button type="button" class="btn" onClick={() => rich.current?.cmd('ol')}>Numbered</button>
               <button type="button" class="btn" onClick={() => rich.current?.cmd('quote')}>Quote</button>
             </div>
           )}
+          {linkOpen && <form class="chips" onSubmit={(e) => { e.preventDefault(); if (linkHref) rich.current?.cmd('link', { href: linkHref }); setLinkHref(''); setLinkOpen(false); }}><input class="picker__in" placeholder="https://…" value={linkHref} onInput={(e) => setLinkHref((e.target as HTMLInputElement).value)} autofocus /><button type="submit" class="btn btn--solid btn--small">Add link</button></form>}
         </div>
       ) : (
       <div class="editor__bar mono">
-        <span class="muted">{rec.type} · {rec.path}</span>
+        <span class="muted"><a href="/private/">Private</a> · {kindLabel}{fm.title || fm.name ? ` · ${String(fm.title ?? fm.name)}` : ''}</span>
         <span class="editor__status">{status}{dirty && !status.startsWith('Saving') ? ' · unsaved' : ''}</span>
         <span class="editor__actions">
-          {url && <a href={url} target="_blank" rel="noopener">View</a>}
+          <VisibilityPill value={String(fm.visibility ?? 'public')} onChange={(v) => setField('visibility', v)} />
+          <button type="button" class="btn btn--soft" onClick={del}>Delete</button>
+          {url && <a class="btn" href={url} target="_blank" rel="noopener">View</a>}
           <button class="btn btn--solid" onClick={() => save()}>Save</button>
         </span>
       </div>
       )}
-      {inline && <p class="mono muted editor__kicker">{String(fm.collection ?? fm.kind ?? rec.type)} · {String(fm.visibility ?? 'public')}{fm.draft ? ' · draft' : ''}</p>}
-      {inline && (fm.title !== undefined || rec.type === 'writing') && <input class="editor__title" value={String(fm.title ?? '')} placeholder="Title" onInput={(e) => { setFm({ ...fm, title: (e.target as HTMLInputElement).value }); setDirty(true); }} />}
-      <form class="fm" hidden={inline && !showMeta} onSubmit={(e) => { e.preventDefault(); save(); }}>
-        {fields.map((f) => {
-          const v = fm[f.key];
-          const upd = (val: unknown) => { setFm({ ...fm, [f.key]: val === '' ? undefined : val }); setDirty(true); };
-          if (f.kind === 'bool') return <label class="fm__f fm__f--bool" key={f.key}><input type="checkbox" checked={!!v} onChange={(e) => upd((e.target as HTMLInputElement).checked)} /> <span class="mono">{f.label}</span></label>;
-          if (f.kind === 'select') return <label class="fm__f" key={f.key}><span class="mono">{f.label}</span><select value={String(v ?? '')} onChange={(e) => upd((e.target as HTMLSelectElement).value)}>{f.options!.map((o) => <option value={o}>{o}</option>)}</select></label>;
-          if (f.kind === 'tags') return <label class="fm__f" key={f.key}><span class="mono">{f.label}</span><input value={Array.isArray(v) ? (v as string[]).join(', ') : ''} placeholder="comma, separated, private/secret" onInput={(e) => upd((e.target as HTMLInputElement).value.split(',').map((s) => s.trim()).filter(Boolean))} /></label>;
-          if (f.kind === 'number') return <label class="fm__f" key={f.key}><span class="mono">{f.label}</span><input type="number" step="any" value={v == null ? '' : String(v)} onInput={(e) => upd((e.target as HTMLInputElement).value === '' ? undefined : Number((e.target as HTMLInputElement).value))} /></label>;
-          if (f.kind === 'date') return <label class="fm__f" key={f.key}><span class="mono">{f.label}</span><input type="date" value={String(v ?? '').slice(0, 10)} onInput={(e) => upd((e.target as HTMLInputElement).value)} /></label>;
-          if (f.kind === 'datetime') return <label class="fm__f" key={f.key}><span class="mono">{f.label}</span><input type="datetime-local" value={toLocalInput(v)} onInput={(e) => { const x = (e.target as HTMLInputElement).value; upd(x ? new Date(x).toISOString().replace(/\.\d{3}Z$/, 'Z') : undefined); }} /></label>;
-          return <label class={`fm__f ${f.key === 'title' || f.key === 'name' ? 'fm__f--title' : ''}`} key={f.key}><span class="mono">{f.label}</span><input value={String(v ?? '')} onInput={(e) => upd((e.target as HTMLInputElement).value)} /></label>;
-        })}
-      </form>
+      <p class="mono muted editor__kicker">{kindLabel}{fm.visibility === 'private' ? ' · private' : ''}{fm.draft ? ' · draft' : ''}</p>
+      {(fm.title !== undefined || rec.type === 'writing' || rec.type === 'item' || rec.type === 'list') && <input class="editor__title" value={String(fm.title ?? '')} placeholder="Title" onInput={(e) => setField('title', (e.target as HTMLInputElement).value)} />}
+      {(fm.name !== undefined || rec.type === 'person' || rec.type === 'tag') && <input class="editor__title" value={String(fm.name ?? '')} placeholder="Name" onInput={(e) => setField('name', (e.target as HTMLInputElement).value)} />}
+      {fields.essentials.filter((f) => f.key !== 'title' && f.key !== 'name').length > 0 && (
+        <form class="fields fields--2 editor__fields" onSubmit={(e) => { e.preventDefault(); save(); }}>
+          {fields.essentials.filter((f) => f.key !== 'title' && f.key !== 'name').map((f) => <FieldRow key={f.key} f={f} fm={fm} onChange={setField} />)}
+        </form>
+      )}
+      {fields.more.length > 0 && (
+        <details class="more editor__more">
+          <summary>More{fm.visibility === 'private' ? ' · private' : ''}{Array.isArray(fm.tags) && (fm.tags as string[]).length ? ` · ${(fm.tags as string[]).length} tag${(fm.tags as string[]).length === 1 ? '' : 's'}` : ''}</summary>
+          <div class="fields fields--2">{fields.more.map((f) => <FieldRow key={f.key} f={f} fm={fm} onChange={setField} />)}</div>
+        </details>
+      )}
       {(rec.type === 'item' || rec.type === 'writing' || rec.type === 'feed' || rec.type === 'review' || rec.type === 'list') && (
-        <details class="artwork" open={!inline || showMeta || !artwork} hidden={inline && !showMeta && !!artwork}>
+        <details class="artwork" open={!inline || showCover} hidden={inline && !showCover}>
           <summary class="mono">Cover &amp; artwork {artwork?.treatment ? `· ${artwork.treatment}` : ''}</summary>
           <CoverPanel recordId={rec.id} type={rec.type} kind={fm.kind as string | undefined} body={body} cover={fm.cover as string | undefined} artwork={artwork as never} approved={fm.approved as boolean | undefined}
             onChange={(n) => { setArtwork(n.artwork); setFm({ ...fm, cover: n.cover, ...(n.approved !== undefined ? { approved: n.approved } : {}) }); setDirty(true); }} onStatus={setStatus} />
@@ -260,7 +251,7 @@ export default function Editor(props: { id?: string; inline?: boolean; onDone?: 
           <button type="button" onClick={() => rich.current?.cmd('italic')} title="Italic (⌘I)"><i>I</i></button>
           <button type="button" onClick={() => rich.current?.cmd('strike')} title="Strikethrough"><s>S</s></button>
           <button type="button" onClick={() => rich.current?.cmd('code')} title="Inline code">{'</>'}</button>
-          <button type="button" onClick={() => { const href = prompt('Link URL'); if (href) rich.current?.cmd('link', { href }); }} title="Link">Link</button>
+          <button type="button" aria-pressed={linkOpen} onClick={() => setLinkOpen(!linkOpen)} title="Link">Link</button>
           <span class="toolbar__sep" />
           <button type="button" onClick={() => rich.current?.cmd('quote')} title="Quote">“ ”</button>
           <button type="button" onClick={() => rich.current?.cmd('ul')} title="Bullet list">• List</button>
@@ -275,6 +266,7 @@ export default function Editor(props: { id?: string; inline?: boolean; onDone?: 
           <button type="button" aria-pressed={mode === 'markdown'} onClick={() => switchMode('markdown')}>Markdown</button>
         </span>
       </div>
+      {!inline && linkOpen && <form class="chips" onSubmit={(e) => { e.preventDefault(); if (linkHref) rich.current?.cmd('link', { href: linkHref }); setLinkHref(''); setLinkOpen(false); }}><input class="picker__in" placeholder="https://…" value={linkHref} onInput={(e) => setLinkHref((e.target as HTMLInputElement).value)} autofocus /><button type="submit" class="btn btn--solid btn--small">Add link</button></form>}
       {lossy && mode === 'markdown' && <p class="mono muted lossy">Opened in Markdown mode because this note uses {lossy}, which the rich editor would not preserve.</p>}
       {mode === 'rich' ? <div class="editor__body editor__body--rich" ref={richHost} /> : <div class="editor__body prose" ref={host} />}
       {conflict && (

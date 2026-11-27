@@ -40,3 +40,47 @@ export function publicUrl(r: RecordSummary, rootCollections: string[] = ['pages'
     default: return null;
   }
 }
+
+// ---- typed helpers used by the owner UI kit ----
+export interface Loaded { id: string; path: string; type: string; frontmatter: Record<string, unknown>; body: string; raw: string; sha: string; conflict: { ours: string; theirs: string } | null }
+export const getRecord = (id: string) => api<Loaded>(`/api/records/${encodeURIComponent(id)}`);
+export const saveRecord = (id: string, frontmatter: Record<string, unknown>, body: string, base_sha?: string) =>
+  api<{ ok: boolean; sha: string }>(`/api/records/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ frontmatter, body, base_sha }) });
+export const createRecord = (type: string, frontmatter: Record<string, unknown>, body = '') =>
+  api<{ id: string; path: string; sha: string; frontmatter: Record<string, unknown>; body: string }>('/api/records', { method: 'POST', body: JSON.stringify({ type, frontmatter, body }) });
+export interface DeleteDryRun { type: string; title: string | null; entries: number; items_kept: number; reviews: number; paths: string[] }
+export const deleteRecord = (id: string, opts: { cascade?: boolean; dryRun?: boolean; keepalive?: boolean } = {}) => {
+  const q = new URLSearchParams(); if (opts.cascade) q.set('cascade', '1'); if (opts.dryRun) q.set('dry_run', '1');
+  return api<DeleteDryRun | { ok: boolean }>(`/api/records/${encodeURIComponent(id)}${q.size ? '?' + q : ''}`, { method: 'DELETE', keepalive: opts.keepalive });
+};
+export const setVisibility = (id: string, visibility: 'public' | 'private', cascade = false) =>
+  api<{ ok: boolean; changed: string[] }>(`/api/records/${encodeURIComponent(id)}/visibility`, { method: 'POST', body: JSON.stringify({ visibility, cascade }) });
+export const listRecords = (params: Record<string, string | number | undefined>) => {
+  const q = new URLSearchParams(); for (const [k, v] of Object.entries(params)) if (v !== undefined && v !== '') q.set(k, String(v));
+  return api<{ records: RecordSummary[] }>(`/api/records?${q}`);
+};
+export interface CollectionDef { key: string; title: string; path?: string; form: 'arch' | 'stepped'; feed: boolean; nav: boolean }
+export interface ListTypeDef { key: string; title: string; queue: boolean; item_kinds: string[]; default_for: string[]; add_label?: string; private_default: boolean; allow_for: boolean; form?: string; done?: boolean; completion?: { list: string; label?: string } }
+export interface SiteConfig { title: string; url: string; timezone: string; mention_policy: string; rating_scale?: number; categories?: string[]; [k: string]: unknown }
+export interface Config { site: SiteConfig; collections: CollectionDef[]; listTypes: ListTypeDef[] }
+let cfgPromise: Promise<Config> | null = null;
+/** One config fetch per page; `fresh` after a config save. */
+export function getConfig(fresh = false): Promise<Config> {
+  if (!cfgPromise || fresh) cfgPromise = api<Config>(`/api/config${fresh ? '?fresh=1' : ''}`).catch((e) => { cfgPromise = null; throw e; });
+  return cfgPromise;
+}
+export const KIND_LABELS: Record<string, string> = { film: 'Film', tv: 'Series', book: 'Book', album: 'Album', product: 'Thing', place: 'Place', link: 'Link', photo: 'Photo' };
+/** A human label for a record: "Columns", "Film", "Watchlist", "Thought"… never a raw key. */
+export function humanKind(r: { type: string; kind?: string | null; collection?: string | null; list_type?: string | null }, cfg?: Config | null): string {
+  switch (r.type) {
+    case 'writing': return cfg?.collections.find((c) => c.key === r.collection)?.title ?? (r.collection ?? 'Writing');
+    case 'item': return KIND_LABELS[r.kind ?? ''] ?? 'Thing';
+    case 'list': return cfg?.listTypes.find((t) => t.key === r.list_type)?.title ?? 'List';
+    case 'feed': return 'Thought';
+    case 'review': return 'Review';
+    case 'list-entry': return 'On a list';
+    case 'person': return 'Person';
+    case 'tag': return 'Tag';
+    default: return r.type;
+  }
+}

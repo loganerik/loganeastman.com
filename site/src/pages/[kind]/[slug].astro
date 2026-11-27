@@ -32,7 +32,7 @@ const description = d.synopsis ?? r.excerpt ?? `${identity.kinds[d.kind]?.label 
   <article class="wrap item">
   <ItemHeader item={item}>
     <OwnerOnly>
-      <InlineEdit client:only="preact" recordId={d.id} extra={[{ label: 'Write a review', href: `/private/new/?type=review&item=${d.id}` }, { label: 'Add to a list', href: `/private/new/?type=list-entry&item=${d.id}` }]} />
+      <InlineEdit client:only="preact" recordId={d.id} title={d.title} type="item" extra={[{ label: 'Write a review', compose: 'review', item: item.path, itemTitle: d.title, itemKind: d.kind }, { label: 'Add to a list', compose: 'list-entry', item: item.path, itemTitle: d.title, itemKind: d.kind }]} />
     </OwnerOnly>
   </ItemHeader>
   {lists.length > 0 && (

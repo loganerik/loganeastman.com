@@ -20,7 +20,7 @@ const isAbout = slugOf(page) === 'about';
 ---
 <Reading title={page.data.title} description={page.data.summary ?? r.excerpt}>
   <Fragment slot="art">{isAbout && identity.placements.about.map((p) => <Pet who={p} size="s" class="about-pet" />)}</Fragment>
-  <OwnerOnly slot="controls"><InlineEdit client:only="preact" recordId={page.data.id} /></OwnerOnly>
+  <OwnerOnly slot="controls"><InlineEdit client:only="preact" recordId={page.data.id} title={page.data.title} type="writing" /></OwnerOnly>
   <Fragment set:html={r.html} />
 </Reading>
 <style>

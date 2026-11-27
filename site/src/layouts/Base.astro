@@ -3,7 +3,7 @@ import Head from '../components/site/Head.astro';
 import Nav from '../components/site/Nav.astro';
 import Footer from '../components/site/Footer.astro';
 import OwnerTools from '../components/private/OwnerTools.astro';
-interface Props { title?: string; description?: string; image?: string; type?: 'website' | 'article'; feeds?: Array<{ title: string; href: string }>; noindex?: boolean; class?: string; preset?: { mode?: 'thought' | 'link' | 'piece' | 'list' | 'entry'; list?: string; collection?: string }; noFab?: boolean }
+interface Props { title?: string; description?: string; image?: string; type?: 'website' | 'article'; feeds?: Array<{ title: string; href: string }>; noindex?: boolean; class?: string; preset?: { mode?: 'thought' | 'link' | 'piece' | 'list' | 'entry' | 'review'; list?: string; collection?: string; item?: string; itemKind?: string; itemTitle?: string }; noFab?: boolean }
 const { class: cls = '', preset, noFab = false, ...head } = Astro.props;
 ---
 <!doctype html>
@@ -17,7 +17,7 @@ const { class: cls = '', preset, noFab = false, ...head } = Astro.props;
       <slot />
     </main>
     <Footer />
-    {!noFab && <OwnerTools preset={preset} />}
+    <OwnerTools preset={preset} noFab={noFab} />
     <script src="../components/private/owner-gate.ts"></script>
     <script src="../components/art/logo-tone.ts"></script>
   </body>

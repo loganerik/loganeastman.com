@@ -20,7 +20,7 @@ const title = rv.data.title ?? (item ? `On ${item.data.title}` : 'Review');
 ---
 <Reading title={title} description={r.excerpt} kicker="Review" meta={[fmtDate(rv.data.date), ...(rv.data.rating != null ? [`${rv.data.rating} / ${idx.config.site.rating_scale}`] : [])]}>
   <Fragment slot="art">{item?.public && <a href={urlFor(item)} class="subject"><Clip record={item} context="list" /></a>}</Fragment>
-  <OwnerOnly slot="controls"><InlineEdit client:only="preact" recordId={rv.data.id} /></OwnerOnly>
+  <OwnerOnly slot="controls"><InlineEdit client:only="preact" recordId={rv.data.id} title={rv.data.title} type="review" /></OwnerOnly>
   {item?.public && <p class="mono muted">About <a href={urlFor(item)}>{item.data.title}</a></p>}
   <Fragment set:html={r.html} />
 </Reading>
