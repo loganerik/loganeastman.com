@@ -28,6 +28,7 @@ const KIND_ROUTES: Record<string, string> = { film: 'film', tv: 'tv', book: 'boo
 const DATE_PREFIX = /^\d{4}-\d{2}-\d{2}-/;
 /** Public URL for a record summary (mirrors src/lib/urls.ts without importing the vault index). */
 export function publicUrl(r: RecordSummary, rootCollections: string[] = ['pages']): string | null {
+  if (r.visibility === 'private' || r.draft) return `/private/view/?id=${r.id}`;
   const stem = r.path.split('/').pop()!;
   switch (r.type) {
     case 'item': return `/${KIND_ROUTES[r.kind ?? ''] ?? r.kind}/${stem}/`;

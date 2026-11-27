@@ -47,7 +47,10 @@ records.get('/api/index/:what', requireOwner, async (c) => {
     return c.json({ tags: rows.map((r) => ({ tag: r.tag, count: r.n, private: r.tag.startsWith('private') || tagRecords.some((t) => t.title === r.tag && t.visibility === 'private') })) });
   }
   if (what === 'people') return c.json({ people: (await all<RecordRow>(c.env.DB, "SELECT * FROM records WHERE type = 'person' ORDER BY title")).map(slim) });
-  if (what === 'lists') return c.json({ lists: (await all<RecordRow>(c.env.DB, "SELECT * FROM records WHERE type = 'list' ORDER BY title")).map(slim) });
+  if (what === 'lists') {
+    const rows = await all<RecordRow & { entries: number }>(c.env.DB, "SELECT r.*, (SELECT COUNT(*) FROM records e WHERE e.type = 'list-entry' AND e.path LIKE 'lists/' || substr(r.path, 7) || '/%') AS entries FROM records r WHERE r.type = 'list' ORDER BY r.title");
+    return c.json({ lists: rows.map((r) => ({ ...slim(r), entries: r.entries })) });
+  }
   return c.json({ error: 'unknown index' }, 404);
 });
 

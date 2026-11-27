@@ -1,0 +1,9 @@
+---
+import Base from '../../../layouts/Base.astro';
+import RecordView from '../../../components/private/RecordView';
+import '../../../styles/owner.css';
+import '../../../styles/editor.css';
+---
+<Base title="Private" noindex>
+  <div class="wrap edit-page"><RecordView client:only="preact" /></div>
+</Base>

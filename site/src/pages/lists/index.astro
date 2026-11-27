@@ -7,6 +7,7 @@ import Sunburst from '../../components/forms/Sunburst.astro';
 import OwnerOnly from '../../components/private/OwnerOnly.astro';
 import CardTools from '../../components/private/CardTools';
 import ConfigSheet from '../../components/private/config/ConfigSheet';
+import PrivateShelf from '../../components/private/PrivateShelf';
 import '../../styles/editor.css';
 import { index, entriesOf, listType, type ResolvedEntry } from '../../lib/content';
 import { urlFor } from '../../lib/urls';
@@ -23,7 +24,8 @@ const lists = idx.ofType<List>('list').map((l) => {
   <OwnerOnly slot="action"><button type="button" class="btn btn--soft" data-config="list-types">Manage kinds of lists</button></OwnerOnly>
   <OwnerOnly><ConfigSheet client:only="preact" /></OwnerOnly>
   {lists.length === 0 && <p class="muted">No lists yet.</p>}
-  <ul class="list-cards">
+  <OwnerOnly><PrivateShelf client:only="preact" type="list" /></OwnerOnly>
+  <ul class="list-cards" data-shelf-static>
     {lists.map(({ l, t, picks }) => (
       <li class="list-card" data-article={l.data.id}>
         <a class="list-card__link" href={urlFor(l)}>

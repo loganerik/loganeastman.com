@@ -105,7 +105,8 @@ function Rows({ records, cfg, empty }: { records: RecordSummary[]; cfg: Cfg | nu
   return (
     <ul class="recs">
       {records.map((r) => {
-        const url = r.visibility === 'public' && !r.draft ? publicUrl(r) : null;
+        const url = publicUrl(r);
+        const isPublic = r.visibility === 'public' && !r.draft;
         return (
           <li key={r.id} data-article={r.id}>
             <div class="recs__main">
@@ -114,7 +115,7 @@ function Rows({ records, cfg, empty }: { records: RecordSummary[]; cfg: Cfg | nu
             </div>
             <div class="chips recs__tools">
               <VisibilityPill id={r.id} value={r.visibility ?? 'public'} type={r.type} />
-              {url && <a class="btn btn--small" href={url}>View</a>}
+              {url && (isPublic || r.type === 'list') && <a class="btn btn--small" href={url}>{isPublic ? 'View' : 'Open'}</a>}
               <a class="btn btn--soft btn--small" href={`/private/edit/?id=${r.id}`}>Edit</a>
               <DeleteButton rec={{ id: r.id, title: r.title, type: r.type }} />
             </div>

@@ -5,6 +5,8 @@ import { renderRecord } from '../../lib/render';
 import { urlFor } from '../../lib/urls';
 import { fmtDate } from '../../lib/dates';
 import Clip from '../../components/art/Clip.astro';
+import OwnerOnly from '../../components/private/OwnerOnly.astro';
+import PrivateShelf from '../../components/private/PrivateShelf';
 import type { Review, Item } from '@lem/vault-core';
 const idx = await index();
 const reviews = idx.ofType<Review>('review').sort((a, b) => String(b.data.date).localeCompare(String(a.data.date)));
@@ -12,7 +14,8 @@ const rows = await Promise.all(reviews.map(async (rv) => ({ rv, item: idx.resolv
 ---
 <Section quiet title="Reviews" count={reviews.length} description="What I thought, after." feeds={[{ title: 'Reviews', href: '/reviews/rss.xml' }]} action={{ label: 'New review', compose: 'review' }}>
   {rows.length === 0 && <p class="muted">No reviews yet.</p>}
-  <ul class="reviews">
+  <OwnerOnly><PrivateShelf client:only="preact" type="review" /></OwnerOnly>
+  <ul class="reviews" data-shelf-static>
     {rows.map(({ rv, item, r }) => (
       <li class="review card">
         {item?.public && <a class="review__art" href={urlFor(rv)} tabindex="-1" aria-hidden="true"><Clip record={item} context="list" decorative /></a>}

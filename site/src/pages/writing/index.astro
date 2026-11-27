@@ -3,6 +3,7 @@ import Section from '../../layouts/Section.astro';
 import PieceCard from '../../components/section/PieceCard.astro';
 import OwnerOnly from '../../components/private/OwnerOnly.astro';
 import ConfigSheet from '../../components/private/config/ConfigSheet';
+import PrivateShelf from '../../components/private/PrivateShelf';
 import { index, writingIn } from '../../lib/content';
 import identity from '@theme/identity';
 const idx = await index();
@@ -19,7 +20,8 @@ const all = collections.flatMap((c) => writingIn(idx, c.key).map((p) => ({ p, c 
     <button type="button" class="btn btn--soft" data-config="collections">Manage collections</button>
   </OwnerOnly>
   {all.length === 0 && <p class="muted">Nothing published yet.</p>}
-  <ul class="writing__grid" data-pieces>
+  <OwnerOnly><PrivateShelf client:only="preact" type="writing" /></OwnerOnly>
+  <ul class="writing__grid" data-pieces data-shelf-static>
     {all.map(({ p, c }) => <li data-collection={c.key}><PieceCard piece={p} form={c.form} kicker={c.title} /></li>)}
   </ul>
   <OwnerOnly><ConfigSheet client:only="preact" /></OwnerOnly>
