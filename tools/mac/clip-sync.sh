@@ -31,7 +31,10 @@ t=open(sys.argv[1],"rb").read().decode("utf-8","ignore")
 for pat in [r"property=[\"\x27]og:image(?::secure_url)?[\"\x27][^>]*content=[\"\x27]([^\"\x27]+)", r"content=[\"\x27]([^\"\x27]+)[\"\x27][^>]*property=[\"\x27]og:image", r"name=[\"\x27]twitter:image[\"\x27][^>]*content=[\"\x27]([^\"\x27]+)"]:
   m=re.search(pat,t,re.I)
   if m: print(html.unescape(m.group(1))); break' "$src")
-    if [[ -z "$img" ]]; then fail "no og:image on page"; continue; fi
+    if [[ -z "$img" ]]; then
+      if grep -qiE 'security checkpoint|just a moment|access denied|attention required|are you a human|captcha' "$src"; then fail "shop serves a bot wall even from home: paste the picture in the editor"; else fail "no og:image on page"; fi
+      continue
+    fi
     if ! curl -sSL --compressed --max-time 60 -o "$src" "$img"; then fail "image download error"; continue; fi
     mime=$(file -b --mime-type "$src")
   fi
