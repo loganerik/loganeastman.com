@@ -9,7 +9,10 @@ interface Props { e: ResolvedEntry; showArt?: boolean }
 const { e, showArt = true } = Astro.props;
 const href = urlFor(e.item);
 const d = e.item.data;
-const credit = d.director?.join(', ') ?? d.authors?.join(', ') ?? d.artist ?? d.site_name ?? '';
+const credit = d.director?.join(', ') ?? d.authors?.join(', ') ?? d.artist ?? (d as { brand?: string }).brand ?? d.site_name ?? '';
+const price = (d as { price?: number | string }).price;
+const priceText = price != null && price !== '' ? (typeof price === 'number' ? `$${price % 1 === 0 ? price : price.toFixed(2)}` : String(price)) : '';
+const host = (() => { try { const h = new URL(d.url ?? '').hostname; return h.startsWith('www.') ? h.slice(4) : h; } catch { return ''; } })();
 const done = e.entry.data.state === 'done';
 ---
 <li class={`entry card ${done ? 'entry--done' : ''}`} style={`--angle:${restingAngle(e.item.data.id, 'cover')}deg`}>
@@ -21,9 +24,9 @@ const done = e.entry.data.state === 'done';
   <div class="entry__text">
     <p class="mono muted">{kickerFor(e.item)}{done && ' · finished'}</p>
     <h3 class="entry__title"><a href={href}>{d.title}</a></h3>
-    {credit && <p class="muted entry__credit">{credit}</p>}
+    {(credit || priceText) && <p class="muted entry__credit">{credit}{credit && priceText ? ' · ' : ''}{priceText}</p>}
     {e.why && <p class="entry__why">{e.why}</p>}
-    <p class="mono faint entry__added">Added {fmtDate(e.entry.data.added)}</p>
+    <p class="mono faint entry__added">Added {fmtDate(e.entry.data.added)}{host && <> · <a href={d.url} rel="noopener" target="_blank">{host}</a></>}</p>
   </div>
 </li>
 <style>

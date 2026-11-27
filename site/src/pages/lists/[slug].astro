@@ -23,12 +23,12 @@ const done = entries.filter((e) => e.entry.data.state === 'done');
   {intro.html && <div class="prose intro" slot="intro" set:html={intro.html} />}
   {entries.length === 0 && <p class="muted">Nothing here yet.</p>}
   <SectionGrid variant="rows">
-    {active.map((e) => <ListEntry e={e} showArt={t?.queue ?? true} />)}
+    {active.map((e) => <ListEntry e={e} />)}
   </SectionGrid>
   {done.length > 0 && (
     <section class="done">
       <div class="rule-label"><span>Finished</span></div>
-      <SectionGrid variant="rows">{done.map((e) => <ListEntry e={e} showArt={t?.queue ?? true} />)}</SectionGrid>
+      <SectionGrid variant="rows">{done.map((e) => <ListEntry e={e} />)}</SectionGrid>
     </section>
   )}
 </Section>
