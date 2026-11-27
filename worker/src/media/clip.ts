@@ -59,7 +59,13 @@ export async function finishClip(env: Env, mediaId: string, png: ArrayBuffer, pr
   if (!dims) throw new Error('clip must be a PNG');
   const v = await putVariant(env, mediaId, 'clip', png, 'png', { provider });
   const m = await one<{ record_id: string | null }>(env.DB, 'SELECT record_id FROM media WHERE id = ?', mediaId);
-  const rec = m?.record_id ? await one<{ path: string }>(env.DB, 'SELECT path FROM records WHERE id = ?', m.record_id) : null;
-  if (rec) await vaultCommit(env, { message: `media: cutout for ${rec.path.split('/').pop()}`, ops: [{ op: 'setIn', path: `${rec.path}.md`, sets: [{ at: ['artwork', 'clip'], value: v.url }, { at: ['artwork', 'clip_size'], value: [v.w, v.h] }, { at: ['artwork', 'media'], value: mediaId }] }] });
+  const rec = m?.record_id ? await one<{ path: string; frontmatter_json: string | null }>(env.DB, 'SELECT path, frontmatter_json FROM records WHERE id = ?', m.record_id) : null;
+  if (rec) {
+    // a finished cutout becomes the treatment unless the owner chose a non-photo treatment on purpose
+    const current = (JSON.parse(rec.frontmatter_json ?? '{}') as { artwork?: { treatment?: string } }).artwork?.treatment;
+    const sets: Array<{ at: string[]; value: unknown }> = [{ at: ['artwork', 'clip'], value: v.url }, { at: ['artwork', 'clip_size'], value: [v.w, v.h] }, { at: ['artwork', 'media'], value: mediaId }];
+    if (!current || current === 'paper' || current === 'cutout') sets.push({ at: ['artwork', 'treatment'], value: 'cutout' });
+    await vaultCommit(env, { message: `media: cutout for ${rec.path.split('/').pop()}`, ops: [{ op: 'setIn', path: `${rec.path}.md`, sets }] });
+  }
   return { url: v.url, w: v.w, h: v.h };
 }
