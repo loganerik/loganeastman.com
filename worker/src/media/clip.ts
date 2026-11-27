@@ -12,8 +12,17 @@ const REPLICATE_MODEL = 'men1scus/birefnet'; // background removal; swap via CLI
 
 export async function runClipJob(env: Env, job: ClipJob, fetchImpl: typeof fetch = (i, o) => fetch(i, o)): Promise<{ status: 'ready' | 'pending' }> {
   // the job may name a media id or a record id (media_attach); resolve to the media row either way
-  const m = (await one<{ id: string; orig_key: string | null; record_id: string | null }>(env.DB, 'SELECT id, orig_key, record_id FROM media WHERE id = ?', job.media_id))
+  let m = (await one<{ id: string; orig_key: string | null; record_id: string | null }>(env.DB, 'SELECT id, orig_key, record_id FROM media WHERE id = ?', job.media_id))
     ?? (await one<{ id: string; orig_key: string | null; record_id: string | null }>(env.DB, "SELECT id, orig_key, record_id FROM media WHERE record_id = ? ORDER BY created_at DESC LIMIT 1", job.media_id));
+  if (!m) {
+    // the record may have been converted (new id): follow its artwork.media reference and relink the media row
+    const rec = await one<{ frontmatter_json: string | null }>(env.DB, 'SELECT frontmatter_json FROM records WHERE id = ?', job.media_id);
+    const mediaId = (JSON.parse(rec?.frontmatter_json ?? '{}') as { artwork?: { media?: string } }).artwork?.media;
+    if (mediaId) {
+      m = await one<{ id: string; orig_key: string | null; record_id: string | null }>(env.DB, 'SELECT id, orig_key, record_id FROM media WHERE id = ?', mediaId);
+      if (m) { await run(env.DB, 'UPDATE media SET record_id = ? WHERE id = ?', job.media_id, m.id); m.record_id = job.media_id; }
+    }
+  }
   if (!m) throw new Error('media not found');
   // covers and title art are shown whole; a cutout only happens when the owner set treatment: cutout explicitly
   if (m.record_id) {
