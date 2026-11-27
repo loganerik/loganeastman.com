@@ -65,7 +65,7 @@ export function fromTmdb(d: TmdbDetails): Enriched {
 }
 
 export function fromOpenLibrary(b: OlBook): Enriched {
-  const keys = clean({ openlibrary_id: b.olid, isbn13: b.isbn13, authors: b.authors.length ? b.authors : undefined, published: b.published, published_year: b.year, publisher: b.publisher, sources: { openlibrary: { fetched: new Date().toISOString() } } });
+  const keys = clean({ openlibrary_id: b.olid, isbn13: b.isbn13, authors: b.authors.length ? b.authors : undefined, published: b.published, published_year: b.year, publisher: b.publisher, synopsis: b.description, sources: { openlibrary: { fetched: new Date().toISOString() } } });
   const identities = [{ provider: 'openlibrary', external_id: b.olid }];
   if (b.isbn13) identities.push({ provider: 'isbn', external_id: b.isbn13 });
   return { kind: 'book', title: b.title, year: b.year, keys, identities, artwork: { cover: b.cover_id ? `openlibrary:${b.cover_id}` : undefined } };

@@ -1,7 +1,8 @@
 // Open Library: books by ISBN, OLID, or title/author search. Free, no key. Dates are messy; keep only what parses.
 import { getJson, type FetchLike } from './http.ts';
 
-export interface OlBook { olid: string; title: string; authors: string[]; year?: number; published?: string; publisher?: string; isbn13?: string; cover_id?: number; popularity?: number }
+export interface OlBook { olid: string; title: string; authors: string[]; year?: number; published?: string; publisher?: string; isbn13?: string; cover_id?: number; popularity?: number; description?: string }
+const desc = (v: unknown): string | undefined => (typeof v === 'string' ? v : v && typeof v === 'object' && typeof (v as { value?: unknown }).value === 'string' ? (v as { value: string }).value : undefined);
 
 export class OpenLibrary {
   private fetchImpl: FetchLike;
@@ -39,7 +40,7 @@ export class OpenLibrary {
       if (ad?.name) authors.push(ad.name);
     }
     const published = typeof d.publish_date === 'string' ? d.publish_date : undefined;
-    return { olid: workKey?.replace('/works/', '') ?? String(d.key).replace('/books/', ''), title: String(d.title ?? work?.title ?? ''), authors, year: published ? Number(/\d{4}/.exec(published)?.[0]) || undefined : undefined, published: parseDate(published), publisher: Array.isArray(d.publishers) ? d.publishers[0] : undefined, isbn13: isbn.length === 13 ? isbn : (d.isbn_13?.[0] as string | undefined), cover_id: d.covers?.[0] };
+    return { olid: workKey?.replace('/works/', '') ?? String(d.key).replace('/books/', ''), title: String(d.title ?? work?.title ?? ''), authors, year: published ? Number(/\d{4}/.exec(published)?.[0]) || undefined : undefined, published: parseDate(published), publisher: Array.isArray(d.publishers) ? d.publishers[0] : undefined, isbn13: isbn.length === 13 ? isbn : (d.isbn_13?.[0] as string | undefined), cover_id: d.covers?.[0], description: desc(work?.description ?? d.description)?.split('\n')[0]?.trim() };
   }
   async byOlid(olid: string): Promise<OlBook | null> {
     const kind = olid.endsWith('M') ? 'books' : 'works';
@@ -52,7 +53,7 @@ export class OpenLibrary {
       const ad = await getJson<{ name?: string }>(`${this.base}${key}.json`, {}, this.fetchImpl).catch(() => null);
       if (ad?.name) authors.push(ad.name);
     }
-    return { olid, title: String(d.title ?? ''), authors, year: d.first_publish_date ? Number(/\d{4}/.exec(String(d.first_publish_date))?.[0]) || undefined : undefined, cover_id: d.covers?.[0] };
+    return { olid, title: String(d.title ?? ''), authors, year: d.first_publish_date ? Number(/\d{4}/.exec(String(d.first_publish_date))?.[0]) || undefined : undefined, cover_id: d.covers?.[0], description: desc(d.description)?.split('\n')[0]?.trim() };
   }
   static coverUrl(coverId: number, size: 'S' | 'M' | 'L' = 'L'): string {
     return `https://covers.openlibrary.org/b/id/${coverId}-${size}.jpg`;
