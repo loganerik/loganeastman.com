@@ -41,6 +41,9 @@ const units = Math.round(shown * (1 + 1 / identity.wall.petRatio));
   /* Seals: a disc at ~78% of the cell with the list name set large. */
   .tile .tile__seal { width: 78%; height: auto; aspect-ratio: 1; padding: 8% 10%; }
   .tile__slip { max-width: 100%; }
+  .tile .tile__slip--attached { display: grid; gap: 0.6rem; justify-items: center; text-align: center; max-height: 94%; overflow: hidden; }
+  .tile__attached { display: block; width: min(70cqw, 220px); }
+  .tile .tile__attached .clip:has(> img) { width: 100%; height: auto; margin: 0; }
   .tile__text { font-family: var(--font-display); font-size: clamp(0.95rem, 2.2cqw, 1.2rem); line-height: 1.35; text-wrap: pretty; }
   /* short thoughts read as headlines: the fewer the words, the larger the type */
   .tile[data-size='s'] .tile__text { font-size: clamp(1.1rem, 3cqw, 1.5rem); line-height: 1.3; }

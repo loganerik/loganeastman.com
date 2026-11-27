@@ -25,7 +25,7 @@ const older = posts[i + 1];
 <Base title={post.data.title ?? r.excerpt.slice(0, 60)} description={r.excerpt} type="article">
   <div class="wrap one">
     <div data-article><FeedSlip post={post} link={false} /></div>
-    {about?.public && <p class="mono muted">About <a href={urlFor(about)}>{(about.data as { title?: string }).title}</a></p>}
+    {about?.public && about.type !== 'item' && <p class="mono muted">About <a href={urlFor(about)}>{(about.data as { title?: string }).title}</a></p>}
     <OwnerOnly><InlineEdit client:only="preact" recordId={post.data.id} title={post.data.title ?? r.excerpt.slice(0, 40)} type="feed" /></OwnerOnly>
     <nav class="mono muted pager" aria-label="Feed navigation">
       {older && <a href={urlFor(older)}>← Older</a>}

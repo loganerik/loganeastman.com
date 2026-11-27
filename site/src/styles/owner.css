@@ -186,3 +186,6 @@ details.more > .fields { margin-top: var(--space-2); padding: var(--space-3); bo
 .entry--view .entry__art img { max-width: 100%; height: auto; }
 .entry--view .entry__title { font-size: var(--step-1); font-weight: 500; margin: 0.2rem 0; }
 .entry--view .entry__title a { text-decoration: none; }
+
+.attach__on { display: flex; gap: var(--space-2); align-items: center; justify-content: space-between; margin: 0; padding: 0.5rem 0.7rem; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper-deep); }
+.attach input[type='url'] { margin-bottom: var(--space-2); }

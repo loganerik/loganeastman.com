@@ -6,10 +6,21 @@ import { renderRecord } from '../../lib/render';
 import { urlFor } from '../../lib/urls';
 import { fmtDate } from '../../lib/dates';
 import { restingAngle } from '../../lib/artwork';
+import { index } from '../../lib/content';
+import Clip from '../art/Clip.astro';
+import type { Item } from '@lem/vault-core';
 interface Props { post: Rec<Feed>; angle?: boolean; link?: boolean }
 const { post, angle = false, link = true } = Astro.props;
 const r = await renderRecord(post);
 const href = urlFor(post);
+// what the post is about (a link, a film, a thing) shows as a card under the words, like a link in a tweet
+const idx = await index();
+const about = post.data.about ? idx.resolve(post.data.about) : undefined;
+const att = about?.public && about.type === 'item' ? (about as Rec<Item>) : undefined;
+const attHref = att ? ((att.data.kind === 'link' || att.data.kind === 'product') && (att.data as { url?: string }).url ? (att.data as { url?: string }).url! : urlFor(att)) : undefined;
+const attExternal = !!attHref && /^https?:/.test(attHref);
+const attSite = att ? ((att.data as { site_name?: string }).site_name ?? (attExternal ? new URL(attHref!).hostname.replace(/^www\./, '') : undefined)) : undefined;
+const attArt = !!(att?.data.artwork?.clip || att?.data.artwork?.thumb || att?.data.artwork?.full);
 const hasTime = String(post.data.date).length > 10;
 const date = fmtDate(post.data.date, { month: 'short', day: 'numeric', year: 'numeric' }) + (hasTime ? ' · ' + fmtDate(post.data.date, { hour: 'numeric', minute: '2-digit' }) : '');
 ---
@@ -17,6 +28,15 @@ const date = fmtDate(post.data.date, { month: 'short', day: 'numeric', year: 'nu
   {(post.data.artwork?.thumb || post.data.artwork?.clip) && <img class="feed-slip__img" src={post.data.artwork.clip ?? post.data.artwork.thumb} width={(post.data.artwork.clip ? post.data.artwork.clip_size : post.data.artwork.thumb_size)?.[0]} height={(post.data.artwork.clip ? post.data.artwork.clip_size : post.data.artwork.thumb_size)?.[1]} alt={post.data.artwork.alt ?? ''} loading="lazy" decoding="async" />}
   {post.data.title && <h3 class="feed-slip__title">{post.data.title}</h3>}
   <div class="feed-slip__body prose" set:html={r.html} />
+  {att && (
+    <a class="feed-card" href={attHref} {...(attExternal ? { rel: 'noopener', target: '_blank' } : {})}>
+      {attArt && <span class="feed-card__art"><Clip record={att} context="list" decorative sizes="(max-width: 600px) 70vw, 280px" /></span>}
+      <span class="feed-card__text">
+        {attSite && <span class="mono muted feed-card__site">{attSite}</span>}
+        <span class="feed-card__title">{att.data.title}</span>
+      </span>
+    </a>
+  )}
   <p class="feed-slip__meta mono muted">
     {link ? <a href={href}><time datetime={String(post.data.date)}>{date}</time></a> : <time datetime={String(post.data.date)}>{date}</time>}
   </p>
@@ -26,6 +46,13 @@ const date = fmtDate(post.data.date, { month: 'short', day: 'numeric', year: 'nu
   .feed-slip__title { font-size: var(--step-1); margin-bottom: var(--space-2); }
   .feed-slip__img { max-width: 100%; max-height: 320px; width: auto; margin: 0 auto var(--space-3); display: block; }
   .feed-slip__body { font-size: var(--step-0); line-height: 1.5; max-width: none; }
+  .feed-card { display: grid; gap: var(--space-2); margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--rule); text-decoration: none; color: inherit; justify-items: center; text-align: center; }
+  .feed-card__art { display: grid; place-items: center; width: min(100%, 260px); }
+  .feed-card__art :global(.clip) { width: 100%; }
+  .feed-card__text { display: grid; gap: 0.15rem; }
+  .feed-card__site { font-size: 0.65rem; text-transform: uppercase; }
+  .feed-card__title { font-family: var(--font-display); font-size: var(--step-0); line-height: 1.25; text-wrap: balance; }
+  .feed-card:hover .feed-card__title { text-decoration: underline; }
   .feed-slip__meta { margin-top: var(--space-3); }
   .feed-slip__meta a { text-decoration: none; }
   .feed-slip__meta a:hover { text-decoration: underline; }

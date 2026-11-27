@@ -13,8 +13,10 @@ const textOnly = t.kind === 'thought' || t.kind === 'queue' || (t.kind === 'piec
 <li class={`tile tile--${t.kind} ${t.shape ? 'tile--' + t.shape : ''}`} data-tile={t.id} data-band={t.band} data-list={t.listId} data-size={textSize} data-shape={t.shape} data-kind={t.kind} style={`--c:${t.span.c};--r:${t.span.r};--angle:${pl.angle}deg;--dx:${pl.dx}%;--dy:${pl.dy}%`}>
   <a class="tile__link" href={t.href}>
     <span class="vh">{t.kind === 'thought' ? 'Thought' : t.kind === 'queue' ? 'List' : t.kind === 'review' ? 'Review' : t.kind === 'piece' ? 'Writing' : ''}: {t.title}</span>
-    {t.kind === 'thought' && t.shape === 'stepped' ? (
+    {t.kind === 'thought' && t.shape === 'stepped' && !t.attached ? (
       <span class="clip clip--shape stepped tile__frame tile__frame--thought" aria-hidden="true"><span class="tile__text">{t.text}</span></span>
+    ) : t.kind === 'thought' && t.attached ? (
+      <span class="clip clip--shape slip slip--fit tile__slip tile__slip--attached" aria-hidden="true"><span class="tile__attached"><Clip record={t.attached} context="list" decorative sizes="20vw" /></span><span class="tile__text">{t.text}</span></span>
     ) : t.kind === 'thought' ? (
       <span class="clip clip--shape slip slip--fit tile__slip" aria-hidden="true"><span class="tile__text">{t.text}</span></span>
     ) : t.kind === 'queue' && t.shape === 'arch' ? (

@@ -2,6 +2,7 @@ import type { Field } from './fields';
 import { peopleFromRelated, relatedWithPeople } from './fields';
 import RecordPicker from '../ui/RecordPicker';
 import ChipInput from '../ui/ChipInput';
+import AttachField from './AttachField';
 
 function toLocalInput(v: unknown): string {
   if (!v) return '';
@@ -32,6 +33,7 @@ export default function FieldRow({ f, fm, onChange }: { f: Field; fm: Record<str
     case 'tags': return <div class="field" key={f.key}>{lab}<ChipInput kind="tags" value={Array.isArray(v) ? (v as string[]) : []} onChange={(t) => upd(t)} placeholder={f.placeholder} />{f.hint && <span class="field__hint mono muted">{f.hint}</span>}</div>;
     case 'people': return <div class="field" key={f.key}>{lab}<ChipInput kind="people" value={peopleFromRelated(v)} onChange={(p) => onChange('related', relatedWithPeople(v, p))} />{f.hint && <span class="field__hint mono muted">{f.hint}</span>}</div>;
     case 'record': return <div class="field" key={f.key}>{lab}<RecordPicker type={f.recordType ?? 'item'} kinds={f.recordKinds} value={wl(v)} label={wl(v).split('/').pop()?.replace(/-/g, ' ') ?? ''} placeholder={f.placeholder} onChange={(p) => upd(p ? `[[${p.path}]]` : undefined)} />{f.hint && <span class="field__hint mono muted">{f.hint}</span>}</div>;
+    case 'attach': return <AttachField key={f.key} value={v} label={f.label} onChange={(x) => onChange(f.key, x)} />;
     case 'number': return <label class="field" key={f.key}>{lab}<input type="number" step="any" value={v == null ? '' : String(v)} onInput={(e) => upd((e.target as HTMLInputElement).value === '' ? undefined : Number((e.target as HTMLInputElement).value))} /></label>;
     case 'date': return <label class="field" key={f.key}>{lab}<input type="date" value={String(v ?? '').slice(0, 10)} onInput={(e) => upd((e.target as HTMLInputElement).value)} /></label>;
     case 'datetime': return <label class="field" key={f.key}>{lab}<input type="datetime-local" value={toLocalInput(v)} onInput={(e) => { const x = (e.target as HTMLInputElement).value; upd(x ? new Date(x).toISOString().replace(/\.\d{3}Z$/, 'Z') : undefined); }} /></label>;

@@ -19,6 +19,7 @@ export interface WallTile {
   record: VaultRecord; // artwork source (item / piece / list / post)
   shape?: 'slip' | 'seal' | 'arch' | 'stepped';
   tone?: 'pink' | 'green' | 'ink'; // seals and slips
+  attached?: VaultRecord; // a thought's linked thing, shown small above the words
   picks?: VaultRecord[]; // a list's things peeking out of its arch or strip
   text?: string; // for thoughts
   count?: number; // for queues
@@ -71,7 +72,9 @@ export function wallCandidates(idx: VaultIndex): WallTile[] {
     const hasArt = !!(p.data.artwork?.clip || p.data.artwork?.thumb);
     if (!text && !hasArt) continue;
     const words = text.split(' ').length;
-    push({ id: p.data.id, kind: hasArt ? 'photo' : 'thought', href: urlFor(p, idx), title: p.data.title ?? text.slice(0, 60), caption: String(p.data.date).length > 10 ? fmtDate(p.data.date, { month: 'short', day: 'numeric' }) + ' · ' + fmtDate(p.data.date, { hour: 'numeric', minute: '2-digit' }) : fmtDate(p.data.date), record: p, shape: hasArt ? undefined : words <= 6 ? 'stepped' : 'slip', text: text.length > 140 ? text.slice(0, 137).trimEnd() + '…' : text, words, score: 0.9 * recency(p.data.date, 30) });
+    const ab = p.data.about ? idx.resolve(p.data.about) : undefined;
+    const attached = ab?.public && ab.type === 'item' && ((ab.data as Item).artwork?.clip || (ab.data as Item).artwork?.thumb) ? ab : undefined;
+    push({ attached, id: p.data.id, kind: hasArt ? 'photo' : 'thought', href: urlFor(p, idx), title: p.data.title ?? text.slice(0, 60), caption: String(p.data.date).length > 10 ? fmtDate(p.data.date, { month: 'short', day: 'numeric' }) + ' · ' + fmtDate(p.data.date, { hour: 'numeric', minute: '2-digit' }) : fmtDate(p.data.date), record: p, shape: hasArt ? undefined : words <= 6 ? 'stepped' : 'slip', text: text.length > 140 ? text.slice(0, 137).trimEnd() + '…' : text, words, score: 0.9 * recency(p.data.date, 30) });
   }
   // lists: every list is on the wall in one of four forms (seal, arch, stepped frame, slip), chosen by the list's
   // own `form`, else its type's, else dealt round-robin so lists of one type never all look alike; and every list

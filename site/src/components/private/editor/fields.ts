@@ -3,7 +3,7 @@
 import type { Config } from '../api';
 import { KIND_LABELS } from '../api';
 
-export type FieldKind = 'text' | 'long' | 'date' | 'datetime' | 'bool' | 'select' | 'number' | 'tags' | 'people' | 'record' | 'visibility' | 'slug';
+export type FieldKind = 'text' | 'long' | 'date' | 'datetime' | 'bool' | 'select' | 'number' | 'tags' | 'people' | 'record' | 'visibility' | 'slug' | 'attach';
 export interface Field { key: string; label: string; kind: FieldKind; options?: Array<{ value: string; label: string }>; placeholder?: string; recordType?: string; recordKinds?: string[]; hint?: string }
 export interface FieldSet { essentials: Field[]; more: Field[] }
 
@@ -22,8 +22,8 @@ export function fieldsFor(type: string, cfg: Config | null, kind?: string): Fiel
       more: [{ key: 'summary', label: 'Summary', kind: 'long', placeholder: 'A line for cards and feeds' }, draftF, vis, tagsF, peopleF, slugF],
     };
     case 'feed': return {
-      essentials: [],
-      more: [{ key: 'title', label: 'Title', kind: 'text', placeholder: 'optional' }, { key: 'date', label: 'Date & time', kind: 'datetime' }, { key: 'about', label: 'About', kind: 'record', recordType: 'item', placeholder: 'a film, book, thing…' }, vis, tagsF, peopleF],
+      essentials: [{ key: 'about', label: 'Link', kind: 'attach' }],
+      more: [{ key: 'title', label: 'Title', kind: 'text', placeholder: 'optional' }, { key: 'date', label: 'Date & time', kind: 'datetime' }, vis, tagsF, peopleF],
     };
     case 'review': return {
       essentials: [{ key: 'item', label: 'What it is about', kind: 'record', recordType: 'item' }, { key: 'rating', label: 'Rating', kind: 'number' }],

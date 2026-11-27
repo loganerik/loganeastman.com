@@ -9,6 +9,7 @@ import { github } from './routes/github';
 import { questions } from './routes/questions';
 import { tokens } from './routes/tokens';
 import { records } from './routes/records';
+import { links } from './routes/links';
 import { publish } from './routes/publish';
 import { complete } from './routes/complete';
 import { lists } from './routes/lists';
@@ -60,6 +61,7 @@ app.route('/', lists);
 app.route('/', people);
 app.route('/', tokens);
 app.route('/', records);
+app.route('/', links);
 app.route('/', assets);
 app.all('/mcp', requireScopes(), (c) => handleMcp(c.req.raw, c.env, c.get('principal')!));
 
