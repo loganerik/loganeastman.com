@@ -15,3 +15,11 @@ Auth for the scripts: simplest is an **agent token** minted in /private → Agen
 (the script reads it automatically). Alternatives: a Cloudflare Access **service token** (Zero Trust → Access → Service Auth), exported as
 `CF_ACCESS_CLIENT_ID` / `CF_ACCESS_CLIENT_SECRET` in the plist's EnvironmentVariables and allowed by the Access policy,
 or `LEM_COOKIE="CF_Authorization=…"` copied from a signed-in browser (expires with the session).
+
+## Pictures the site cannot download itself
+
+Some shops (Aesop, La Roche-Posay) refuse Cloudflare's addresses. When the Worker gets a 403 or similar for a
+picture URL it puts the URL in a fetch queue instead of failing; `clip-sync.sh` downloads it from here on its
+next run, uploads it to `/api/media/fetch/<id>`, and the site makes the derivatives and queues the usual
+cutout (products) or trim (covers). `GET /api/media/fetch-queue` shows what is waiting. If a shop hands even
+the Mac a bot-challenge page, paste the picture into the editor's Cover & artwork panel instead.
