@@ -9,7 +9,7 @@ export interface Identity {
   footer: { about: { label: string; href: string } };
   writing: { rootCollections: string[] };
   kinds: Record<string, { route: string; label: string; plural: string; treatment: string }>;
-  wall: { maxTiles: number; quotas: Record<string, number>; perturbation: number; picksPerList: [number, number]; petRatio: number };
+  wall: { maxTiles: number; quotas: Record<string, number>; perturbation: number; picksPerList: [number, number]; bakePerList: number; petRatio: number };
 }
 
 const identity: Identity = {
@@ -61,6 +61,8 @@ const identity: Identity = {
     link: { route: 'links', label: 'Link', plural: 'Links', treatment: 'typeset' },
     photo: { route: 'photos', label: 'Photo', plural: 'Photos', treatment: 'cutout' },
   },
-  wall: { maxTiles: 64, quotas: { photo: 12, piece: 10, thought: 8, pick: 32, queue: 8, review: 4, gift: 8 }, perturbation: 14, picksPerList: [3, 5], petRatio: 3 },
+  // The wall takes stock of everything, then deals: every list (seal + a few of its things, rotating daily), a healthy
+  // share of writing and thoughts, photos and reviews, and a pet between every couple of tiles. It grows with the site.
+  wall: { maxTiles: 240, quotas: { photo: 16, piece: 16, thought: 16, pick: 160, queue: 24, review: 8, gift: 12 }, perturbation: 14, picksPerList: [3, 5], bakePerList: 12, petRatio: 2 },
 };
 export default identity;

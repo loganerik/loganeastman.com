@@ -1,11 +1,13 @@
-// Who gets on the wall: photos with clips, writing, recent thoughts, up to three picks per ordinary list,
-// one seal per media queue, reviews whose subject is finished. Scored by weight × recency; quotas per kind.
+// Who gets on the wall: photos with clips, writing, recent thoughts, a seal for every list plus a rotating dozen
+// of its things, reviews whose subject is finished. Scored by weight × recency; quotas per kind. The client deals
+// the final order per visit (wall-client.ts).
 import type { VaultIndex, VaultRecord } from '../../loaders/index';
 import type { Item, List, Feed, Writing, Review } from '@lem/vault-core';
 import { entriesOf, listType, type Rec } from '../content';
 import { urlFor, titleOf } from '../urls';
 import { fmtDate } from '../dates';
 import identity from '@theme/identity';
+import { splitmix32, hash32 } from './prng';
 
 export type TileKind = 'photo' | 'piece' | 'thought' | 'pick' | 'queue' | 'review' | 'gift';
 export interface WallTile {
@@ -70,13 +72,16 @@ export function wallCandidates(idx: VaultIndex): WallTile[] {
   for (const l of idx.ofType<List>('list')) {
     const lt = listType(idx, l.data.list_type);
     const entries = entriesOf(idx, l as Rec<List>);
-    // every list is on the wall as a seal; ordinary lists also contribute picks (the client shows 3–5 of up to 8 per visit)
+    // every list is on the wall as a seal, and every list lends a few of its things: a daily-rotating dozen are baked,
+    // the client shows 3–5 of them per visit, so the mix changes by the day and by the visit
     if (entries.length) push({ id: l.data.id, kind: 'queue', href: urlFor(l, idx), title: l.data.title, caption: `${lt?.title ?? 'List'} · ${entries.length}`, record: l, shape: 'seal', count: entries.length, score: 0.75 * recency(entries[0]?.entry.data.added) });
-    if (!lt?.queue) {
-      for (const e of entries.slice(0, 8)) {
-        const isGift = lt?.key === 'gifts';
-        push({ id: e.entry.data.id, kind: isGift ? 'gift' : 'pick', href: urlFor(e.item, idx), title: e.item.data.title, caption: isGift ? 'Gift idea' : `from ${l.data.title}`, record: e.item, listId: l.data.id, score: 0.8 * recency(e.entry.data.added) });
-      }
+    const active = entries.filter((e) => e.entry.data.state !== 'done');
+    const day = Math.floor(Date.now() / DAY);
+    const rnd = splitmix32(hash32(l.data.id, day));
+    const baked = active.map((e) => ({ e, k: rnd() })).sort((a, b) => a.k - b.k).slice(0, identity.wall.bakePerList).map((x) => x.e);
+    for (const e of baked) {
+      const isGift = lt?.key === 'gifts';
+      push({ id: e.entry.data.id, kind: isGift ? 'gift' : 'pick', href: urlFor(e.item, idx), title: e.item.data.title, caption: isGift ? 'Gift idea' : `from ${l.data.title}`, record: e.item, listId: l.data.id, score: 0.8 * (0.5 + 0.5 * recency(e.entry.data.added)) });
     }
   }
   // reviews of finished subjects

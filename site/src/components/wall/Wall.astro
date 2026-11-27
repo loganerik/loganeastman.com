@@ -6,7 +6,12 @@ import Pet from '../art/Pet.astro';
 import identity from '@theme/identity';
 interface Props { tiles: WallTile[] }
 const { tiles } = Astro.props;
-const units = tiles.reduce((s, t) => s + t.span.c * t.span.r, 0);
+// reserve roughly what a visit will show: everything that is not a list pick, about four picks per list, and a pet
+// for every couple of tiles (the client hides the rest of the baked picks)
+const perList = new Map<string, number>();
+for (const t of tiles) if (t.listId) perList.set(t.listId, (perList.get(t.listId) ?? 0) + 1);
+const shown = tiles.filter((t) => !t.listId).reduce((s, t) => s + t.span.c * t.span.r, 0) + [...perList.values()].reduce((s, n) => s + Math.min(n, 4), 0);
+const units = Math.round(shown * (1 + 1 / identity.wall.petRatio));
 ---
 <ul class="wall" data-wall data-perturbation={identity.wall.perturbation} data-picks-min={identity.wall.picksPerList[0]} data-picks-max={identity.wall.picksPerList[1]} data-pet-ratio={identity.wall.petRatio} style={`--units:${units}`} aria-label="Recent things">
   {tiles.map((t) => <WallTile tile={t} />)}
