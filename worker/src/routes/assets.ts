@@ -108,6 +108,32 @@ assets.get('/api/media/:id/original', requireScopes('media:write'), async (c) =>
   return new Response(obj.body, { headers });
 });
 
+/** Pictures the Worker could not download; the Mac fetches each from home and uploads it. */
+assets.get('/api/media/fetch-queue', requireScopes('media:write'), async (c) => {
+  const rows = await all<{ id: string; record_id: string; url: string; error: string | null }>(c.env.DB, "SELECT id, record_id, url, error FROM fetch_queue WHERE status = 'pending' ORDER BY created_at LIMIT 20");
+  return c.json({ queue: rows.map((r) => ({ id: r.id, record_id: r.record_id, url: r.url, reason: r.error, upload: `/api/media/fetch/${r.id}` })) });
+});
+
+/** The Mac delivers the bytes: stored as the record's artwork, derivatives made, follow-up cutout/trim queued. */
+assets.post('/api/media/fetch/:id', requireScopes('media:write'), async (c) => {
+  const row = await one<{ id: string; record_id: string; url: string }>(c.env.DB, "SELECT id, record_id, url FROM fetch_queue WHERE id = ?", c.req.param('id'));
+  if (!row) return c.json({ error: 'not found' }, 404);
+  const form = await c.req.formData().catch(() => null);
+  const file = form?.get('file');
+  if (!(file instanceof File)) return c.json({ error: 'multipart field "file" required' }, 400);
+  if (!/^image\//.test(file.type)) return c.json({ error: 'images only' }, 400);
+  const { storeArtworkBytes } = await import('../media/derive');
+  const r = await storeArtworkBytes(c.env, row.record_id, await file.arrayBuffer(), file.type, `mac:${new URL(row.url).hostname}`);
+  await run(c.env.DB, "UPDATE fetch_queue SET status = 'done', error = NULL, updated_at = ? WHERE id = ?", now(), row.id);
+  return c.json({ ok: true, ...r });
+});
+
+assets.post('/api/media/fetch/:id/failed', requireScopes('media:write'), async (c) => {
+  const { reason } = (await c.req.json().catch(() => ({}))) as { reason?: string };
+  await run(c.env.DB, "UPDATE fetch_queue SET status = 'failed', error = ?, updated_at = ? WHERE id = ?", (reason ?? 'failed').slice(0, 300), now(), c.req.param('id'));
+  return c.json({ ok: true });
+});
+
 /** Media the local tool should cut out, oldest first. */
 assets.get('/api/media/clip-queue', requireScopes('media:write'), async (c) => {
   const rows = await all<{ id: string; kind: string; record_id: string | null; media_id: string; params_json: string | null }>(c.env.DB,
