@@ -27,6 +27,8 @@ export async function deriveProviderArtwork(env: Env, recordId: string, job: Der
   }
   const sets: Array<{ at: string[]; value: unknown }> = [{ at: ['artwork', 'media'], value: media.id }];
   let foundSource: string | undefined;
+  const recRow = await one<{ frontmatter_json: string | null }>(env.DB, 'SELECT frontmatter_json FROM records WHERE id = ?', recordId);
+  const pageUrl = (JSON.parse(recRow?.frontmatter_json ?? '{}') as { url?: string }).url;
   const put = async (variant: 'full' | 'thumb' | 'clip', ref: string, width?: number) => {
     let buf: ArrayBuffer;
     let ext: string;
@@ -39,7 +41,8 @@ export async function deriveProviderArtwork(env: Env, recordId: string, job: Der
     } else {
       const src = ref.startsWith('url:') ? ref.slice(4) : providerUrl(ref, env.TMDB_IMAGE_URL || undefined);
       if (!src) return;
-      const res = await fetchImpl(src, { headers: { 'user-agent': 'loganeastman-worker' } });
+      // shops' CDNs often refuse non-browser requests: look like a browser, say where we came from
+      const res = await fetchImpl(src, { headers: { 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15', accept: 'image/avif,image/webp,image/png,image/jpeg,image/*;q=0.8', ...(pageUrl ? { referer: pageUrl } : {}) }, redirect: 'follow' });
       if (!res.ok) throw new Error(`artwork ${res.status} ${src}`);
       buf = await res.arrayBuffer();
       ext = (res.headers.get('content-type') ?? '').includes('png') ? 'png' : 'jpg';

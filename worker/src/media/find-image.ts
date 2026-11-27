@@ -6,7 +6,7 @@ export interface FoundImage { url: string; source: 'og' | 'icon' | 'logo' | 'fav
 
 async function probe(url: string, source: FoundImage['source'], fetchImpl: typeof fetch): Promise<FoundImage | null> {
   try {
-    const res = await fetchImpl(url, { headers: { 'user-agent': 'Mozilla/5.0 (compatible; loganeastman-capture/1.0)', accept: 'image/*' }, redirect: 'follow' });
+    const res = await fetchImpl(url, { headers: { 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15', accept: 'image/avif,image/webp,image/png,image/jpeg,image/*;q=0.8' }, redirect: 'follow' });
     if (!res.ok) return null;
     const ct = res.headers.get('content-type') ?? '';
     if (!/^image\/(png|jpe?g|webp|avif|gif)/.test(ct)) return null; // no icons, no svg: they don't read as artwork

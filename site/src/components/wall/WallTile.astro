@@ -9,7 +9,7 @@ const { tile: t } = Astro.props;
 const pl = placementFor(t.id, t.band, 0);
 const textOnly = t.kind === 'thought' || t.kind === 'queue' || (t.kind === 'piece' && !(t.record.data as { artwork?: unknown }).artwork) || t.kind === 'review';
 ---
-<li class={`tile tile--${t.kind} ${t.shape ? 'tile--' + t.shape : ''}`} data-tile={t.id} data-band={t.band} style={`--c:${t.span.c};--r:${t.span.r};--angle:${pl.angle}deg;--dx:${pl.dx}%;--dy:${pl.dy}%;--s:${pl.scale}`}>
+<li class={`tile tile--${t.kind} ${t.shape ? 'tile--' + t.shape : ''}`} data-tile={t.id} data-band={t.band} data-list={t.listId} style={`--c:${t.span.c};--r:${t.span.r};--angle:${pl.angle}deg;--dx:${pl.dx}%;--dy:${pl.dy}%`}>
   <a class="tile__link" href={t.href}>
     <span class="vh">{t.kind === 'thought' ? 'Thought' : t.kind === 'queue' ? 'List' : t.kind === 'review' ? 'Review' : t.kind === 'piece' ? 'Writing' : ''}: {t.title}</span>
     {t.kind === 'thought' ? (

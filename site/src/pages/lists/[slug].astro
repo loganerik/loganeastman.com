@@ -2,6 +2,7 @@
 import Section from '../../layouts/Section.astro';
 import SectionGrid from '../../components/section/SectionGrid.astro';
 import ListEntry from '../../components/section/ListEntry.astro';
+import { slugOf } from '../../lib/urls';
 import { index, entriesOf, listType, type Rec } from '../../lib/content';
 import { renderRecord } from '../../lib/render';
 import { groupByCategory } from '../../lib/lists';
@@ -9,7 +10,7 @@ import type { List } from '@lem/vault-core';
 
 export async function getStaticPaths() {
   const idx = await index();
-  return idx.ofType<List>('list').map((l) => ({ params: { slug: l.stem }, props: { path: l.path } }));
+  return idx.ofType<List>('list').map((l) => ({ params: { slug: slugOf(l) }, props: { path: l.path } }));
 }
 const idx = await index();
 const list = idx.byPath.get(Astro.props.path) as Rec<List>;
@@ -23,7 +24,7 @@ const groups = queue ? [] : groupByCategory(idx, active);
 const categories = groups.map((g) => g.key);
 let i = 0;
 ---
-<Section preset={{ mode: 'entry', list: list.stem }} title={list.data.title} kicker={t?.title} count={entries.length} description={intro.excerpt || `${list.data.title} · ${entries.length} entries`}
+<Section preset={{ mode: 'entry', list: list.stem }} image={(list.data as { artwork?: { full?: string; thumb?: string } }).artwork?.full ?? (list.data as { artwork?: { thumb?: string } }).artwork?.thumb} title={list.data.title} kicker={t?.title} count={entries.length} description={intro.excerpt || `${list.data.title} · ${entries.length} entries`}
   action={{ label: t?.add_label ?? 'Add', href: `/private/new/?type=list-entry&list=${list.data.id}` }}>
   {intro.html && <div class="prose intro" slot="intro" set:html={intro.html} />}
   {entries.length === 0 && <p class="muted">Nothing here yet.</p>}

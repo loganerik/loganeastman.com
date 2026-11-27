@@ -2,10 +2,10 @@
 // Section pages: steady text, artwork moves. Orderly grids and rows.
 import Base from './Base.astro';
 import OwnerOnly from '../components/private/OwnerOnly.astro';
-interface Props { title: string; description?: string; kicker?: string; count?: number; action?: { label: string; href: string }; feeds?: Array<{ title: string; href: string }>; noindex?: boolean; preset?: { mode?: 'thought' | 'link' | 'piece' | 'list' | 'entry'; list?: string; collection?: string }; quiet?: boolean }
-const { title, description, kicker, count, action, feeds, noindex, preset, quiet = false } = Astro.props;
+interface Props { title: string; description?: string; kicker?: string; count?: number; action?: { label: string; href: string }; feeds?: Array<{ title: string; href: string }>; noindex?: boolean; preset?: { mode?: 'thought' | 'link' | 'piece' | 'list' | 'entry'; list?: string; collection?: string }; quiet?: boolean; image?: string }
+const { title, description, kicker, count, action, feeds, noindex, preset, quiet = false, image } = Astro.props;
 ---
-<Base title={title} description={description} feeds={feeds} noindex={noindex} preset={preset}>
+<Base title={title} description={description} feeds={feeds} noindex={noindex} preset={preset} image={image}>
   <div class="section wrap">
     <header class={`section__head ${quiet ? 'section__head--quiet' : ''}`}>
       <div>

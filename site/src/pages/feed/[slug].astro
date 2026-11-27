@@ -7,11 +7,11 @@ import '../../styles/editor.css';
 import '../../styles/prose.css';
 import { index, feedPosts, type Rec } from '../../lib/content';
 import { renderRecord } from '../../lib/render';
-import { urlFor } from '../../lib/urls';
+import { urlFor, slugOf } from '../../lib/urls';
 import type { Feed } from '@lem/vault-core';
 export async function getStaticPaths() {
   const idx = await index();
-  return feedPosts(idx).map((p) => ({ params: { slug: p.stem }, props: { path: p.path } }));
+  return feedPosts(idx).map((p) => ({ params: { slug: slugOf(p) }, props: { path: p.path } }));
 }
 const idx = await index();
 const post = idx.byPath.get(Astro.props.path) as Rec<Feed>;

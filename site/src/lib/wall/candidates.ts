@@ -22,6 +22,7 @@ export interface WallTile {
   band: 'text' | 'cover' | 'cutout';
   score: number;
   words?: number;
+  listId?: string; // picks: which list they came from (the client keeps 3–5 per list per visit)
 }
 
 const DAY = 86_400_000;
@@ -69,12 +70,12 @@ export function wallCandidates(idx: VaultIndex): WallTile[] {
   for (const l of idx.ofType<List>('list')) {
     const lt = listType(idx, l.data.list_type);
     const entries = entriesOf(idx, l as Rec<List>);
-    if (lt?.queue) {
-      if (entries.length) push({ id: l.data.id, kind: 'queue', href: urlFor(l, idx), title: l.data.title, caption: `${lt.title} · ${entries.length}`, record: l, shape: 'seal', count: entries.length, score: 0.7 * recency(entries[0]?.entry.data.added) });
-    } else {
-      for (const e of entries.slice(0, 3)) {
+    // every list is on the wall as a seal; ordinary lists also contribute picks (the client shows 3–5 of up to 8 per visit)
+    if (entries.length) push({ id: l.data.id, kind: 'queue', href: urlFor(l, idx), title: l.data.title, caption: `${lt?.title ?? 'List'} · ${entries.length}`, record: l, shape: 'seal', count: entries.length, score: 0.75 * recency(entries[0]?.entry.data.added) });
+    if (!lt?.queue) {
+      for (const e of entries.slice(0, 8)) {
         const isGift = lt?.key === 'gifts';
-        push({ id: e.entry.data.id, kind: isGift ? 'gift' : 'pick', href: urlFor(e.item, idx), title: e.item.data.title, caption: isGift ? 'Gift idea' : `from ${l.data.title}`, record: e.item, score: 0.8 * recency(e.entry.data.added) });
+        push({ id: e.entry.data.id, kind: isGift ? 'gift' : 'pick', href: urlFor(e.item, idx), title: e.item.data.title, caption: isGift ? 'Gift idea' : `from ${l.data.title}`, record: e.item, listId: l.data.id, score: 0.8 * recency(e.entry.data.added) });
       }
     }
   }

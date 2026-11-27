@@ -22,7 +22,7 @@ const buildId = import.meta.env.BUILD_ID ?? 'dev';
 <meta property="og:description" content={description} />
 <meta property="og:type" content={type} />
 <meta property="og:url" content={url} />
-{image && <meta property="og:image" content={new URL(image, Astro.site ?? identity.site.url).toString()} />}
+<meta property="og:image" content={new URL(image ?? '/share-default.jpg', Astro.site ?? identity.site.url).toString()} />
 <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
 <link rel="alternate" type="application/rss+xml" title={`${identity.site.name} · everything`} href="/rss.xml" />
 {feeds.map((f) => <link rel="alternate" type="application/rss+xml" title={f.title} href={f.href} />)}

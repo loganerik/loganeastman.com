@@ -12,7 +12,7 @@ export function kindRoute(kind: ItemKind): string {
 /** Public URL slug for a record (writing/review: `slug:` key wins, else filename minus date prefix). */
 export function slugOf(r: VaultRecord): string {
   const d = r.data as { slug?: string };
-  if (d.slug) return d.slug;
+  if (d.slug) return slugify(d.slug) || r.stem;
   if (r.type === 'writing' || r.type === 'review') return r.stem.replace(DATE_PREFIX, '');
   return r.stem;
 }
@@ -20,9 +20,9 @@ export function slugOf(r: VaultRecord): string {
 export function urlFor(r: VaultRecord, index?: VaultIndex): string {
   switch (r.type) {
     case 'item':
-      return `/${kindRoute((r.data as Item).kind)}/${r.stem}/`;
+      return `/${kindRoute((r.data as Item).kind)}/${slugOf(r)}/`;
     case 'list':
-      return `/lists/${r.stem}/`;
+      return `/lists/${slugOf(r)}/`;
     case 'list-entry': {
       const item = index?.resolve((r.data as ListEntry).item);
       return item ? urlFor(item, index) : `/lists/`;
@@ -33,7 +33,7 @@ export function urlFor(r: VaultRecord, index?: VaultIndex): string {
       return `/writing/${c}/${slugOf(r)}/`;
     }
     case 'feed':
-      return `/feed/${r.stem}/`;
+      return `/feed/${slugOf(r)}/`;
     case 'review':
       return `/reviews/${slugOf(r)}/`;
     case 'person':

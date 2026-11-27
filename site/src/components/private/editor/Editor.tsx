@@ -39,13 +39,14 @@ type Field = { key: string; label: string; kind: 'text' | 'date' | 'bool' | 'sel
 function fieldsFor(type: string, cfg: { collections: Array<{ key: string; title: string }>; listTypes: Array<{ key: string; title: string }> } | null): Field[] {
   const vis: Field = { key: 'visibility', label: 'Visibility', kind: 'select', options: ['public', 'private'] };
   const tagsF: Field = { key: 'tags', label: 'Tags', kind: 'tags' };
+  const slugF: Field = { key: 'slug', label: 'URL slug', kind: 'text' };
   switch (type) {
-    case 'writing': return [{ key: 'title', label: 'Title', kind: 'text' }, { key: 'collection', label: 'Collection', kind: 'select', options: cfg?.collections.map((c) => c.key) ?? [] }, { key: 'date', label: 'Date', kind: 'date' }, { key: 'summary', label: 'Summary', kind: 'text' }, { key: 'draft', label: 'Draft', kind: 'bool' }, vis, tagsF];
+    case 'writing': return [{ key: 'title', label: 'Title', kind: 'text' }, { key: 'collection', label: 'Collection', kind: 'select', options: cfg?.collections.map((c) => c.key) ?? [] }, { key: 'date', label: 'Date', kind: 'date' }, { key: 'summary', label: 'Summary', kind: 'text' }, slugF, { key: 'draft', label: 'Draft', kind: 'bool' }, vis, tagsF];
     case 'feed': return [{ key: 'title', label: 'Title (optional)', kind: 'text' }, { key: 'date', label: 'Date', kind: 'date' }, { key: 'about', label: 'About [[record]]', kind: 'text' }, { key: 'draft', label: 'Draft', kind: 'bool' }, vis, tagsF];
     case 'review': return [{ key: 'title', label: 'Title (optional)', kind: 'text' }, { key: 'item', label: 'Item [[record]]', kind: 'text' }, { key: 'date', label: 'Date', kind: 'date' }, { key: 'rating', label: 'Rating', kind: 'number' }, { key: 'draft', label: 'Draft', kind: 'bool' }, vis, tagsF];
-    case 'list': return [{ key: 'title', label: 'Title', kind: 'text' }, { key: 'list_type', label: 'List type', kind: 'select', options: cfg?.listTypes.map((c) => c.key) ?? [] }, { key: 'sort', label: 'Sort', kind: 'select', options: ['added-desc', 'added-asc', 'title', 'manual'] }, vis];
+    case 'list': return [{ key: 'title', label: 'Title', kind: 'text' }, { key: 'list_type', label: 'List type', kind: 'select', options: cfg?.listTypes.map((c) => c.key) ?? [] }, { key: 'sort', label: 'Sort', kind: 'select', options: ['added-desc', 'added-asc', 'title', 'manual'] }, slugF, vis];
     case 'list-entry': return [{ key: 'state', label: 'State', kind: 'select', options: ['active', 'done', 'removed'] }, { key: 'added', label: 'Added', kind: 'date' }, { key: 'for', label: 'For [[person]] (gifts)', kind: 'text' }, vis];
-    case 'item': return [{ key: 'title', label: 'Title', kind: 'text' }, { key: 'year', label: 'Year', kind: 'number' }, { key: 'brand', label: 'Brand', kind: 'text' }, { key: 'category', label: 'Category', kind: 'text' }, { key: 'subtype', label: 'Subtype', kind: 'text' }, { key: 'price', label: 'Price (USD)', kind: 'number' }, { key: 'details', label: 'Details (size, colour)', kind: 'text' }, { key: 'finished', label: 'Finished on', kind: 'date' }, { key: 'url', label: 'URL', kind: 'text' }, vis, tagsF];
+    case 'item': return [{ key: 'title', label: 'Title', kind: 'text' }, { key: 'year', label: 'Year', kind: 'number' }, { key: 'brand', label: 'Brand', kind: 'text' }, { key: 'category', label: 'Category', kind: 'text' }, { key: 'subtype', label: 'Subtype', kind: 'text' }, { key: 'price', label: 'Price (USD)', kind: 'number' }, { key: 'details', label: 'Details (size, colour)', kind: 'text' }, { key: 'finished', label: 'Finished on', kind: 'date' }, { key: 'url', label: 'URL', kind: 'text' }, slugF, vis, tagsF];
     case 'person': return [{ key: 'name', label: 'Name', kind: 'text' }, { key: 'public_alias', label: 'Public alias', kind: 'text' }, vis];
     case 'tag': return [{ key: 'name', label: 'Name', kind: 'text' }, { key: 'description', label: 'Description', kind: 'text' }, vis];
     default: return [vis];
@@ -232,7 +233,7 @@ export default function Editor(props: { id?: string; inline?: boolean; onDone?: 
           return <label class={`fm__f ${f.key === 'title' || f.key === 'name' ? 'fm__f--title' : ''}`} key={f.key}><span class="mono">{f.label}</span><input value={String(v ?? '')} onInput={(e) => upd((e.target as HTMLInputElement).value)} /></label>;
         })}
       </form>
-      {(rec.type === 'item' || rec.type === 'writing' || rec.type === 'feed' || rec.type === 'review') && (
+      {(rec.type === 'item' || rec.type === 'writing' || rec.type === 'feed' || rec.type === 'review' || rec.type === 'list') && (
         <details class="artwork" open={!inline || showMeta || !artwork} hidden={inline && !showMeta && !!artwork}>
           <summary class="mono">Cover &amp; artwork {artwork?.treatment ? `· ${artwork.treatment}` : ''}</summary>
           <CoverPanel recordId={rec.id} type={rec.type} kind={fm.kind as string | undefined} body={body} cover={fm.cover as string | undefined} artwork={artwork as never} approved={fm.approved as boolean | undefined}

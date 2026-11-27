@@ -8,7 +8,7 @@ interface Props { tiles: WallTile[] }
 const { tiles } = Astro.props;
 const units = tiles.reduce((s, t) => s + t.span.c * t.span.r, 0);
 ---
-<ul class="wall" data-wall data-perturbation={identity.wall.perturbation} style={`--units:${units}`} aria-label="Recent things">
+<ul class="wall" data-wall data-perturbation={identity.wall.perturbation} data-picks-min={identity.wall.picksPerList[0]} data-picks-max={identity.wall.picksPerList[1]} style={`--units:${units}`} aria-label="Recent things">
   {tiles.map((t) => <WallTile tile={t} />)}
   {identity.placements.wall.map((p, i) => (
     <li class="wall__pet" data-pet-after={p.after} data-side={p.side} data-first={i === 0 ? '' : undefined} aria-hidden="true" style={`--angle:${(i % 2 ? -1 : 1) * (1 + (i % 3))}deg`}><Pet who={p.who} size="l" flip={p.side === 'left'} /></li>
@@ -24,8 +24,8 @@ const units = tiles.reduce((s, t) => s + t.span.c * t.span.r, 0);
   @media (min-width: 1500px) { .wall { --cols: 5; } }
   .tile { grid-column: span min(var(--c), var(--cols)); grid-row: span var(--r); position: relative; min-width: 0; }
   @media (max-width: 599px) { .tile { grid-column: span min(var(--c), 2); grid-row: span min(var(--r), 2); } }
-  .tile__link { display: grid; place-items: center; width: 100%; height: 100%; text-decoration: none; color: inherit; transform: translate(var(--dx, 0%), var(--dy, 0%)) rotate(var(--angle, 0deg)) scale(var(--s, 1)); transition: transform var(--motion-fast) var(--ease-lift); will-change: transform; }
-  .tile__link:hover, .tile__link:focus-visible { transform: translate(var(--dx, 0%), calc(var(--dy, 0%) - 1.5%)) rotate(calc(var(--angle, 0deg) * 0.4)) scale(calc(var(--s, 1) * 1.03)); }
+  .tile__link { display: grid; place-items: center; width: 100%; height: 100%; text-decoration: none; color: inherit; transform: translate(var(--dx, 0%), var(--dy, 0%)) rotate(var(--angle, 0deg)); transition: transform var(--motion-fast) var(--ease-lift); will-change: transform; }
+  .tile__link:hover, .tile__link:focus-visible { transform: translate(var(--dx, 0%), calc(var(--dy, 0%) - 1.5%)) rotate(calc(var(--angle, 0deg) * 0.4)) scale(1.03); }
   .tile__link:focus-visible { outline: 2px solid var(--focus); outline-offset: 6px; }
   .tile .clip { width: 82%; max-height: 82%; margin: auto; }
   .tile .clip--typeset, .tile .clip--logo { aspect-ratio: auto; height: 100%; }
@@ -50,9 +50,9 @@ const units = tiles.reduce((s, t) => s + t.span.c * t.span.r, 0);
   .tile__cap { position: absolute; left: 50%; bottom: -0.2rem; transform: translate(-50%, 100%); white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; font-size: 0.65rem; color: var(--fg-muted); opacity: 0; transition: opacity var(--motion-fast); pointer-events: none; }
   .tile__link:hover .tile__cap, .tile__link:focus-visible .tile__cap { opacity: 1; }
   @media (hover: none) { .tile__cap { opacity: 1; position: static; transform: none; white-space: normal; text-align: center; margin-top: 0.3rem; } .tile__link { grid-template-rows: 1fr auto; } }
-  .wall__pet { grid-column: span 1; grid-row: span 1; display: grid; place-items: center; transform: translate(var(--dx, 0%), var(--dy, 0%)) rotate(var(--angle, 0deg)) scale(var(--s, 1)); }
+  .wall__pet { grid-column: span 1; grid-row: span 1; display: grid; place-items: center; transform: translate(var(--dx, 0%), var(--dy, 0%)) rotate(var(--angle, 0deg)); }
   .wall__pet .pet img { height: auto; width: 85%; max-height: 100%; object-fit: contain; }
   .wall__pet[data-side='right'] { justify-self: end; }
   @media (max-width: 699px) { .wall__pet { display: none; } .wall__pet[data-first] { display: grid; } }
-  @media (prefers-reduced-motion: reduce) { .tile__link { transition: none; } .tile__link:hover { transform: translate(var(--dx, 0%), var(--dy, 0%)) rotate(var(--angle, 0deg)) scale(var(--s, 1)); } }
+  @media (prefers-reduced-motion: reduce) { .tile__link { transition: none; } .tile__link:hover { transform: translate(var(--dx, 0%), var(--dy, 0%)) rotate(var(--angle, 0deg)); } }
 </style>

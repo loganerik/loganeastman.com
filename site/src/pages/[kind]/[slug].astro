@@ -8,7 +8,7 @@ import InlineEdit from '../../components/private/editor/InlineEdit';
 import '../../styles/editor.css';
 import { index, listsContaining, reviewsOf, type Rec } from '../../lib/content';
 import { renderRecord } from '../../lib/render';
-import { urlFor, kindRoute } from '../../lib/urls';
+import { urlFor, kindRoute, slugOf } from '../../lib/urls';
 import { fmtDate } from '../../lib/dates';
 import identity from '@theme/identity';
 import type { Item } from '@lem/vault-core';
@@ -16,7 +16,7 @@ import { publicTags } from '@lem/vault-core';
 
 export async function getStaticPaths() {
   const idx = await index();
-  return idx.ofType<Item>('item').map((item) => ({ params: { kind: kindRoute(item.data.kind), slug: item.stem }, props: { path: item.path } }));
+  return idx.ofType<Item>('item').map((item) => ({ params: { kind: kindRoute(item.data.kind), slug: slugOf(item) }, props: { path: item.path } }));
 }
 const idx = await index();
 const item = idx.byPath.get(Astro.props.path) as Rec<Item>;
