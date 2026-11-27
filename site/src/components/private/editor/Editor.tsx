@@ -15,6 +15,8 @@ import FieldRow from './FieldRow';
 import VisibilityPill from '../ui/VisibilityPill';
 import { deleteWithUndo } from '../ui/useDelete';
 import { confirmSheet } from '../ui/confirm';
+import { syncMentions, ensurePeople, extractMentions } from './mentions';
+import { peopleFromRelated } from './fields';
 import { loadDraft, saveDraft, clearDraft, type Draft } from './drafts';
 import { createRichEditor, isLossy, type RichEditor } from './milkdown';
 import CoverPanel from './CoverPanel';
@@ -152,7 +154,11 @@ export default function Editor(props: { id?: string; inline?: boolean; record?: 
     if (mode === 'rich' && rich.current) bodyRef.current = rich.current.getMarkdown();
     setStatus('Saving…');
     try {
-      const r = await api<{ sha: string; status: string }>(`/api/records/${rec.id}`, { method: 'PUT', body: JSON.stringify({ frontmatter: { ...fm, artwork: artwork ?? undefined }, body: bodyRef.current, base_sha: override?.baseSha ?? sha ?? undefined }) });
+      const merged = syncMentions({ ...fm, artwork: artwork ?? undefined }, bodyRef.current);
+      const newPeople = extractMentions(bodyRef.current).people.filter((p) => !peopleFromRelated(fm.related).includes(p));
+      if (newPeople.length) await ensurePeople(newPeople);
+      if (merged.tags !== fm.tags || merged.related !== fm.related) setFm((f) => ({ ...f, tags: merged.tags, related: merged.related }));
+      const r = await api<{ sha: string; status: string }>(`/api/records/${rec.id}`, { method: 'PUT', body: JSON.stringify({ frontmatter: merged, body: bodyRef.current, base_sha: override?.baseSha ?? sha ?? undefined }) });
       setSha(r.sha); setDirty(false); setConflict(null); setSavedOnce(true); await clearDraft(rec.id);
       setStatus(r.status === 'skipped' ? 'No changes' : `Saved ${new Date().toLocaleTimeString()} · live in a couple of minutes`);
     } catch (e) {

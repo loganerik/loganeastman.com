@@ -44,9 +44,14 @@ records.get('/api/index/:what', requireOwner, async (c) => {
   if (what === 'tags') {
     const rows = await all<{ tag: string; n: number }>(c.env.DB, "SELECT j.value AS tag, COUNT(*) AS n FROM records, json_each(json_extract(records.frontmatter_json, '$.tags')) j GROUP BY j.value ORDER BY n DESC");
     const tagRecords = await all<RecordRow>(c.env.DB, "SELECT * FROM records WHERE type = 'tag'");
-    return c.json({ tags: rows.map((r) => ({ tag: r.tag, count: r.n, private: r.tag.startsWith('private') || tagRecords.some((t) => t.title === r.tag && t.visibility === 'private') })) });
+    const q = (c.req.query('q') ?? '').toLowerCase();
+    return c.json({ tags: rows.filter((r) => !q || r.tag.toLowerCase().includes(q)).map((r) => ({ tag: r.tag, count: r.n, private: r.tag.startsWith('private') || tagRecords.some((t) => t.title === r.tag && t.visibility === 'private') })) });
   }
-  if (what === 'people') return c.json({ people: (await all<RecordRow>(c.env.DB, "SELECT * FROM records WHERE type = 'person' ORDER BY title")).map(slim) });
+  if (what === 'people') {
+    const q = (c.req.query('q') ?? '').toLowerCase();
+    const rows = await all<RecordRow>(c.env.DB, "SELECT * FROM records WHERE type = 'person' ORDER BY title");
+    return c.json({ people: rows.filter((r) => !q || (r.title ?? '').toLowerCase().includes(q) || (JSON.parse(r.frontmatter_json ?? '{}') as { public_alias?: string }).public_alias?.toLowerCase().includes(q)).map(slim) });
+  }
   if (what === 'lists') {
     const rows = await all<RecordRow & { entries: number }>(c.env.DB, "SELECT r.*, (SELECT COUNT(*) FROM records e WHERE e.type = 'list-entry' AND e.path LIKE 'lists/' || substr(r.path, 7) || '/%') AS entries FROM records r WHERE r.type = 'list' ORDER BY r.title");
     return c.json({ lists: rows.map((r) => ({ ...slim(r), entries: r.entries })) });

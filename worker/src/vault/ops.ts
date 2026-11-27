@@ -7,6 +7,7 @@ export type VaultOp =
   | { op: 'write'; path: string; contents: string; baseSha?: string } // editor save; baseSha guards against overwrite
   | { op: 'setKeys'; path: string; keys: Record<string, unknown>; onlyIfMissing?: string[] } // top-level frontmatter keys
   | { op: 'setIn'; path: string; sets: Array<{ at: string[]; value: unknown }> } // nested, e.g. ['artwork','full']
+  | { op: 'mergeList'; path: string; key: string; items: Array<Record<string, unknown>>; matchOn: string[] } // append items missing from a list key (dedupe on matchOn)
   | { op: 'delete'; path: string };
 
 export interface ApplyResult { path: string; status: 'added' | 'changed' | 'skipped' | 'deleted' | 'conflict'; reason?: string }
@@ -46,6 +47,20 @@ export function applyOp(op: VaultOp, current: { text: string; sha: string } | nu
         }
       });
       if (next === current.text) return { result: { path: op.path, status: 'skipped', reason: 'unchanged' } };
+      return { contents: next, result: { path: op.path, status: 'changed' } };
+    }
+    case 'mergeList': {
+      if (!current) return { result: { path: op.path, status: 'skipped', reason: 'missing' } };
+      const fm = parseNote(current.text).frontmatter;
+      const locked = new Set((fm.locked as string[] | undefined) ?? []);
+      if (locked.has(op.key)) return { result: { path: op.path, status: 'skipped', reason: 'locked' } };
+      const cur = Array.isArray(fm[op.key]) ? (fm[op.key] as Array<Record<string, unknown>>) : [];
+      const norm = (v: unknown) => (typeof v === 'string' ? v.replace(/^\[\[|\]\]$/g, '').split('|')[0]!.replace(/\.md$/, '').trim().toLowerCase() : JSON.stringify(v));
+      const sig = (x: Record<string, unknown>) => op.matchOn.map((k) => norm(x[k])).join('\u0000');
+      const seen = new Set(cur.map(sig));
+      const add = op.items.filter((x) => !seen.has(sig(x)));
+      if (!add.length) return { result: { path: op.path, status: 'skipped', reason: 'unchanged' } };
+      const next = setKeys(current.text, { [op.key]: [...cur, ...add] });
       return { contents: next, result: { path: op.path, status: 'changed' } };
     }
     case 'delete':

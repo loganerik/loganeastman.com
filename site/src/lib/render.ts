@@ -1,7 +1,7 @@
 import { renderMarkdown, type Rendered, type RenderContext } from './markdown/pipeline';
 import { getIndex, type VaultIndex, type VaultRecord } from '../loaders/index';
 import { urlFor, titleOf, tagUrl } from './urls';
-import { isPrivateTag } from '@lem/vault-core';
+import { isPrivateTag, slugify } from '@lem/vault-core';
 
 const cache = new WeakMap<VaultRecord, Promise<Rendered>>();
 
@@ -17,6 +17,14 @@ export function contextFor(index: VaultIndex, depth = 0): RenderContext {
         return null;
       }
       return { url: urlFor(r, index), title: titleOf(r) };
+    },
+    resolveMention(name) {
+      const person = index.resolve(`people/${slugify(name)}`);
+      const policy = index.config.site.mention_policy;
+      if (person?.public) return { url: urlFor(person, index), text: (person.data as { name?: string }).name ?? name };
+      if (policy === 'redact') return { text: 'someone' };
+      if (policy === 'alias') return { text: (person?.data as { public_alias?: string } | undefined)?.public_alias ?? name };
+      return { text: name };
     },
     resolveEmbed(target, size) {
       const t = target.replace(/^\.?\//, '');

@@ -95,10 +95,7 @@ export const recordsLink = defineTool({
       await run(env.DB, 'INSERT INTO suggestions (id, from_id, to_id, kind, reason, confidence, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', id, from_id, to_id, kind, note ?? null, confidence, 'open', now());
       return { status: 'suggested', suggestion_id: id };
     }
-    const blob = await vaultFor(env).readFile(`${from.path}.md`);
-    const related = ((parseNote(blob?.text ?? '').frontmatter.related as Array<Record<string, unknown>>) ?? []).filter((r) => normalizeTarget(String(r.to).replace(/^\[\[|\]\]$/g, '')) !== to.path);
-    related.push({ to: formatWikilink(to.path), kind, ...(note ? { note } : {}) });
-    await vaultCommit(env, { message: `agent: link ${from.title ?? from.path} → ${to.title ?? to.path}`, ops: [{ op: 'setKeys', path: `${from.path}.md`, keys: { related } }] });
+    await vaultCommit(env, { message: `agent: link ${from.title ?? from.path} → ${to.title ?? to.path}`, ops: [{ op: 'mergeList', path: `${from.path}.md`, key: 'related', items: [{ to: formatWikilink(to.path), kind, ...(note ? { note } : {}) }], matchOn: ['to', 'kind'] }] });
     await run(env.DB, 'INSERT OR REPLACE INTO record_links (from_id, to_id, kind) VALUES (?, ?, ?)', from_id, to_id, kind);
     return { status: 'linked' };
   },

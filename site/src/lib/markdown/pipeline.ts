@@ -21,6 +21,8 @@ export interface RenderContext {
   resolveLink(target: string): { url: string; title: string } | null;
   resolveEmbed(target: string, size?: string): EmbedImage | EmbedNote | null;
   tagUrl(tag: string): string | null;
+  /** `@Name` → how to show it per the site's mention policy: a link for public people, bare text otherwise. */
+  resolveMention?(name: string): { url?: string; text: string } | null;
 }
 
 export interface Rendered {
@@ -33,6 +35,7 @@ export interface Rendered {
 
 const WIKI_RE = /(!?)\[\[([^\]|#]+)(?:#([^\]|]+))?(?:\|([^\]]+))?\]\]/g;
 const TAG_RE = /(^|[\s(])#([A-Za-z][\w/-]*)/g;
+const MENTION_RE = /(^|[\s(])@([A-Za-z][\w'-]*)/g;
 
 function remarkObsidian(ctx: RenderContext) {
   return (tree: MdRoot) => {
@@ -63,10 +66,10 @@ function remarkObsidian(ctx: RenderContext) {
       if (!parent || idx === undefined) return;
       if (parent.type === 'link' || parent.type === 'linkReference') return;
       const value = node.value;
-      if (!/\[\[|==|#/.test(value)) return;
+      if (!/\[\[|==|#|@/.test(value)) return;
       const out: PhrasingContent[] = [];
       let last = 0;
-      const re = new RegExp(`${WIKI_RE.source}|==([^=\\n]+)==|${TAG_RE.source}`, 'g');
+      const re = new RegExp(`${WIKI_RE.source}|==([^=\\n]+)==|${TAG_RE.source}|${MENTION_RE.source}`, 'g');
       let m: RegExpExecArray | null;
       while ((m = re.exec(value))) {
         if (m.index > last) out.push({ type: 'text', value: value.slice(last, m.index) });
@@ -101,6 +104,11 @@ function remarkObsidian(ctx: RenderContext) {
           const url = ctx.tagUrl(m[7]);
           if (url) out.push({ type: 'link', url, data: { hProperties: { className: ['tag'] } }, children: [{ type: 'text', value: '#' + m[7] }] });
           else out.push({ type: 'text', value: '#' + m[7] });
+        } else if (m[9] !== undefined) {
+          if (m[8]) out.push({ type: 'text', value: m[8] });
+          const who = ctx.resolveMention?.(m[9]) ?? { text: m[9] };
+          if (who.url) out.push({ type: 'link', url: who.url, data: { hProperties: { className: ['mention'] } }, children: [{ type: 'text', value: who.text }] });
+          else out.push({ type: 'text', value: who.text });
         }
         last = m.index + m[0].length;
       }

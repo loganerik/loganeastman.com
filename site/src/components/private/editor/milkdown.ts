@@ -162,5 +162,6 @@ export function isLossy(md: string): string | null {
   if (/<(div|table|details|iframe|figure)\b/i.test(md)) return 'raw HTML blocks';
   if (/^>\s*>/m.test(md)) return 'nested blockquotes';
   if (/\$\$|\$[^$\n]+\$/.test(md)) return 'math';
+  if (/(^|[\s(])@[A-Za-z]/.test(md)) return '@mentions';
   return null;
 }

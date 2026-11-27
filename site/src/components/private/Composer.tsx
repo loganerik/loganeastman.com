@@ -10,22 +10,12 @@ import ChipInput from './ui/ChipInput';
 import Sheet from './ui/Sheet';
 import Editor from './editor/Editor';
 import { toast } from './ui/toast';
+import { extractMentions, ensurePeople } from './editor/mentions';
 
 type Kind = 'feed' | 'writing' | 'review' | 'list' | 'list-entry' | 'item' | 'person';
 const KINDS: Array<[Kind, string]> = [['feed', 'Thought'], ['writing', 'Piece'], ['review', 'Review'], ['list', 'List'], ['list-entry', 'On a list'], ['item', 'Thing'], ['person', 'Person']];
 export interface Preset { mode?: string; list?: string; collection?: string; item?: string; itemKind?: string; itemTitle?: string; listTitle?: string }
 type Intent = '' | 'writing' | 'feed' | 'list' | 'review';
-
-/** `@Name #tag` anywhere in the text become people and tags; a trailing line of only such tokens is removed. */
-export function extractMentions(raw: string): { body: string; people: string[]; tags: string[] } {
-  const people: string[] = [], tags: string[] = [];
-  const lines = raw.trim().split('\n');
-  const last = lines[lines.length - 1] ?? '';
-  if (lines.length > 1 && /^(\s*[@#][\w/-]+)+\s*$/.test(last)) lines.pop();
-  for (const m of raw.matchAll(/(^|[\s(])@([A-Za-z][\w'-]*)/g)) if (!people.includes(m[2]!)) people.push(m[2]!);
-  for (const m of raw.matchAll(/(^|[\s(])#([A-Za-z][\w/-]*)/g)) if (!tags.includes(m[2]!)) tags.push(m[2]!);
-  return { body: lines.join('\n').trim(), people, tags };
-}
 
 export default function Composer({ preset, page = false }: { preset?: Preset; page?: boolean }) {
   const presetKind = (): Kind => preset?.mode === 'piece' ? 'writing' : preset?.mode === 'thought' ? 'feed' : preset?.mode === 'entry' ? 'list-entry' : preset?.mode === 'list' ? 'list' : preset?.mode === 'review' ? 'review' : 'feed';
@@ -109,6 +99,7 @@ export default function Composer({ preset, page = false }: { preset?: Preset; pa
     if (kind === 'list-entry' && !listHint) { setStatus('Pick a list.'); return; }
     setBusy(true); setStatus('Saving…');
     try {
+      if (allPeople.length) await ensurePeople(allPeople);
       const front: Record<string, unknown> = { ...fm, visibility: priv ? 'private' : 'public' };
       if (allTags.length) front.tags = allTags.map((t) => (priv || t.startsWith('private/') ? t : t));
       if (allPeople.length) front.related = relatedWithPeople(fm.related, allPeople);
