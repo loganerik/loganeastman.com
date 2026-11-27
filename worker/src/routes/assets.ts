@@ -152,3 +152,11 @@ assets.get('/api/media/index', requireScopes('media:write'), async (c) => {
   const blob = await vaultFor(c.env).readFile('_media/index.json');
   return c.json(blob ? JSON.parse(blob.text) : { attachments: {} });
 });
+
+/** The local tool found nothing to cut out: record it so the queue stops offering this media. */
+assets.post('/api/media/:id/variants/clip/failed', requireScopes('media:write'), async (c) => {
+  const id = c.req.param('id');
+  const { reason } = (await c.req.json().catch(() => ({}))) as { reason?: string };
+  await run(c.env.DB, "UPDATE media_variants SET status = 'failed', params_json = ?, updated_at = ? WHERE media_id = ? AND variant = 'clip'", JSON.stringify({ reason: reason ?? 'failed' }), now(), id);
+  return c.json({ ok: true });
+});
