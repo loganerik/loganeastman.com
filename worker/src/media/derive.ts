@@ -110,16 +110,16 @@ export async function deriveProviderArtwork(env: Env, recordId: string, job: Der
     if (dims) sets.push({ at: ['artwork', `${variant}_size`], value: dims });
   };
   if (job.poster) {
-    await put('full', job.poster);
+    await put('full', job.poster, 1600);
     await put('thumb', job.poster, 400);
   }
   if (job.cover) {
-    await put('full', job.cover);
+    await put('full', job.cover, 1600);
     await put('thumb', job.cover, 400);
   }
   if (job.og) {
     try {
-      await put('full', job.og);
+      await put('full', job.og, 1600);
       await put('thumb', job.og, 400);
     } catch (e) {
       // blocked or unreachable from here: the Mac fetches it from home instead
