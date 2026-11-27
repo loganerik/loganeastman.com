@@ -47,7 +47,7 @@ for q in json.load(sys.stdin)["queue"]: print(q["media_id"], q["original"], q["u
   flags=()
   [[ "$params" == *'"all": true'* || "$params" == *'"all":true'* ]] && flags+=(--all)
   [[ "$params" == *'"mode": "trim"'* || "$params" == *'"mode":"trim"'* ]] && flags+=(--trim)
-  if [[ -x "$WORK/clip" ]]; then "$WORK/clip" "$src" "$out" "${flags[@]}"; else swift "$DIR/clip.swift" "$src" "$out" "${flags[@]}"; fi || { echo "clip failed for $id"; curl -sS "${AUTH[@]}" -X POST -H 'content-type: application/json' -d '{"reason":"no foreground found"}' "$SITE${up}/failed" >/dev/null; rm -f "$src"; continue; }
+  if [[ -x "$WORK/clip" ]]; then "$WORK/clip" "$src" "$out" ${flags[@]+"${flags[@]}"}; else swift "$DIR/clip.swift" "$src" "$out" ${flags[@]+"${flags[@]}"}; fi || { echo "clip failed for $id"; curl -sS "${AUTH[@]}" -X POST -H 'content-type: application/json' -d '{"reason":"no foreground found"}' "$SITE${up}/failed" >/dev/null; rm -f "$src"; continue; }
   curl -sS "${AUTH[@]}" -F "file=@$out;type=image/png" -F "provider=local" "$SITE$up" >/dev/null && echo "uploaded clip for $id"
   rm -f "$src" "$out"
 done
