@@ -15,7 +15,7 @@ export const complete = new Hono<AppEnv>();
 
 interface Outcome { ok: true; already?: boolean; entry?: { id: string; path: string; list: string }; moved: boolean; done_list?: { path: string; created: boolean }; item?: { id: string; finished: string }; review?: { id: string; path: string; created: boolean }; commit?: string | null }
 
-async function completeEntry(env: Env, ctx: { waitUntil(p: Promise<unknown>): void } | undefined, entryRow: RecordRow, opts: { finished?: string; review?: boolean }): Promise<Outcome> {
+export async function completeEntry(env: Env, ctx: { waitUntil(p: Promise<unknown>): void } | undefined, entryRow: RecordRow, opts: { finished?: string; review?: boolean }): Promise<Outcome> {
   const cfg = await loadVaultConfig(env);
   const gh = vaultFor(env);
   const blob = await gh.readFile(`${entryRow.path}.md`);

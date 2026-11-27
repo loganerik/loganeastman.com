@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { defineTool, ToolError } from './registry';
 import { reindexAll } from '../routes/github';
+import { completeEntry } from '../routes/complete';
 import { one, all, run, now, json } from '../db';
 import { vaultFor } from '../vault/github';
 import { parseNote, formatWikilink, normalizeTarget } from '@lem/vault-core';
@@ -158,5 +159,17 @@ export const recordsReindex = defineTool({
   scopes: ['records:write'],
   async handler({ env }) {
     return reindexAll(env);
+  },
+});
+
+export const entryComplete = defineTool({
+  name: 'entry_complete',
+  description: 'Finish a list entry: it moves to the list type\'s done list (Watched, Read, Listened), the item is stamped finished, and a review draft is created when asked.',
+  input: z.object({ entry_id: z.string(), finished: z.string().optional().describe('YYYY-MM-DD, default today'), review: z.boolean().default(false) }),
+  scopes: ['records:write'],
+  async handler({ env }, { entry_id, finished, review }) {
+    const row = await one<RecordRow>(env.DB, "SELECT * FROM records WHERE id = ? AND type = 'list-entry'", entry_id);
+    if (!row) throw new ToolError('entry not found', 404);
+    return completeEntry(env, undefined, row as never, { finished, review });
   },
 });
