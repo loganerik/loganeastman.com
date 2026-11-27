@@ -21,7 +21,7 @@ export const decisionSchema = z.object({
   og_image: z.string().optional(),
   site_name: z.string().optional(),
   description: z.string().optional(),
-  product: z.object({ price: z.number().optional(), currency: z.string().optional(), brand: z.string().optional(), category: z.string().optional(), subtype: z.string().optional() }).optional(),
+  product: z.object({ price: z.number().optional(), currency: z.string().optional(), brand: z.string().optional(), category: z.string().optional(), subtype: z.string().optional(), details: z.string().optional() }).optional(),
   title: z.string().optional(),
   year: z.number().int().optional(),
   url: z.string().optional(),
@@ -95,7 +95,7 @@ export const captureOrganize = defineTool<{ capture_id: string; decision: Organi
         const id = newId(kind);
         const fm: Record<string, unknown> = {
           id, type: 'item', kind, title, year, visibility,
-          ...(decision.url && !enriched ? { url: decision.url, site_name: decision.site_name, og_title: decision.title, og_description: decision.description, brand: decision.product?.brand ?? decision.site_name, category: decision.product?.category, subtype: decision.product?.subtype, price: decision.product?.price, currency: decision.product?.currency ?? 'USD' } : {}),
+          ...(decision.url && !enriched ? { url: decision.url, site_name: decision.site_name, og_title: decision.title, og_description: decision.description, brand: decision.product?.brand ?? decision.site_name, category: decision.product?.category, subtype: decision.product?.subtype, details: decision.product?.details, price: decision.product?.price, currency: decision.product?.currency ?? 'USD' } : {}),
           ...(enriched?.keys ?? {}),
           artwork: { ...(enriched?.artwork.poster ? { poster: enriched.artwork.poster } : {}), ...(enriched?.artwork.logo ? { logo: enriched.artwork.logo } : {}), ...(enriched?.artwork.cover ? { cover: enriched.artwork.cover } : {}), ...(!enriched && decision.og_image ? { og: decision.og_image } : {}) },
           tags: privTags, related: peopleRefs, locked: [], created: t,

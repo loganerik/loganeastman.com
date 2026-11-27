@@ -2,7 +2,7 @@
 // Each step's output is stored in job_steps so a retry resumes instead of redoing (and never duplicates).
 import { z } from 'zod';
 import type { Env } from '../env';
-import { fetchPageFacts, hintFromUrl, titleYearFrom, judge, Tmdb, OpenLibrary, MusicBrainz, apparelSubtype, type PageFacts, type Match } from '@lem/providers';
+import { fetchPageFacts, hintFromUrl, titleYearFrom, judge, Tmdb, OpenLibrary, MusicBrainz, apparelSubtype, guessCategory, detailsFromUrl, type PageFacts, type Match } from '@lem/providers';
 import type { Identity } from './enrich';
 import { ITEM_KINDS, newId } from '@lem/vault-core';
 import { one, run, now, json } from '../db';
@@ -41,6 +41,7 @@ const identifySchema = z.object({
   creator: z.string().nullable(),
   reasoning: z.string(),
 });
+type Identified = z.infer<typeof identifySchema> & { product?: { brand?: string; category?: string; subtype?: string; details?: string } };
 const decideSchema = z.object({
   chosen_id: z.string().nullable(), // candidate id or null when none fits
   file_as: z.array(z.enum(['list', 'feed', 'review', 'writing'])),
@@ -70,7 +71,7 @@ export async function runOrganize(env: Env, job: { id: string; subject_id: strin
   });
 
   // 2. identify: what kind of thing is this, and what should we search for?
-  const identified = await step<z.infer<typeof identifySchema>>(env, job.id, 'identify', steps, async () => {
+  const identified = await step<Identified>(env, job.id, 'identify', steps, async () => {
     const hint = capture.url ? hintFromUrl(capture.url) : null;
     const ty = titleYearFrom(facts?.title ?? facts?.html_title);
     if (hint?.kind === 'film' || hint?.kind === 'tv' || hint?.provider === 'imdb' || hint?.provider === 'tmdb') {
@@ -107,7 +108,8 @@ export async function runOrganize(env: Env, job: { id: string; subject_id: strin
       const title = words.length ? words.join(' ').replace(/\bMens\b/, "Men's").replace(/\bWomens\b/, "Women's") : u.hostname.replace(/^www\./, '');
       const brand = u.hostname.replace(/^www\./, '').split('.')[0]!.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
       const shopPath = /\/(products?|p|item|items|dp|shop|store)\//i.test(u.pathname + '/');
-      return { kind: shopPath ? 'product' : 'link', title, year: null, creator: shopPath ? brand : null, reasoning: 'page blocked; from the url' };
+      const category = guessCategory(title);
+      return { kind: shopPath ? 'product' : 'link', title, year: null, creator: shopPath ? brand : null, reasoning: 'page blocked; from the url', product: shopPath ? { brand, category, subtype: category === 'Apparel' ? apparelSubtype(title) : undefined, details: detailsFromUrl(capture.url) } : undefined };
     }
     if (!llm) {
       if (!capture.url) return { kind: 'none', title: null, year: null, creator: null, reasoning: 'no url, no model' };
@@ -207,9 +209,15 @@ export async function runOrganize(env: Env, job: { id: string; subject_id: strin
     if ((kind === 'film' || kind === 'tv' || kind === 'book' || kind === 'album') && !identity) throw new NeedsOwner(`I could not find "${identified.title ?? capture.url}" at the provider. Paste a direct link (TMDB, IMDb, Open Library, MusicBrainz), or tell me the exact title and year.`);
     if (!fileAs.length) fileAs = [{ target: 'feed' }];
     const usable = facts && !isChallenge(facts) ? facts : null;
-    const brandGuess = kind === 'product' ? identified.creator ?? undefined : undefined;
-    const og = !identity && (usable || brandGuess)
-      ? { og_image: usable?.image, site_name: usable?.site_name, description: usable?.description, product: usable?.product || usable?.title || brandGuess ? { ...(usable?.product ?? {}), brand: usable?.product?.brand ?? brandGuess, subtype: usable?.product?.category === 'Apparel' ? apparelSubtype(usable?.title ?? '') : undefined } : undefined }
+    const hintP = identified.product;
+    const brandGuess = kind === 'product' ? hintP?.brand ?? identified.creator ?? undefined : undefined;
+    const titleForGuess = identified.title ?? usable?.title ?? '';
+    const category = usable?.product?.category ?? hintP?.category ?? (kind === 'product' ? guessCategory(titleForGuess) : undefined);
+    const og = !identity && (usable || hintP || brandGuess)
+      ? { og_image: usable?.image, site_name: usable?.site_name, description: usable?.description,
+          product: usable?.product || usable?.title || hintP || brandGuess
+            ? { ...(usable?.product ?? {}), brand: usable?.product?.brand ?? brandGuess, category, subtype: hintP?.subtype ?? (category === 'Apparel' ? apparelSubtype(titleForGuess) : undefined), details: hintP?.details ?? (capture.url ? detailsFromUrl(capture.url) : undefined) }
+            : undefined }
       : {};
     return { kind: kind ?? 'none', identity, title: identified.title ?? usable?.title ?? undefined, year: identified.year ?? undefined, url: capture.url ?? undefined, ...og, file_as: fileAs, visibility: capture.visibility as 'public' | 'private', confidence: resolved.match === 'confident' ? 0.95 : 0.7, connections: [] };
   });

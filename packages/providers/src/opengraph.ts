@@ -118,6 +118,22 @@ function productFacts(meta: Record<string, string>, jsonld: unknown[]): ProductF
   return Object.values(out).some((v) => v !== undefined) ? out : undefined;
 }
 
+/** A category from the title alone (shops that block us still have a telling slug). */
+export function guessCategory(title: string): string | undefined {
+  return APPAREL.test(title) ? 'Apparel' : undefined;
+}
+
+/** Colour and size a shop puts in the link (?variant=fog-harbor&size=l → "Fog Harbor · Size L"). */
+export function detailsFromUrl(url: string): string | undefined {
+  let u: URL;
+  try { u = new URL(url); } catch { return undefined; }
+  const nice = (v: string) => v.replace(/[-_+]+/g, ' ').trim().replace(/\b\w/g, (c) => c.toUpperCase());
+  const parts: string[] = [];
+  for (const k of ['color', 'colour', 'variant', 'style', 'finish']) { const v = u.searchParams.get(k); if (v && !/^\d+$/.test(v)) { parts.push(nice(v)); break; } }
+  for (const k of ['size', 'sz']) { const v = u.searchParams.get(k); if (v) { parts.push(`Size ${v.length <= 3 ? v.toUpperCase() : nice(v)}`); break; } }
+  return parts.length ? parts.join(' · ') : undefined;
+}
+
 export function apparelSubtype(title: string): string | undefined {
   if (TEE.test(title)) return 'T-shirts';
   const m = /\b(sweatshirt|hoodie|jeans|socks?|sweater|jacket|coat|shorts|hat|cap|boots?|sneakers?)\b/i.exec(title);
