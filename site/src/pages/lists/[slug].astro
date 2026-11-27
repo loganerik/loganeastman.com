@@ -34,7 +34,7 @@ let i = 0;
     <div class="wishlist" data-wishlist>
       <div class="wishlist__bar">
         <div class="chips" data-cats>
-          <button type="button" class="chip" aria-pressed="true" data-cat="">All <span class="muted" data-count>{active.length}</span></button>
+          <button type="button" class="chip" aria-pressed="true" data-cat="">All<span hidden data-count>{active.length}</span></button>
           {categories.map((c) => <button type="button" class="chip" aria-pressed="false" data-cat={c}>{c}</button>)}
         </div>
         <div class="wishlist__tools">
@@ -51,7 +51,7 @@ let i = 0;
       </div>
       {groups.map((g) => (
         <section class="group" data-group={g.key}>
-          <div class="rule-label"><span>{g.title} <span class="muted" data-group-count>{g.entries.length}</span></span></div>
+          <div class="rule-label"><span>{g.title}<span hidden data-group-count>{g.entries.length}</span></span></div>
           <SectionGrid variant="rows">{g.entries.map((e) => <ListEntry e={e} index={i++} />)}</SectionGrid>
         </section>
       ))}

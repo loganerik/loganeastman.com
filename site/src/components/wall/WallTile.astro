@@ -15,7 +15,7 @@ const textOnly = t.kind === 'thought' || t.kind === 'queue' || (t.kind === 'piec
     {t.kind === 'thought' ? (
       <span class="clip clip--shape slip slip--fit tile__slip" aria-hidden="true"><span class="tile__text">{t.text}</span></span>
     ) : t.kind === 'queue' ? (
-      <span class="clip clip--shape seal seal--pink tile__seal" aria-hidden="true"><span><Sunburst class="tile__seal-orn" width={48} /><span class="tile__seal-title">{t.title}</span><span class="mono tile__seal-n">{t.count}</span></span></span>
+      <span class="clip clip--shape seal seal--pink tile__seal" aria-hidden="true"><span><Sunburst class="tile__seal-orn" width={48} /><span class="tile__seal-title">{t.title}</span></span></span>
     ) : textOnly && t.shape === 'arch' ? (
       <span class="clip clip--shape tile__arch" aria-hidden="true"><span class="tile__arch-window"><Skyline /></span><span class="tile__arch-plate"><span class="tile__arch-title">{t.title}</span></span></span>
     ) : textOnly ? (

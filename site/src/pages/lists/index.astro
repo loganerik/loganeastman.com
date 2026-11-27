@@ -20,7 +20,6 @@ for (const x of lists) groups.set(x.t?.title ?? x.l.data.list_type, [...(groups.
             <a class="seal seal--green seal-link" href={urlFor(l)}>
               <span>
                 <span class="seal__title">{l.data.title}</span>
-                <span class="mono seal__count">{n} {n === 1 ? 'entry' : 'entries'}</span>
               </span>
             </a>
           </li>
@@ -35,5 +34,4 @@ for (const x of lists) groups.set(x.t?.title ?? x.l.data.list_type, [...(groups.
   .seal-link { text-decoration: none; transition: transform var(--motion-fast) var(--ease-lift); }
   .seal-link:hover, .seal-link:focus-visible { transform: translateY(var(--lift)); }
   .seal__title { display: block; font-size: var(--step-2); line-height: 1.05; }
-  .seal__count { display: block; margin-top: 0.6em; opacity: 0.8; }
 </style>
