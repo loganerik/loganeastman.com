@@ -25,16 +25,16 @@ const i = posts.findIndex((p) => p.path === post.path);
 const newer = posts[i - 1];
 const older = posts[i + 1];
 ---
-<Base title={post.data.title ?? plain(post.body).slice(0, 70)} description={about?.public ? `${plain(post.body)} · ${(about.data as { title?: string }).title ?? ''}` : r.excerpt} type="article" image={`/og/feed/${slugOf(post)}.png`} minimal>
+<Base title={post.data.title ?? plain(post.body).slice(0, 70)} description={about?.public ? `${plain(post.body)} · ${(about.data as { title?: string }).title ?? ''}` : r.excerpt} type="article" image={`/og/notes/${slugOf(post)}.png`} minimal>
   <div class="wrap one">
     <div data-article><FeedSlip post={post} link={false} /></div>
     {about?.public && about.type !== 'item' && <p class="mono muted">About <a href={urlFor(about)}>{(about.data as { title?: string }).title}</a></p>}
-    <ShareBar url={Astro.url.pathname} title={plain(post.body).slice(0, 70)} image={`/og/feed/${slugOf(post)}-instagram.png`} />
+    <ShareBar url={Astro.url.pathname} title={plain(post.body).slice(0, 70)} image={`/og/notes/${slugOf(post)}-instagram.png`} />
     <OwnerOnly><InlineEdit client:only="preact" recordId={post.data.id} title={post.data.title ?? r.excerpt.slice(0, 40)} type="feed" /></OwnerOnly>
-    <BackLink href="/feed/" label="Feed" />
-    <nav class="mono muted pager" aria-label="Feed navigation">
+    <BackLink href="/notes/" label="Notes" />
+    <nav class="mono muted pager" aria-label="Notes navigation">
       {older && <a href={urlFor(older)}>← Older</a>}
-      <a href="/feed/">All notes</a>
+      <a href="/notes/">All notes</a>
       {newer && <a href={urlFor(newer)}>Newer →</a>}
     </nav>
   </div>

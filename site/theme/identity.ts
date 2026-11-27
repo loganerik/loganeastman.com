@@ -44,7 +44,7 @@ const identity: Identity = {
   },
   nav: [
     { label: 'Writing', href: '/writing/' },
-    { label: 'Feed', href: '/feed/' },
+    { label: 'Notes', href: '/notes/' },
     { label: 'Lists', href: '/lists/' },
     { label: 'Reviews', href: '/reviews/' },
     { label: 'Horizon', href: '/horizon/' },

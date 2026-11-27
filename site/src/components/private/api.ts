@@ -34,7 +34,7 @@ export function publicUrl(r: RecordSummary, rootCollections: string[] = ['pages'
     case 'item': return `/${KIND_ROUTES[r.kind ?? ''] ?? r.kind}/${stem}/`;
     case 'list': return `/lists/${stem}/`;
     case 'writing': return rootCollections.includes(r.collection ?? '') ? `/${stem.replace(DATE_PREFIX, '')}/` : `/writing/${r.collection}/${stem.replace(DATE_PREFIX, '')}/`;
-    case 'feed': return `/feed/${stem}/`;
+    case 'feed': return `/notes/${stem}/`;
     case 'review': return `/reviews/${stem.replace(DATE_PREFIX, '')}/`;
     case 'person': return `/people/${stem}/`;
     case 'tag': return `/tags/${stem}/`;

@@ -33,7 +33,7 @@ export function urlFor(r: VaultRecord, index?: VaultIndex): string {
       return `/writing/${c}/${slugOf(r)}/`;
     }
     case 'feed':
-      return `/feed/${slugOf(r)}/`;
+      return `/notes/${slugOf(r)}/`;
     case 'review':
       return `/reviews/${slugOf(r)}/`;
     case 'person':

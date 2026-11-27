@@ -36,7 +36,7 @@ h1{font-weight:400;font-size:1.6rem;margin:.2rem 0 1rem}
 <div class="chips">
 <label><input type="radio" name="intent" value="" checked>Let the agent decide</label>
 <label><input type="radio" name="intent" value="list">List</label>
-<label><input type="radio" name="intent" value="feed">Feed</label>
+<label><input type="radio" name="intent" value="feed">Notes</label>
 <label><input type="radio" name="intent" value="review">Review</label>
 <label><input type="radio" name="intent" value="writing">Writing</label>
 </div>

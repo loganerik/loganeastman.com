@@ -31,7 +31,7 @@ export function urlsForRecord(env: Env, rec: { type: string; kind: string | null
     if (folder && itemStem && byFolder[folder]) out.push(`${base}/${byFolder[folder]}/${itemStem}/`);
     out.push(`${base}/lists/`);
   }
-  else if (rec.type === 'feed') out.push(`${base}/feed/${stem}/`, `${base}/feed/`);
+  else if (rec.type === 'feed') out.push(`${base}/notes/${stem}/`, `${base}/notes/`);
   else if (rec.type === 'review') out.push(`${base}/reviews/${stem.replace(/^\d{4}-\d{2}-\d{2}-/, '')}/`, `${base}/reviews/`);
   else if (rec.type === 'writing') out.push(`${base}/writing/`, `${base}/writing/${String(fmAll.collection ?? '')}/`, `${base}/writing/${String(fmAll.collection ?? '')}/${stem.replace(/^\d{4}-\d{2}-\d{2}-/, '')}/`);
   else if (rec.type === 'person') out.push(`${base}/people/${stem}/`);

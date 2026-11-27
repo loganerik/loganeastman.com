@@ -239,7 +239,7 @@ function Inbox() {
         <input placeholder="Paste a link…" inputMode="url" value={form.url} onInput={(e) => setForm({ ...form, url: (e.target as HTMLInputElement).value })} aria-label="Link" />
         <input placeholder="Why I'm interested (one sentence)" value={form.why} onInput={(e) => setForm({ ...form, why: (e.target as HTMLInputElement).value })} aria-label="Why" />
         <select value={form.intent} onChange={(e) => setForm({ ...form, intent: (e.target as HTMLSelectElement).value })} aria-label="File as">
-          <option value="">Let the agent decide</option><option value="list">List</option><option value="feed">Feed</option><option value="review">Review</option><option value="writing">Writing</option>
+          <option value="">Let the agent decide</option><option value="list">List</option><option value="feed">Notes</option><option value="review">Review</option><option value="writing">Writing</option>
         </select>
         <label class="mono"><input type="checkbox" checked={form.priv} onChange={(e) => setForm({ ...form, priv: (e.target as HTMLInputElement).checked })} /> Private</label>
         <button class="btn btn--solid" disabled={busy}>Save</button>

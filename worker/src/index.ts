@@ -33,6 +33,14 @@ app.use('*', async (c, next) => {
   return next();
 });
 
+// the Feed became Notes: old links keep working
+app.get('/feed/*', (c) => {
+  const u = new URL(c.req.url);
+  u.pathname = u.pathname.replace(/^\/feed\//, '/notes/');
+  return c.redirect(u.toString(), 301);
+});
+app.get('/feed', (c) => c.redirect(new URL('/notes/', c.req.url).toString(), 301));
+
 app.use('*', accessIdentity);
 
 app.get('/api/health', (c) => c.json({ ok: true, env: c.env.ENVIRONMENT, at: new Date().toISOString() }));
