@@ -3,7 +3,7 @@
 // the final order per visit (wall-client.ts).
 import type { VaultIndex, VaultRecord } from '../../loaders/index';
 import type { Item, List, Feed, Writing, Review } from '@lem/vault-core';
-import { entriesOf, listType, type Rec } from '../content';
+import { entriesOf, listType, type Rec, type ResolvedEntry } from '../content';
 import { urlFor, titleOf } from '../urls';
 import { fmtDate } from '../dates';
 import identity from '@theme/identity';
@@ -18,6 +18,8 @@ export interface WallTile {
   caption: string;
   record: VaultRecord; // artwork source (item / piece / list / post)
   shape?: 'slip' | 'seal' | 'arch' | 'stepped';
+  tone?: 'pink' | 'green' | 'ink'; // seals and slips
+  picks?: VaultRecord[]; // a list's things peeking out of its arch or strip
   text?: string; // for thoughts
   count?: number; // for queues
   span: { c: 1 | 2 | 3; r: 1 | 2 };
@@ -36,6 +38,7 @@ function recency(date: string | undefined, half = 90): number {
 
 function spanFor(kind: TileKind, r: VaultRecord, words = 0, hero = false): WallTile['span'] {
   if (hero) return { c: 2, r: 2 };
+  if (kind === 'queue') return { c: 1, r: 1 };
   if (kind === 'thought') return words <= 10 ? { c: 1, r: 1 } : { c: 2, r: 1 };
   if (kind === 'piece' && !(r.data as { artwork?: unknown }).artwork) return { c: 1, r: 1 };
   return { c: 1, r: 1 };
@@ -68,17 +71,27 @@ export function wallCandidates(idx: VaultIndex): WallTile[] {
     const hasArt = !!(p.data.artwork?.clip || p.data.artwork?.thumb);
     push({ id: p.data.id, kind: hasArt ? 'photo' : 'thought', href: urlFor(p, idx), title: p.data.title ?? text.slice(0, 60), caption: String(p.data.date).length > 10 ? fmtDate(p.data.date, { month: 'short', day: 'numeric' }) + ' · ' + fmtDate(p.data.date, { hour: 'numeric', minute: '2-digit' }) : fmtDate(p.data.date), record: p, shape: hasArt ? undefined : words <= 6 ? 'stepped' : 'slip', text: text.length > 140 ? text.slice(0, 137).trimEnd() + '…' : text, words, score: 0.9 * recency(p.data.date, 30) });
   }
-  // lists
-  for (const l of idx.ofType<List>('list')) {
+  // lists: every list is on the wall in one of four forms (seal, arch, stepped frame, slip), chosen by the list's
+  // own `form`, else its type's, else dealt round-robin so lists of one type never all look alike; and every list
+  // lends a few of its things: a daily-rotating dozen are baked, the client shows 3–5 per visit
+  const allLists = idx.ofType<List>('list');
+  const forms = identity.wall.listForms;
+  const rankWithin = new Map<string, number>();
+  for (const l of [...allLists].sort((a, b) => String(a.data.created ?? '').localeCompare(String(b.data.created ?? '')))) {
+    const n = rankWithin.get(l.data.list_type) ?? 0; rankWithin.set(l.data.list_type, n + 1); rankWithin.set(`${l.data.list_type}:${l.data.id}`, n);
+  }
+  for (const l of allLists) {
     const lt = listType(idx, l.data.list_type);
     const entries = entriesOf(idx, l as Rec<List>);
-    // every list is on the wall as a seal, and every list lends a few of its things: a daily-rotating dozen are baked,
-    // the client shows 3–5 of them per visit, so the mix changes by the day and by the visit
-    if (entries.length) push({ id: l.data.id, kind: 'queue', href: urlFor(l, idx), title: l.data.title, caption: `${lt?.title ?? 'List'} · ${entries.length}`, record: l, shape: 'seal', count: entries.length, score: 0.75 * recency(entries[0]?.entry.data.added) });
     const active = entries.filter((e) => e.entry.data.state !== 'done');
     const day = Math.floor(Date.now() / DAY);
     const rnd = splitmix32(hash32(l.data.id, day));
     const baked = active.map((e) => ({ e, k: rnd() })).sort((a, b) => a.k - b.k).slice(0, identity.wall.bakePerList).map((x) => x.e);
+    const form = ((l.data as { form?: string }).form ?? (lt as { form?: string } | undefined)?.form ?? forms[((rankWithin.get(`${l.data.list_type}:${l.data.id}`) ?? 0) + (hash32(l.data.list_type) % forms.length)) % forms.length]) as WallTile['shape'];
+    const tone: WallTile['tone'] = form === 'slip' ? 'ink' : hash32(l.data.id) & 1 ? 'pink' : 'green';
+    const hasArt = (e: ResolvedEntry) => { const a = (e.item.data as { artwork?: { clip?: string; thumb?: string; full?: string } }).artwork; return !!(a?.clip || a?.thumb || a?.full); };
+    const picks = baked.filter(hasArt).slice(0, 3).map((e) => e.item as VaultRecord);
+    if (entries.length) push({ id: l.data.id, kind: 'queue', href: urlFor(l, idx), title: l.data.title, caption: `${lt?.title ?? 'List'} · ${entries.length}`, record: l, shape: form, tone, picks, count: entries.length, score: 0.75 * recency(entries[0]?.entry.data.finished ?? entries[0]?.entry.data.added) });
     for (const e of baked) {
       const isGift = lt?.key === 'gifts';
       push({ id: e.entry.data.id, kind: isGift ? 'gift' : 'pick', href: urlFor(e.item, idx), title: e.item.data.title, caption: isGift ? 'Gift idea' : `from ${l.data.title}`, record: e.item, listId: l.data.id, score: 0.8 * (0.5 + 0.5 * recency(e.entry.data.added)) });

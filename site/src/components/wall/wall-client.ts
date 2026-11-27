@@ -31,18 +31,19 @@ if (grid) {
     if (el.dataset.petAfter !== undefined) return 'pet';
     const c = el.querySelector('.clip');
     if (!c) return 'text';
-    if (c.classList.contains('clip--shape')) return el.classList.contains('tile--queue') ? 'seal' : el.classList.contains('tile--piece') ? 'piece' : 'text';
+    if (c.classList.contains('clip--shape')) return el.dataset.shape ?? (el.classList.contains('tile--piece') ? 'piece' : 'text');
     if (c.classList.contains('clip--typeset')) return 'typeset';
     if (c.classList.contains('clip--cover') || c.classList.contains('clip--poster') || c.classList.contains('clip--logo')) return 'cover';
     return 'cutout';
   };
   // buckets: family + list, so posters from one watchlist spread out instead of clustering
-  type Bucket = { key: string; fam: string; items: HTMLElement[] };
+  type Bucket = { key: string; fam: string; kind: string; items: HTMLElement[] };
   const buckets = new Map<string, Bucket>();
   for (const t of tiles) {
     const fam = family(t);
-    const k = fam + ':' + (t.dataset.list ?? '');
-    if (!buckets.has(k)) buckets.set(k, { key: k, fam, items: [] });
+    const kind = t.dataset.kind ?? '';
+    const k = fam + ':' + kind + ':' + (t.dataset.list ?? '');
+    if (!buckets.has(k)) buckets.set(k, { key: k, fam, kind, items: [] });
     buckets.get(k)!.items.push(t);
   }
   for (const b of buckets.values()) b.items = b.items.map((el) => ({ el, k: rng() })).sort((a, b) => a.k - b.k).map((x) => x.el);
@@ -52,15 +53,17 @@ if (grid) {
   const dealt: HTMLElement[] = [];
   const famOf: string[] = [];
   const keyOf: string[] = [];
+  const kindOf: string[] = [];
   const total = tiles.length;
   while (dealt.length < total) {
     const live = [...buckets.values()].filter((b) => b.items.length);
-    const prevF = famOf[famOf.length - 1], prevK = keyOf[keyOf.length - 1], aboveF = famOf[famOf.length - cols];
-    const score = (b: Bucket) => b.items.length + (b.key !== prevK ? 2 : 0) + (b.fam !== prevF ? 3 : 0) + (b.fam !== aboveF ? 1 : 0) + rng() * 0.5;
+    const prevF = famOf[famOf.length - 1], prevK = keyOf[keyOf.length - 1], aboveF = famOf[famOf.length - cols], prevKind = kindOf[kindOf.length - 1];
+    // two lists never sit together, whatever their shapes; otherwise prefer a different family, list and column-mate
+    const score = (b: Bucket) => b.items.length + (b.key !== prevK ? 2 : 0) + (b.fam !== prevF ? 3 : 0) + (b.fam !== aboveF ? 1 : 0) + (b.kind === 'queue' && prevKind === 'queue' ? -6 : 0) + rng() * 0.5;
     live.sort((a, b) => score(b) - score(a));
     const pick = live[0]!;
     const el = pick.items.pop()!;
-    dealt.push(el); famOf.push(pick.fam); keyOf.push(pick.key);
+    dealt.push(el); famOf.push(pick.fam); keyOf.push(pick.key); kindOf.push(pick.kind);
   }
   for (const t of dealt) {
     const pl = placementFor(t.dataset.tile!, (t.dataset.band as 'text' | 'cover' | 'cutout') ?? 'cover', seed);

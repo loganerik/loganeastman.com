@@ -48,6 +48,22 @@ const units = Math.round(shown * (1 + 1 / identity.wall.petRatio));
   .tile .tile__frame--thought { width: 90%; height: auto; min-height: 62%; display: grid; place-items: center; padding: 1.4rem 1.2rem; }
   .tile__seal { padding: 10% 14%; border: 2px solid var(--pink-ink); outline: 1px solid var(--pink-ink); outline-offset: -8px; color: var(--ink); }
   .tile__seal-orn { display: block; margin: 0 auto 0.4rem; color: var(--pink-ink); }
+  .tile__seal.seal--green { border-color: color-mix(in oklab, var(--on-dark) 55%, var(--green)); outline-color: color-mix(in oklab, var(--on-dark) 45%, var(--green)); color: var(--on-dark); }
+  .tile__seal.seal--green .tile__seal-orn { color: var(--on-dark); }
+  /* a list's arch: its things peek out of the window */
+  .tile .tile__arch--list { width: 90%; height: 92%; }
+  .tile__arch-window--picks { position: relative; background: color-mix(in oklab, var(--on-dark) 12%, var(--green)); }
+  .tile__peek { position: absolute; left: 50%; bottom: -4%; width: 46%; aspect-ratio: 2 / 3; transform: translateX(calc(-50% + (var(--i) - (var(--n) - 1) / 2) * 34%)) rotate(calc((var(--i) - (var(--n) - 1) / 2) * 7deg)); transform-origin: 50% 100%; }
+  .tile .tile__peek .clip:has(> img) { width: 100%; height: auto; margin: 0; }
+  .tile__peek .clip > img { filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.35)); }
+  /* a list's stepped frame: title and a strip of three */
+  .tile .tile__frame--list { width: 92%; height: auto; max-height: 94%; display: grid; place-items: center; padding: 1rem 0.9rem; }
+  .tile__strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; width: 70%; margin: 0.5rem auto 0; }
+  .tile .tile__strip .clip:has(> img) { width: 100%; height: auto; margin: 0; }
+  /* a list's ink slip */
+  .tile .tile__slip--list { display: grid; gap: 0.3rem; padding: 0.9rem 1.1rem; max-width: 92%; max-height: 92%; overflow: hidden; }
+  .tile__slip-title { font-family: var(--font-display); font-style: italic; font-size: clamp(1.2rem, 4.5cqw, 1.9rem); line-height: 1.05; text-wrap: balance; }
+  .tile__count { font-size: 0.65rem; opacity: 0.75; }
   .tile__frame-orn { display: block; margin: 0 auto 0.2rem; color: var(--green); }
   .tile__seal-title { display: block; font-size: clamp(1.15rem, 12cqw, 2rem); line-height: 1.05; text-wrap: balance; }
   .tile__frame { padding: 1.2rem; }
