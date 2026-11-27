@@ -1,29 +1,62 @@
 ---
+// Every list as a small collage of what is on it: watchlists on a green plate with white title lettering,
+// other lists as loose cutouts on the paper. The type is the kicker, the title sits beneath.
 import Section from '../../layouts/Section.astro';
-import SectionGrid from '../../components/section/SectionGrid.astro';
-import { index, entriesOf, listType } from '../../lib/content';
+import Clip from '../../components/art/Clip.astro';
+import Sunburst from '../../components/forms/Sunburst.astro';
+import OwnerOnly from '../../components/private/OwnerOnly.astro';
+import { index, entriesOf, listType, type ResolvedEntry } from '../../lib/content';
 import { urlFor } from '../../lib/urls';
 import type { List } from '@lem/vault-core';
 const idx = await index();
-const lists = idx.ofType<List>('list').map((l) => ({ l, n: entriesOf(idx, l).length, t: listType(idx, l.data.list_type) }));
+const hasArt = (e: ResolvedEntry) => { const a = (e.item.data as { artwork?: { clip?: string; full?: string; thumb?: string } }).artwork; return !!(a?.clip || a?.full || a?.thumb); };
+const lists = idx.ofType<List>('list').map((l) => {
+  const entries = entriesOf(idx, l).filter((e) => e.entry.data.state !== 'done').sort((a, b) => b.entry.data.added.localeCompare(a.entry.data.added));
+  const picks = [...entries.filter(hasArt), ...entries.filter((e) => !hasArt(e))].slice(0, 4);
+  return { l, t: listType(idx, l.data.list_type), picks, n: entries.length };
+});
 ---
 <Section quiet preset={{ mode: 'list' }} title="Lists" description="Watchlists, reading, gifts, places." action={{ label: 'New list', href: '/private/new/?kind=list' }}>
   {lists.length === 0 && <p class="muted">No lists yet.</p>}
-  <SectionGrid variant="seals">
-    {lists.map(({ l }) => (
-      <li class="card">
-        <a class="seal seal--green seal-link" href={urlFor(l)}>
-          <span>
-            <span class="seal__title">{l.data.title}</span>
+  <ul class="list-cards">
+    {lists.map(({ l, t, picks }) => (
+      <li class="list-card">
+        <a class="list-card__link" href={urlFor(l)}>
+          <span class={`list-card__panel ${t?.queue ? 'list-card__panel--plate' : 'list-card__panel--paper'} ${picks.length === 0 ? 'list-card__panel--empty' : ''}`} aria-hidden="true">
+            {picks.length === 0 ? (
+              <Sunburst class="list-card__orn" width={48} />
+            ) : (
+              picks.map((e) => (
+                <span class="list-card__cell">
+                  <Clip record={e.item} context="wall" tone={t?.queue ? 'dark' : 'paper'} decorative sizes="(max-width: 600px) 40vw, 180px" />
+                </span>
+              ))
+            )}
           </span>
+          <span class="mono muted list-card__kicker">{t?.title ?? 'List'}</span>
+          <span class="list-card__title">{l.data.title}</span>
         </a>
+        <OwnerOnly><a class="list-card__edit btn btn--soft btn--small" href={`/private/edit/?id=${l.data.id}`} aria-label={`Edit ${l.data.title}`}>Edit</a></OwnerOnly>
       </li>
     ))}
-  </SectionGrid>
+  </ul>
 </Section>
 <style>
-  .grid { margin-top: var(--space-4); }
-  .seal-link { text-decoration: none; transition: transform var(--motion-fast) var(--ease-lift); }
-  .seal-link:hover, .seal-link:focus-visible { transform: translateY(var(--lift)); }
-  .seal__title { display: block; font-size: var(--step-2); line-height: 1.05; }
+  .list-cards { list-style: none; padding: 0; margin: var(--space-4) 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: var(--space-6) var(--space-5); }
+  .list-card { position: relative; }
+  .list-card__link { display: block; text-decoration: none; color: inherit; }
+  .list-card__panel { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 6%; padding: 7%; aspect-ratio: 3 / 2; margin-bottom: var(--space-3); transition: transform var(--motion-fast) var(--ease-lift); }
+  .list-card__panel--plate { background: var(--green); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--on-dark) 35%, var(--green)); }
+  .list-card__panel--paper { padding: 4%; gap: 4%; }
+  .list-card__panel--empty { place-items: center; grid-template-columns: 1fr; grid-template-rows: 1fr; color: var(--pink-ink); background: var(--pill-bg); }
+  .list-card__link:hover .list-card__panel, .list-card__link:focus-visible .list-card__panel { transform: translateY(var(--lift)); }
+  .list-card__link:focus-visible { outline: 2px solid var(--focus); outline-offset: 6px; }
+  .list-card__cell { display: grid; place-items: center; min-width: 0; min-height: 0; container-type: size; }
+  /* each clipping fits its cell on whichever axis binds, keeping its own shape */
+  .list-card__cell :global(.clip) { width: min(100cqw, calc(100cqh * var(--ar, 1))); height: auto; }
+  .list-card__panel--plate .list-card__cell :global(.clip--logo > img) { padding: 2%; }
+  .list-card__kicker { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .list-card__title { display: block; font-family: var(--font-display); font-size: var(--step-2); line-height: 1.1; margin-top: 0.15em; }
+  .list-card__edit { position: absolute; top: 0.6rem; right: 0.6rem; }
+  @media (prefers-reduced-motion: reduce) { .list-card__panel { transition: none; } .list-card__link:hover .list-card__panel { transform: none; } }
 </style>

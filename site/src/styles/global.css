@@ -71,5 +71,4 @@ main { flex: 1; }
 /* logos keep their own colours; on paper a hairline of ink keeps white and cream lettering readable */
 .clip--logo.on-paper > img { filter: drop-shadow(0 0 0.5px var(--ink)); }
 .clip--logo.on-paper > img.is-light { filter: brightness(0) opacity(0.88); }
-.clip--logo.on-dark > img { filter: none; }
 .clip--logo.ink > img { filter: brightness(0); }
