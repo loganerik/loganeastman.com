@@ -10,7 +10,8 @@ interface Props { post: Rec<Feed>; angle?: boolean; link?: boolean }
 const { post, angle = false, link = true } = Astro.props;
 const r = await renderRecord(post);
 const href = urlFor(post);
-const date = fmtDate(post.data.date, { month: 'short', day: 'numeric', year: 'numeric' });
+const hasTime = String(post.data.date).length > 10;
+const date = fmtDate(post.data.date, hasTime ? { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' } : { month: 'short', day: 'numeric', year: 'numeric' });
 ---
 <article class="feed-slip slip slip--fit" style={angle ? `--angle:${restingAngle(post.data.id, 'text')}deg; transform: rotate(var(--angle))` : undefined}>
   {(post.data.artwork?.thumb || post.data.artwork?.clip) && <img class="feed-slip__img" src={post.data.artwork.clip ?? post.data.artwork.thumb} width={(post.data.artwork.clip ? post.data.artwork.clip_size : post.data.artwork.thumb_size)?.[0]} height={(post.data.artwork.clip ? post.data.artwork.clip_size : post.data.artwork.thumb_size)?.[1]} alt={post.data.artwork.alt ?? ''} loading="lazy" decoding="async" />}

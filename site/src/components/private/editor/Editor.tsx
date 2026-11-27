@@ -35,14 +35,14 @@ const highlight = HighlightStyle.define([
   { tag: tags.processingInstruction, color: 'var(--ink-faint)' },
 ]);
 
-type Field = { key: string; label: string; kind: 'text' | 'date' | 'bool' | 'select' | 'tags' | 'number'; options?: string[] };
+type Field = { key: string; label: string; kind: 'text' | 'date' | 'datetime' | 'bool' | 'select' | 'tags' | 'number'; options?: string[] };
 function fieldsFor(type: string, cfg: { collections: Array<{ key: string; title: string }>; listTypes: Array<{ key: string; title: string }> } | null): Field[] {
   const vis: Field = { key: 'visibility', label: 'Visibility', kind: 'select', options: ['public', 'private'] };
   const tagsF: Field = { key: 'tags', label: 'Tags', kind: 'tags' };
   const slugF: Field = { key: 'slug', label: 'URL slug', kind: 'text' };
   switch (type) {
     case 'writing': return [{ key: 'title', label: 'Title', kind: 'text' }, { key: 'collection', label: 'Collection', kind: 'select', options: cfg?.collections.map((c) => c.key) ?? [] }, { key: 'date', label: 'Date', kind: 'date' }, { key: 'summary', label: 'Summary', kind: 'text' }, slugF, { key: 'draft', label: 'Draft', kind: 'bool' }, vis, tagsF];
-    case 'feed': return [{ key: 'title', label: 'Title (optional)', kind: 'text' }, { key: 'date', label: 'Date', kind: 'date' }, { key: 'about', label: 'About [[record]]', kind: 'text' }, { key: 'draft', label: 'Draft', kind: 'bool' }, vis, tagsF];
+    case 'feed': return [{ key: 'title', label: 'Title (optional)', kind: 'text' }, { key: 'date', label: 'Date & time', kind: 'datetime' }, { key: 'about', label: 'About [[record]]', kind: 'text' }, { key: 'draft', label: 'Draft', kind: 'bool' }, vis, tagsF];
     case 'review': return [{ key: 'title', label: 'Title (optional)', kind: 'text' }, { key: 'item', label: 'Item [[record]]', kind: 'text' }, { key: 'date', label: 'Date', kind: 'date' }, { key: 'rating', label: 'Rating', kind: 'number' }, { key: 'draft', label: 'Draft', kind: 'bool' }, vis, tagsF];
     case 'list': return [{ key: 'title', label: 'Title', kind: 'text' }, { key: 'list_type', label: 'List type', kind: 'select', options: cfg?.listTypes.map((c) => c.key) ?? [] }, { key: 'sort', label: 'Sort', kind: 'select', options: ['added-desc', 'added-asc', 'title', 'manual'] }, slugF, vis];
     case 'list-entry': return [{ key: 'state', label: 'State', kind: 'select', options: ['active', 'done', 'removed'] }, { key: 'added', label: 'Added', kind: 'date' }, { key: 'for', label: 'For [[person]] (gifts)', kind: 'text' }, vis];
@@ -51,6 +51,15 @@ function fieldsFor(type: string, cfg: { collections: Array<{ key: string; title:
     case 'tag': return [{ key: 'name', label: 'Name', kind: 'text' }, { key: 'description', label: 'Description', kind: 'text' }, vis];
     default: return [vis];
   }
+}
+
+function toLocalInput(v: unknown): string {
+  if (!v) return '';
+  const str = String(v);
+  const d = new Date(str.length <= 10 ? str + 'T12:00:00' : str);
+  if (Number.isNaN(d.getTime())) return '';
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
 }
 
 export default function Editor(props: { id?: string; inline?: boolean; onDone?: (saved: boolean) => void }) {
@@ -230,6 +239,7 @@ export default function Editor(props: { id?: string; inline?: boolean; onDone?: 
           if (f.kind === 'tags') return <label class="fm__f" key={f.key}><span class="mono">{f.label}</span><input value={Array.isArray(v) ? (v as string[]).join(', ') : ''} placeholder="comma, separated, private/secret" onInput={(e) => upd((e.target as HTMLInputElement).value.split(',').map((s) => s.trim()).filter(Boolean))} /></label>;
           if (f.kind === 'number') return <label class="fm__f" key={f.key}><span class="mono">{f.label}</span><input type="number" step="any" value={v == null ? '' : String(v)} onInput={(e) => upd((e.target as HTMLInputElement).value === '' ? undefined : Number((e.target as HTMLInputElement).value))} /></label>;
           if (f.kind === 'date') return <label class="fm__f" key={f.key}><span class="mono">{f.label}</span><input type="date" value={String(v ?? '').slice(0, 10)} onInput={(e) => upd((e.target as HTMLInputElement).value)} /></label>;
+          if (f.kind === 'datetime') return <label class="fm__f" key={f.key}><span class="mono">{f.label}</span><input type="datetime-local" value={toLocalInput(v)} onInput={(e) => { const x = (e.target as HTMLInputElement).value; upd(x ? new Date(x).toISOString().replace(/\.\d{3}Z$/, 'Z') : undefined); }} /></label>;
           return <label class={`fm__f ${f.key === 'title' || f.key === 'name' ? 'fm__f--title' : ''}`} key={f.key}><span class="mono">{f.label}</span><input value={String(v ?? '')} onInput={(e) => upd((e.target as HTMLInputElement).value)} /></label>;
         })}
       </form>
