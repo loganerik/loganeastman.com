@@ -4,12 +4,15 @@ import { LlmRefusal } from './provider';
 
 export class OpenAIProvider implements LlmProvider {
   readonly name = 'openai';
-  constructor(private apiKey: string, private model: string, private fetchImpl: typeof fetch = fetch) {}
+  private fetchImpl: typeof fetch;
+  // workerd refuses a bare `fetch` called as a method (Illegal invocation): keep a wrapper, call it as a plain function
+  constructor(private apiKey: string, private model: string, fetchImpl?: typeof fetch) { this.fetchImpl = fetchImpl ?? ((i, o) => fetch(i, o)); }
 
   async structured<T>(args: StructuredArgs<T>): Promise<T> {
     const schema = z.toJSONSchema(args.schema, { target: 'draft-2020-12' }) as Record<string, unknown>;
     strictify(schema);
-    const res = await this.fetchImpl('https://api.openai.com/v1/responses', {
+    const call = this.fetchImpl;
+    const res = await call('https://api.openai.com/v1/responses', {
       method: 'POST',
       headers: { authorization: `Bearer ${this.apiKey}`, 'content-type': 'application/json' },
       body: JSON.stringify({
