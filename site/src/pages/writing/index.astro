@@ -48,9 +48,17 @@ const all = collections.flatMap((c) => writingIn(idx, c.key).map((p) => ({ p, c 
     const seen = new Set<string>();
     const list = [...records, ...priv.records].filter((x) => !seen.has(x.id) && seen.add(x.id));
     box.querySelector('[data-drafts-count]')!.textContent = `(${list.length})`;
-    box.querySelector('[data-drafts-list]')!.innerHTML = list.map((x) => `<li><a href="/private/edit/?id=${x.id}">${(x.title ?? x.path).replace(/</g, '&lt;')}</a></li>`).join('') || '<li class="muted">None.</li>';
+    box.querySelector('[data-drafts-list]')!.innerHTML = list.map((x) => `<li><a href="/private/edit/?id=${x.id}">${(x.title ?? x.path).replace(/</g, '&lt;')}</a> <button type="button" class="btn btn--soft btn--small" data-discard="${x.id}">Discard</button></li>`).join('') || '<li class="muted">None.</li>';
     box.hidden = false;
   };
+  document.addEventListener('click', async (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-discard]');
+    if (!b) return;
+    if (!confirm('Discard this draft? The file is deleted from the vault.')) return;
+    b.disabled = true;
+    const r = await fetch(`/api/records/${b.dataset.discard}`, { method: 'DELETE', credentials: 'include' });
+    if (r.ok) b.closest('li')?.remove(); else { b.disabled = false; alert('Could not discard: ' + r.status); }
+  });
   if (document.documentElement.dataset.owner) load();
   else new MutationObserver((_, o) => { if (document.documentElement.dataset.owner) { o.disconnect(); load(); } }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-owner'] });
 </script>

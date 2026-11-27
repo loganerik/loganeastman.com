@@ -65,6 +65,7 @@ main { flex: 1; }
 .btn:hover, .chip:hover { border-color: var(--green); color: var(--green); }
 .btn--solid, .chip[aria-pressed='true'], .chip.on { background: var(--green); color: var(--on-dark); border-color: var(--green); }
 .btn--soft { background: var(--pill-bg); border-color: var(--pill-bg); }
+.btn--small { font-size: 0.72rem; padding: 0.35rem 0.75rem; }
 .btn--solid:hover { color: var(--on-dark); }
 .chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .clip--logo.on-paper > img, .clip--logo.on-dark > img { filter: none; }

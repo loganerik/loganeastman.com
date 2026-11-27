@@ -142,12 +142,13 @@ function Ask({ q, onDone }: { q: Question; onDone: () => void }) {
   );
 }
 
-function RecordList({ records, empty }: { records: RecordSummary[]; empty: string }) {
+function RecordList({ records, empty, onDiscard }: { records: RecordSummary[]; empty: string; onDiscard?: (r: RecordSummary) => void }) {
   if (!records.length) return <p class="muted">{empty}</p>;
   return (
     <ul class="recs">
       {records.map((r) => (
         <li key={r.id}>
+          {onDiscard && <button type="button" class="btn btn--soft btn--small" onClick={() => onDiscard(r)}>Discard</button>}
           <span class="mono muted recs__type">{r.type}{r.kind ? `/${r.kind}` : ''}{r.collection ? `/${r.collection}` : ''}</span>
           <a class="recs__title" href={`/private/edit/?id=${r.id}`}>{r.title ?? r.path}</a>
           <span class="mono muted">{r.visibility}{r.draft ? ' · draft' : ''}{r.conflict ? ' · CONFLICT' : ''}{r.date ? ' · ' + when(String(r.date), { year: 'numeric', month: 'short', day: 'numeric' }) : ''}</span>
@@ -160,13 +161,19 @@ function RecordList({ records, empty }: { records: RecordSummary[]; empty: strin
 
 function Records({ status }: { status: 'drafts' | 'published' }) {
   const { data, err } = useLoader(() => api<{ records: RecordSummary[] }>(`/api/records?status=${status === 'drafts' ? 'draft' : 'published'}&limit=200`), [status]);
+  const [gone, setGone] = useState<Set<string>>(new Set());
   const [priv, setPriv] = useState<RecordSummary[] | null>(null);
+  const discard = async (r: RecordSummary) => {
+    if (!confirm(`Discard "${r.title ?? r.path}"? The file is deleted from the vault.`)) return;
+    await api(`/api/records/${r.id}`, { method: 'DELETE' });
+    setGone((g) => new Set([...g, r.id]));
+  };
   useEffect(() => { if (status === 'published') api<{ records: RecordSummary[] }>('/api/records?visibility=private&limit=200').then((d) => setPriv(d.records)).catch(() => {}); }, [status]);
   return (
     <section>
       <p class="mono hub__actions"><a class="btn" href="/private/new/?type=writing">New piece</a> <a class="btn" href="/private/new/?type=feed">New thought</a> <a class="btn" href="/private/new/?type=list">New list</a> <a class="btn" href="/private/new/?type=review">New review</a></p>
       {err && <p class="err mono">{err}</p>}
-      {data && <RecordList records={data.records} empty={status === 'drafts' ? 'No drafts.' : 'Nothing published yet.'} />}
+      {data && <RecordList records={data.records.filter((r) => !gone.has(r.id))} empty={status === 'drafts' ? 'No drafts.' : 'Nothing published yet.'} onDiscard={status === 'drafts' ? discard : undefined} />}
       {status === 'published' && priv && priv.length > 0 && (<><div class="rule-label" style="margin-top:2rem"><span>Private</span></div><RecordList records={priv} empty="" /></>)}
     </section>
   );

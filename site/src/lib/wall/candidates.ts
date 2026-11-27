@@ -64,7 +64,7 @@ export function wallCandidates(idx: VaultIndex): WallTile[] {
     const text = p.body.replace(/[#>*_`\[\]!]/g, '').replace(/\s+/g, ' ').trim();
     const words = text.split(' ').length;
     const hasArt = !!(p.data.artwork?.clip || p.data.artwork?.thumb);
-    push({ id: p.data.id, kind: hasArt ? 'photo' : 'thought', href: urlFor(p, idx), title: p.data.title ?? text.slice(0, 60), caption: fmtDate(p.data.date), record: p, shape: hasArt ? undefined : 'slip', text: text.length > 140 ? text.slice(0, 137).trimEnd() + '…' : text, words, score: 0.9 * recency(p.data.date, 30) });
+    push({ id: p.data.id, kind: hasArt ? 'photo' : 'thought', href: urlFor(p, idx), title: p.data.title ?? text.slice(0, 60), caption: fmtDate(p.data.date), record: p, shape: hasArt ? undefined : words <= 6 ? 'stepped' : 'slip', text: text.length > 140 ? text.slice(0, 137).trimEnd() + '…' : text, words, score: 0.9 * recency(p.data.date, 30) });
   }
   // lists
   for (const l of idx.ofType<List>('list')) {

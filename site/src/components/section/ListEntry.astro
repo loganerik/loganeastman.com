@@ -7,6 +7,7 @@ import { restingAngle, kickerFor } from '../../lib/artwork';
 import { fmtDate } from '../../lib/dates';
 import { fmtPrice, hostOf } from '../../lib/format';
 import Clip from '../art/Clip.astro';
+import OwnerOnly from '../private/OwnerOnly.astro';
 interface Props { e: ResolvedEntry; showArt?: boolean; index?: number }
 const { e, showArt = true, index } = Astro.props;
 const href = urlFor(e.item);
@@ -32,6 +33,13 @@ const kicker = d.subtype ?? (isProduct ? d.category : kickerFor(e.item));
     {d.details && <p class="mono muted entry__details">{d.details}</p>}
     {e.why && <p class="entry__why">{e.why}</p>}
     <p class="mono faint entry__added">Added {fmtDate(e.entry.data.added)}{host && <> · <a href={d.url} rel="noopener" target="_blank">{host}</a></>}</p>
+    <OwnerOnly>
+      <p class="chips owner-row entry__tools">
+        <button type="button" class="btn btn--soft btn--small" data-edit={d.id} data-edit-title={d.title}>Edit item</button>
+        <button type="button" class="btn btn--soft btn--small" data-edit={e.entry.data.id} data-edit-title={`Note · ${d.title}`}>Edit note</button>
+        <button type="button" class="btn btn--soft btn--small" data-remove={e.entry.data.id} data-remove-title={d.title}>Remove</button>
+      </p>
+    </OwnerOnly>
   </div>
 </li>
 <style>
@@ -51,6 +59,8 @@ const kicker = d.subtype ?? (isProduct ? d.category : kickerFor(e.item));
   .entry__added a { text-decoration: none; }
   .entry__added a:hover { text-decoration: underline; }
   .entry--done .entry__title { color: var(--fg-muted); }
+  .entry__tools { margin-top: var(--space-2); }
+  :global(.list--compact) .entry__tools { display: none; }
   /* compact "Christmas list" view */
   :global(.list--compact) .entry { grid-template-columns: 48px minmax(0, 1fr); gap: var(--space-3); padding: var(--space-2) 0; }
   :global(.list--compact) .entry__n { display: inline; }

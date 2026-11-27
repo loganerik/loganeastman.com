@@ -2,6 +2,9 @@
 import Section from '../../layouts/Section.astro';
 import SectionGrid from '../../components/section/SectionGrid.astro';
 import FeedSlip from '../../components/section/FeedSlip.astro';
+import OwnerOnly from '../../components/private/OwnerOnly.astro';
+import InlineEdit from '../../components/private/editor/InlineEdit';
+import '../../styles/editor.css';
 import { index, feedPosts } from '../../lib/content';
 const idx = await index();
 const posts = feedPosts(idx);
@@ -9,6 +12,11 @@ const posts = feedPosts(idx);
 <Section quiet preset={{ mode: 'thought' }} title="Feed" description="Short thoughts, in order." feeds={[{ title: 'Feed', href: '/feed/rss.xml' }]} action={{ label: 'New thought', href: '/private/new/?kind=feed' }}>
   {posts.length === 0 && <p class="muted">Quiet so far.</p>}
   <SectionGrid variant="slips">
-    {posts.map((p) => <li><FeedSlip post={p} angle /></li>)}
+    {posts.map((p) => (
+      <li>
+        <div data-article={p.data.id}><FeedSlip post={p} angle /></div>
+        <OwnerOnly><InlineEdit client:only="preact" recordId={p.data.id} articleSelector={`[data-article="${p.data.id}"]`} /></OwnerOnly>
+      </li>
+    ))}
   </SectionGrid>
 </Section>

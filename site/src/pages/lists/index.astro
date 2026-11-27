@@ -6,31 +6,23 @@ import { urlFor } from '../../lib/urls';
 import type { List } from '@lem/vault-core';
 const idx = await index();
 const lists = idx.ofType<List>('list').map((l) => ({ l, n: entriesOf(idx, l).length, t: listType(idx, l.data.list_type) }));
-const groups = new Map<string, typeof lists>();
-for (const x of lists) groups.set(x.t?.title ?? x.l.data.list_type, [...(groups.get(x.t?.title ?? x.l.data.list_type) ?? []), x]);
 ---
 <Section quiet preset={{ mode: 'list' }} title="Lists" description="Watchlists, reading, gifts, places." action={{ label: 'New list', href: '/private/new/?kind=list' }}>
   {lists.length === 0 && <p class="muted">No lists yet.</p>}
-  {[...groups.entries()].map(([title, xs]) => (
-    <section class="group">
-      <div class="rule-label"><span>{title}</span></div>
-      <SectionGrid variant="seals">
-        {xs.map(({ l, n }) => (
-          <li class="card">
-            <a class="seal seal--green seal-link" href={urlFor(l)}>
-              <span>
-                <span class="seal__title">{l.data.title}</span>
-              </span>
-            </a>
-          </li>
-        ))}
-      </SectionGrid>
-    </section>
-  ))}
+  <SectionGrid variant="seals">
+    {lists.map(({ l }) => (
+      <li class="card">
+        <a class="seal seal--green seal-link" href={urlFor(l)}>
+          <span>
+            <span class="seal__title">{l.data.title}</span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </SectionGrid>
 </Section>
 <style>
-  .group { margin-bottom: var(--space-6); }
-  .group .grid { margin-top: var(--space-4); }
+  .grid { margin-top: var(--space-4); }
   .seal-link { text-decoration: none; transition: transform var(--motion-fast) var(--ease-lift); }
   .seal-link:hover, .seal-link:focus-visible { transform: translateY(var(--lift)); }
   .seal__title { display: block; font-size: var(--step-2); line-height: 1.05; }
