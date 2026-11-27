@@ -27,10 +27,14 @@ const { title, description, image, kicker, meta = [], noindex, wide = false, fee
 </Base>
 <style>
   .reading { padding-top: var(--space-5); }
-  .reading__head { display: grid; gap: var(--space-4); max-width: var(--measure); margin-bottom: var(--space-5); }
+  /* the title block and the prose share one centred column; the prose itself stays left-aligned */
+  .reading__head { display: grid; gap: var(--space-4); max-width: var(--measure); margin-inline: auto; margin-bottom: var(--space-5); text-align: center; }
+  .reading__titles { display: grid; justify-items: center; gap: var(--space-3); }
+  .reading__title { text-wrap: balance; }
   .reading--wide .reading__head { max-width: none; }
   .reading__kicker { margin-bottom: var(--space-2); }
   .reading__title { font-size: var(--step-4); font-weight: 400; }
   .reading__meta { margin-top: var(--space-3); }
-  .reading__body { margin-inline: 0; }
+  .reading__body { margin-inline: auto; }
+  .reading :global([data-article]) + :global([data-article]) { max-width: var(--measure); margin-inline: auto; }
 </style>

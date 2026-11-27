@@ -49,12 +49,25 @@ export default function CoverPanel({ recordId, type, kind, body, cover, artwork,
   };
 
   const treatments = type === 'item' && (kind === 'film' || kind === 'tv') ? ['poster', 'lettering', 'typeset'] : type === 'item' && (kind === 'book' || kind === 'album') ? ['cover', 'typeset'] : ['paper', 'cutout', 'cover', 'typeset'];
+  const canCut = treatments.includes('cutout');
+  const isCut = artwork?.treatment === 'cutout' || (!artwork?.treatment && canCut && !!artwork?.clip);
+  const toggleCut = (on: boolean) => {
+    if (on) { if (artwork?.clip) onChange({ cover, artwork: { ...(artwork ?? {}), treatment: 'cutout' } }); else void cutout(); }
+    else onChange({ cover, artwork: { ...(artwork ?? {}), treatment: 'paper' } });
+  };
+  const current = artwork?.clip ?? artwork?.thumb ?? artwork?.full;
   return (
     <div class="cover">
+      {current && (
+        <div class="cover__now">
+          <img class="cover__current" src={current} alt="" />
+          {canCut && <label class="mono cover__treat"><input type="checkbox" checked={isCut} disabled={busy} onChange={(e) => toggleCut((e.target as HTMLInputElement).checked)} /> Cut out the subject</label>}
+        </div>
+      )}
       <div class="cover__row">
         <label class="btn btn--soft"><input type="file" accept="image/*" hidden onChange={(e) => { const f = (e.target as HTMLInputElement).files?.[0]; (e.target as HTMLInputElement).value = ''; if (f) upload(f, true); }} />{cover ? 'Replace cover' : 'Upload a cover'}</label>
         <label class="mono cover__treat">Treatment <select value={String(artwork?.treatment ?? treatments[0])} onChange={(e) => onChange({ cover, artwork: { ...(artwork ?? {}), treatment: (e.target as HTMLSelectElement).value } })}>{treatments.map((t) => <option value={t}>{t}</option>)}</select></label>
-        {(artwork?.treatment === 'cutout' || treatments.includes('cutout')) && artwork?.media && <button type="button" class="btn" onClick={cutout} disabled={busy}>{artwork?.clip ? 'Redo cutout' : 'Cut out the subject'}</button>}
+        {isCut && artwork?.media && <button type="button" class="btn" onClick={cutout} disabled={busy}>Redo cutout</button>}
         {cover && <button type="button" class="btn" onClick={() => onChange({ cover: undefined, artwork: null })}>No cover</button>}
         {type === 'item' && kind === 'photo' && <label class="mono cover__treat"><input type="checkbox" checked={!!approved} onChange={(e) => onChange({ cover, artwork, approved: (e.target as HTMLInputElement).checked })} /> Approved for public use</label>}
       </div>
