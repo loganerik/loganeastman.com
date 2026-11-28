@@ -1,6 +1,7 @@
 // Who gets on the wall: photos with clips, writing, recent thoughts, a seal for every list plus a rotating dozen
 // of its things, reviews whose subject is finished. Scored by weight × recency; quotas per kind. The client deals
 // the final order per visit (wall-client.ts).
+import { starText } from '../stars';
 import type { VaultIndex, VaultRecord } from '../../loaders/index';
 import type { Item, List, Feed, Writing, Review } from '@lem/vault-core';
 import { entriesOf, listType, type Rec, type ResolvedEntry } from '../content';
@@ -108,7 +109,7 @@ export function wallCandidates(idx: VaultIndex): WallTile[] {
     if (!item?.public) continue;
     const finished = !!item.data.finished || idx.ofType('list-entry', { all: true }).some((e) => (e.data as { item: string; state: string }).state === 'done' && idx.resolve((e.data as { item: string }).item)?.path === item.path);
     if (!finished) continue;
-    push({ id: rv.data.id, kind: 'review', href: urlFor(rv, idx), title: rv.data.title ?? `On ${item.data.title}`, caption: `Review · ${fmtDate(rv.data.date)}`, record: item, shape: 'stepped', score: 1.0 * recency(rv.data.date) });
+    push({ id: rv.data.id, kind: 'review', href: urlFor(rv, idx), title: rv.data.title ?? `On ${item.data.title}`, caption: [starText(rv.data.rating, idx.config.site.rating_scale) + ((rv.data as { liked?: boolean }).liked ? ' ♥' : ''), fmtDate(rv.data.date)].map((x) => x.trim()).filter(Boolean).join(' · ') || 'Review', record: item, shape: 'stepped', score: 1.0 * recency(rv.data.date) });
   }
 
   // quotas, then global order by score; the two best photos become heroes

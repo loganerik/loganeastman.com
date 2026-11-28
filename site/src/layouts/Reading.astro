@@ -3,8 +3,9 @@
 import Base from './Base.astro';
 import '../styles/prose.css';
 import '../styles/editor.css';
-interface Props { title: string; description?: string; image?: string; kicker?: string; meta?: string[]; noindex?: boolean; wide?: boolean; feeds?: Array<{ title: string; href: string }>; minimal?: boolean; share?: { url: string; title: string; image: string } }
-const { title, description, image, kicker, meta = [], noindex, wide = false, feeds, minimal = false, share } = Astro.props;
+interface Props { title: string; description?: string; image?: string; kicker?: string; meta?: string[]; noindex?: boolean; wide?: boolean; feeds?: Array<{ title: string; href: string }>; minimal?: boolean; share?: { url: string; title: string; image: string }; stars?: { rating?: number | null; scale?: number; liked?: boolean } }
+const { title, description, image, kicker, meta = [], noindex, wide = false, feeds, minimal = false, share, stars } = Astro.props;
+import Stars from '../components/art/Stars.astro';
 import ShareBar from '../components/site/ShareBar.astro';
 ---
 <Base title={title} description={description} image={image} type="article" noindex={noindex} feeds={feeds} minimal={minimal}>
@@ -15,6 +16,7 @@ import ShareBar from '../components/site/ShareBar.astro';
         <div data-article>
           {kicker && <p class="mono muted reading__kicker">{kicker}</p>}
           <h1 class="reading__title">{title}</h1>
+          {stars && <p class="reading__stars"><Stars {...stars} size="l" /></p>}
           {meta.length > 0 && <p class="mono muted reading__meta">{meta.map((m, i) => <><span>{m}</span>{i < meta.length - 1 && <span class="sep"> · </span>}</>)}</p>}
           {share && <ShareBar {...share} compact />}
         </div>
@@ -37,6 +39,7 @@ import ShareBar from '../components/site/ShareBar.astro';
   .reading__kicker { margin-bottom: var(--space-2); }
   .reading__title { font-size: var(--step-4); font-weight: 400; }
   .reading__meta { margin-top: var(--space-3); }
+  .reading__stars { margin: var(--space-3) 0 0; }
   .reading__body { margin-inline: auto; }
   .reading :global([data-article]) + :global([data-article]) { max-width: var(--measure); margin-inline: auto; }
 </style>

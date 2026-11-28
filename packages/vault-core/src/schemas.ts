@@ -173,6 +173,7 @@ export const reviewSchema = z.looseObject({
   title: z.string().optional(),
   date: dateish,
   rating: z.number().optional(),
+  liked: z.boolean().optional(),
   draft: z.boolean().default(false),
 });
 export type Review = z.infer<typeof reviewSchema>;

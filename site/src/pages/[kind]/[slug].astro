@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import '../../styles/prose.css';
+import Stars from '../../components/art/Stars.astro';
 import ItemHeader from '../../components/section/ItemHeader.astro';
 import ReleaseDates from '../../components/section/ReleaseDates.astro';
 import OwnerOnly from '../../components/private/OwnerOnly.astro';
@@ -55,7 +56,7 @@ const description = d.synopsis ?? r.excerpt ?? `${identity.kinds[d.kind]?.label 
     {reviews.length > 0 && (
       <section class="after">
         <div class="rule-label"><span>Review</span></div>
-        <ul class="plain">{reviews.map((rv) => <li><a href={urlFor(rv)}>{rv.data.title ?? `Review of ${d.title}`}</a> <span class="mono muted">{fmtDate(rv.data.date)}</span></li>)}</ul>
+        <ul class="plain">{reviews.map((rv) => <li><a href={urlFor(rv)}>{rv.data.title ?? `Review of ${d.title}`}</a> <Stars rating={rv.data.rating} scale={idx.config.site.rating_scale} liked={(rv.data as { liked?: boolean }).liked} size="s" /> <span class="mono muted">{fmtDate(rv.data.date)}</span></li>)}</ul>
       </section>
     )}
     {related.length > 0 && (

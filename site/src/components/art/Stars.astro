@@ -1,0 +1,21 @@
+---
+// A rating the Letterboxd way: ★★★★½ in green, then a pink heart when liked. Renders nothing when neither is set.
+import { starText, starLabel } from '../../lib/stars';
+interface Props { rating?: number | null; scale?: number; liked?: boolean; size?: 's' | 'm' | 'l'; class?: string }
+const { rating, scale = 5, liked = false, size = 'm', class: cls } = Astro.props;
+const text = starText(rating, scale);
+---
+{(text || liked) && (
+  <span class:list={['stars', `stars--${size}`, cls]} role="img" aria-label={starLabel(rating, scale, liked)}>
+    {text && <span class="stars__glyphs" aria-hidden="true">{text}</span>}
+    {liked && <span class="stars__heart" aria-hidden="true">♥</span>}
+  </span>
+)}
+<style>
+  .stars { display: inline-flex; align-items: baseline; gap: 0.35em; line-height: 1; white-space: nowrap; font-family: var(--font-display); }
+  .stars__glyphs { color: var(--green); letter-spacing: 0.06em; }
+  .stars__heart { color: var(--pink-ink); }
+  .stars--s { font-size: 0.95rem; }
+  .stars--m { font-size: 1.25rem; }
+  .stars--l { font-size: 1.7rem; }
+</style>

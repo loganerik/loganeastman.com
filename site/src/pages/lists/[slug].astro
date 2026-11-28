@@ -1,4 +1,5 @@
 ---
+import { starText } from '../../lib/stars';
 import Section from '../../layouts/Section.astro';
 import SectionGrid from '../../components/section/SectionGrid.astro';
 import ListEntry from '../../components/section/ListEntry.astro';
@@ -26,7 +27,7 @@ const done = entries.filter((e) => e.entry.data.state === 'done');
 const queue = t?.queue ?? false;
 const doneList = !!t?.done;
 const complete = t?.completion ? { label: t.completion.label ?? 'Mark done' } : undefined;
-const reviewFor = (e: (typeof entries)[number]) => { const r = reviewsOf(idx, e.item)[0]; return r ? { href: urlFor(r, idx), title: 'Review' } : undefined; };
+const reviewFor = (e: (typeof entries)[number]) => { const r = reviewsOf(idx, e.item)[0]; return r ? { href: urlFor(r, idx), title: [starText(r.data.rating, idx.config.site.rating_scale), (r.data as { liked?: boolean }).liked ? '♥' : ''].filter(Boolean).join(' ') || 'Review' } : undefined; };
 const groups = queue ? [] : groupByCategory(idx, active);
 const categories = groups.map((g) => g.key);
 let i = 0;

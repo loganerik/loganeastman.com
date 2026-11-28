@@ -5,6 +5,7 @@ import { renderRecord } from '../../lib/render';
 import { urlFor } from '../../lib/urls';
 import { fmtDate } from '../../lib/dates';
 import Clip from '../../components/art/Clip.astro';
+import Stars from '../../components/art/Stars.astro';
 import OwnerOnly from '../../components/private/OwnerOnly.astro';
 import PrivateShelf from '../../components/private/PrivateShelf';
 import type { Review, Item } from '@lem/vault-core';
@@ -20,8 +21,9 @@ const rows = await Promise.all(reviews.map(async (rv) => ({ rv, item: idx.resolv
       <li class="review card">
         {item?.public && <a class="review__art" href={urlFor(rv)} tabindex="-1" aria-hidden="true"><Clip record={item} context="list" decorative /></a>}
         <div>
-          <p class="mono muted">{item?.public ? item.data.title : 'Review'} · {fmtDate(rv.data.date)}{rv.data.rating != null && ` · ${rv.data.rating}/${idx.config.site.rating_scale}`}</p>
+          <p class="mono muted">{item?.public ? item.data.title : 'Review'} · {fmtDate(rv.data.date)}</p>
           <h3><a href={urlFor(rv)}>{rv.data.title ?? (item ? `On ${item.data.title}` : 'Review')}</a></h3>
+          <Stars rating={rv.data.rating} scale={idx.config.site.rating_scale} liked={(rv.data as { liked?: boolean }).liked} size="s" />
           <p class="muted">{r.excerpt}</p>
         </div>
       </li>

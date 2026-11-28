@@ -3,8 +3,8 @@
 import type { Config } from '../api';
 import { KIND_LABELS } from '../api';
 
-export type FieldKind = 'text' | 'long' | 'date' | 'datetime' | 'bool' | 'select' | 'number' | 'tags' | 'people' | 'record' | 'visibility' | 'slug' | 'attach';
-export interface Field { key: string; label: string; kind: FieldKind; options?: Array<{ value: string; label: string }>; placeholder?: string; recordType?: string; recordKinds?: string[]; hint?: string }
+export type FieldKind = 'text' | 'long' | 'date' | 'datetime' | 'bool' | 'select' | 'number' | 'tags' | 'people' | 'record' | 'visibility' | 'slug' | 'attach' | 'stars' | 'heart';
+export interface Field { key: string; label: string; kind: FieldKind; options?: Array<{ value: string; label: string }>; placeholder?: string; recordType?: string; recordKinds?: string[]; hint?: string; max?: number }
 export interface FieldSet { essentials: Field[]; more: Field[] }
 
 const vis: Field = { key: 'visibility', label: 'Who sees it', kind: 'visibility' };
@@ -26,7 +26,7 @@ export function fieldsFor(type: string, cfg: Config | null, kind?: string): Fiel
       more: [{ key: 'title', label: 'Title', kind: 'text', placeholder: 'optional' }, { key: 'date', label: 'Date & time', kind: 'datetime' }, vis, tagsF, peopleF],
     };
     case 'review': return {
-      essentials: [{ key: 'item', label: 'What it is about', kind: 'record', recordType: 'item' }, { key: 'rating', label: 'Rating', kind: 'number' }],
+      essentials: [{ key: 'item', label: 'What it is about', kind: 'record', recordType: 'item' }, { key: 'rating', label: 'Rating', kind: 'stars', max: cfg?.site?.rating_scale ?? 5 }, { key: 'liked', label: 'Liked', kind: 'heart' }],
       more: [{ key: 'title', label: 'Title', kind: 'text', placeholder: 'optional' }, { key: 'date', label: 'Date', kind: 'date' }, draftF, vis, tagsF, peopleF],
     };
     case 'list': return {

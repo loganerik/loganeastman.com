@@ -18,7 +18,7 @@ const item = idx.resolve(rv.data.item) as Rec<Item> | undefined;
 const r = await renderRecord(rv, idx);
 const title = rv.data.title ?? (item ? `On ${item.data.title}` : 'Review');
 ---
-<Reading title={title} description={r.excerpt} kicker="Review" meta={[fmtDate(rv.data.date), ...(rv.data.rating != null ? [`${rv.data.rating} / ${idx.config.site.rating_scale}`] : [])]}>
+<Reading title={title} description={r.excerpt} kicker="Review" meta={[fmtDate(rv.data.date)]} stars={{ rating: rv.data.rating, scale: idx.config.site.rating_scale, liked: (rv.data as { liked?: boolean }).liked }}>
   <Fragment slot="art">{item?.public && <a href={urlFor(item)} class="subject"><Clip record={item} context="list" /></a>}</Fragment>
   <OwnerOnly slot="controls"><InlineEdit client:only="preact" recordId={rv.data.id} title={rv.data.title} type="review" /></OwnerOnly>
   {item?.public && <p class="mono muted">About <a href={urlFor(item)}>{item.data.title}</a></p>}
